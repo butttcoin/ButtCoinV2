@@ -10,5 +10,6 @@ See the Java file to find out the basic mechanics and how the numbers were deriv
 
 See these graphs to confirm the deflationary nature of the token.
 
+The graph below is a comparison as a difficulty increase. The same graph shapes are obtained with eras increasing.
 
 ![alt text](https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/emulations/estimated/Selection_138.png)
