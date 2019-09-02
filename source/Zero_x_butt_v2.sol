@@ -342,8 +342,8 @@ contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
         if (constructorLock) revert();
         constructorLock = true;
 
-        symbol = "0xBUTT";
-        name = "ButtCoin";
+        symbol = "0x0x0x0x0x0";
+        name = "0x0x0x0x0x0x0x0x0x0x0x0x0x0x1";
         decimals = 8;
         //tokensGenerated = 33554467 * 10 ** uint(decimals);
         tokensGenerated = 0; //DBG
@@ -429,9 +429,9 @@ contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
         require(!reAdjustDifficultyLock);
         require(!blacklist[msg.sender]); //must not be blacklisted
  
-        //make it 2% harder
-        uint overallTotal = tokensBurned+tokensGenerated+tokensMined;
-        miningTarget = _MAXIMUM_TARGET - ((_MAXIMUM_TARGET*tokensBurned)/overallTotal);
+        //make a difficulty proportional to burned tokens
+        uint overallTotal = tokensGenerated+tokensMined; //this will include the burned tokens
+        miningTarget = _MAXIMUM_TARGET.sub ((tokensBurned.div(overallTotal)).mul( _MAXIMUM_TARGET));
 
         latestDifficultyPeriodStarted = block.number;
 
@@ -694,7 +694,7 @@ contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
 
  
     function getMiningReward() public view returns(uint) {
-        return tokensBurned.div(50); //this is two percent of a burned tokens
+        return tokensBurned.div(50); //this is two percent of burned tokens
     }
 
     //help debug mining software
