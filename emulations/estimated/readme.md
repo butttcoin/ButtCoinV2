@@ -12,4 +12,3 @@ See these graphs to confirm the deflationary nature of the token.
 
 
 ![alt text](https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/emulations/estimated/Selection_138.png)
-![alt text](https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/emulations/estimated/Selection_139.png)
