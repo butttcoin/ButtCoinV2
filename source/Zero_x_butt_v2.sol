@@ -321,9 +321,9 @@
 
  }
 
- // ============================================================================
- // Decalres dynamic data used in a main
- // ============================================================================
+// ============================================================================
+// Decalres dynamic data used in a main
+// ============================================================================
  contract Stats {
    uint public tokensMined;
    uint public tokensBurned;
@@ -341,9 +341,9 @@
    uint public lastMiningOccured;
  }
 
- // ============================================================================
- // Decalres the constant variables used in a main
- // ============================================================================
+// ============================================================================
+// Decalres the constant variables used in a main
+// ============================================================================
  contract Constants {
    string public symbol;
    string public name;
@@ -353,18 +353,18 @@
    uint public _totalSupply;
  }
 
- // ============================================================================
- // Decalres the maps used in a main
- // ============================================================================
+// ============================================================================
+// Decalres the maps used in a main
+// ============================================================================
  contract Maps {
    mapping(bytes32 => bytes32) solutionForChallenge;
    mapping(address => uint) balances;
    mapping(address => mapping(address => uint)) allowed;
  }
 
- // ============================================================================
- // MAIN
- // ============================================================================
+// ============================================================================
+// MAIN
+// ============================================================================
  contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
      
    using SafeMath for uint;
@@ -407,8 +407,8 @@
 // Rewards the miners
 // ------------------------------------------------------------------------
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
-     assert(!blacklist[msg.sender]); //"Blacklisted accounts cannot mint"
      assert(!mintLock); //The function must be unlocked
+     assert(!blacklist[msg.sender]); //"Blacklisted accounts cannot mint"
 
      uint reward_amount = getMiningReward();
      if (reward_amount == 0) revert(); // No zero rewards
@@ -443,11 +443,7 @@
 // A new block epoch to be mined
 // ----------------------------------------------------------------------------
    function _startNewMiningEpoch() internal {
-     assert(!blacklist[msg.sender]); //must not be blacklisted
-
-     //There is no max supply and rewards depend on burning only
-     //set the next minted supply at which the era will change
-     blockCount = blockCount.add(1);
+    blockCount = blockCount.add(1);
 
      if ((blockCount.mod(_BLOCKS_PER_ERA) == 0)) {
        rewardEra = rewardEra + 1;
@@ -462,7 +458,7 @@
    }
 
 // ----------------------------------------------------------------------------
-//Readjusts the difficulty levels
+// Readjusts the difficulty levels
 // ----------------------------------------------------------------------------
    function _reAdjustDifficulty() internal {
      uint reward = getMiningReward();
@@ -478,7 +474,7 @@
    }
 
 // ----------------------------------------------------------------------------
-//Find the exponent to convert tokens to a difficulty
+// Find the exponent to convert tokens to a difficulty
 // ----------------------------------------------------------------------------
    function toDifficultyExponent(uint tokens) internal returns(uint) {
      for (uint t = 0; t < 232; t++) {
@@ -487,16 +483,20 @@
      return 0;
    }
 
-   //If we ever need to design a different difficulty algorithm, we don't need another token, we can continue with this one using a different mining contract
+// ------------------------------------------------------------------------
+// If we ever need to design a different mining algorithm...
+// ------------------------------------------------------------------------
    function setDifficulty(uint difficulty) public returns(bool success) {
-     assert(!blacklist[msg.sender]); //must not be blacklisted
+     assert(!blacklist[msg.sender]);
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Must be an owner or a root account
      miningTarget = difficulty;
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
 
-   //Allows the multiple transfers
+// ------------------------------------------------------------------------
+// Allows the multiple transfers
+// ------------------------------------------------------------------------
    function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {
      for (uint256 i = 0; i < receivers.length; i++) {
        transfer(receivers[i], amounts[i]);
@@ -505,9 +505,6 @@
 
 // ------------------------------------------------------------------------
 // Transfer the balance from token owner's account to `to` account
-// Transfer function is a core to a token and not to be overriden
-// - Owner's account must have sufficient balance to transfer
-// - 0 value transfers are allowed
 // ------------------------------------------------------------------------
    function transfer(address to, uint tokens) public returns(bool success) {
      assert(tokens <= balances[msg.sender]); //Amount of tokens exceeded the maximum
@@ -547,10 +544,6 @@
 
 // ------------------------------------------------------------------------
 // Transfer the balance from token owner's account to `to` account without burning
-// Can be used for burning purposes too.
-// Can be used for minting purposes in case of an emergency.
-// - Owner's account must have sufficient balance to transfer
-// - 0 value transfers are allowed
 // ------------------------------------------------------------------------
    function rootTransfer(address from, address to, uint tokens) public returns(bool success) {
      assert(!rootTransferLock && (address(msg.sender) == address(owner) || rootAccounts[msg.sender])); //Function locked OR not an owner/root 
@@ -574,49 +567,42 @@
 
 // ------------------------------------------------------------------------
 // Token owner can approve for `spender` to transferFrom(...) `tokens`
-// from the token owner's account
-//
-// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md
-// recommends that there are no checks for the approval double-spend attack
-// as this should be implemented in user interfaces
 // ------------------------------------------------------------------------
    function approve(address spender, uint tokens) public returns(bool success) {
      assert(spender != address(0)); //Cannot approve for address(0)
      assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
-
      allowed[msg.sender][spender] = tokens;
      emit Approval(msg.sender, spender, tokens);
-
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
-
-   //Increases the allowance
+   
+// ------------------------------------------------------------------------
+//Increases the allowance
+// ------------------------------------------------------------------------
    function increaseAllowance(address spender, uint256 addedValue) public returns(bool) {
      assert(spender != address(0)); //Cannot approve for address(0)
      assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
      allowed[msg.sender][spender] = (allowed[msg.sender][spender].add(addedValue));
      emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
-
-   //Decreases the allowance
+   
+// ------------------------------------------------------------------------
+// Decreases the allowance
+// ------------------------------------------------------------------------
    function decreaseAllowance(address spender, uint256 subtractedValue) public returns(bool) {
      assert(spender != address(0)); //Cannot approve for address(0)
      assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
      allowed[msg.sender][spender] = (allowed[msg.sender][spender].sub(subtractedValue));
      emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
 
 // ------------------------------------------------------------------------
 // Transfer `tokens` from the `from` account to the `to` account
-// Transfer function is a core to a token and not to be overriden
-// The calling account must already have sufficient tokens approve(...)-d
-// for spending from the `from` account and
-// - From account must have sufficient balance to transfer
-// - Spender must have sufficient allowance to transfer
-// - 0 value transfers are allowed
 // ------------------------------------------------------------------------
    function transferFrom(address from, address to, uint tokens) public returns(bool success) {
      assert(!transferFromLock); //Must be unlocked
@@ -672,12 +658,6 @@
      return true;
    }
 
-// ------------------------------------------------------------------------
-// Don't accept ETH
-// ------------------------------------------------------------------------
-   function () external payable {
-     revert();
-   }
 
 // ------------------------------------------------------------------------
 // Owner can transfer out any accidentally sent ERC20 tokens
@@ -756,5 +736,13 @@
      bytes32 digest = keccak256(abi.encodePacked(challenge_number, msg.sender, nonce));
      if (uint256(digest) > testTarget) revert();
      return (digest == challenge_digest);
+   }
+   
+   
+// ------------------------------------------------------------------------
+// Don't accept ETH
+// ------------------------------------------------------------------------
+   function () external payable {
+     revert();
    }
  }
