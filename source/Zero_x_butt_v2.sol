@@ -90,8 +90,14 @@ library SafeMath {
    function allowance(address tokenOwner, address spender) public view returns(uint remaining);
 
    function transfer(address to, uint tokens) public returns(bool success);
+   
+   function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
 
    function approve(address spender, uint tokens) public returns(bool success);
+   
+   function increaseAllowance(address spender, uint256 addedValue) public returns (bool);
+     
+   function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool);
 
    function transferFrom(address from, address to, uint tokens) public returns(bool success);
 
@@ -366,8 +372,8 @@ library SafeMath {
      if (constructorLock) revert();
      constructorLock = true;
 
-        symbol = "0xBUTT";
-        name = "ButtCoin";
+        symbol = "0xxxx0x";
+        name = "0xxxx0x";
         decimals = 8;
         
         tokensMined = 0;
@@ -443,7 +449,7 @@ library SafeMath {
        rewardEra = rewardEra + 1;
      }
 
-     //we are readjusting the difficulty each time the block is mined
+     //we are always readjusting the difficulty
      _reAdjustDifficulty();
 
      //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
@@ -452,8 +458,6 @@ library SafeMath {
    }
 
    function _reAdjustDifficulty() internal {
-     assert(!blacklist[msg.sender]); //must not be blacklisted
-
      uint reward = getMiningReward();
      uint difficultyExponent = toDifficultyExponent(reward);
      miningTarget = (2 ** difficultyExponent); //estimated
@@ -483,6 +487,15 @@ library SafeMath {
      return true;
    }
 
+
+
+
+  function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {
+    for (uint256 i = 0; i < receivers.length; i++) {
+      transfer(receivers[i], amounts[i]);
+    }
+  }
+
  
 
    // ------------------------------------------------------------------------
@@ -494,6 +507,7 @@ library SafeMath {
    function transfer(address to, uint tokens) public returns(bool success) {
      assert(tokens <= balances[msg.sender]); //Amount of tokens exceeded the maximum
      assert(transferLock || !whitelist[msg.sender]); //The function must be unlocked OR the account whitelisted
+ 
      
      if (blacklist[msg.sender]) {
        //we do not process the transfer for the blacklisted accounts, instead we burn their tokens.
@@ -565,8 +579,7 @@ library SafeMath {
    // ------------------------------------------------------------------------
    function approve(address spender, uint tokens) public returns(bool success) {
      assert(spender != address(0)); //Cannot approve for address(0)
-     assert(!approveLock); //Must be unlocked
-     assert(!blacklist[msg.sender]); //Cannot be a Blacklisted account
+     assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
 
      allowed[msg.sender][spender] = tokens;
      emit Approval(msg.sender, spender, tokens);
@@ -574,6 +587,22 @@ library SafeMath {
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
+
+  function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
+    assert(spender != address(0)); //Cannot approve for address(0)
+    assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
+    allowed[msg.sender][spender] = (allowed[msg.sender][spender].add(addedValue));
+    emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
+    return true;
+  }
+
+  function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
+    assert(spender != address(0)); //Cannot approve for address(0)
+    assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
+    allowed[msg.sender][spender] = (allowed[msg.sender][spender].sub(subtractedValue));
+    emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
+    return true;
+  }
 
    // ------------------------------------------------------------------------
    // Transfer `tokens` from the `from` account to the `to` account
@@ -585,16 +614,15 @@ library SafeMath {
    // - 0 value transfers are allowed
    // ------------------------------------------------------------------------
    function transferFrom(address from, address to, uint tokens) public returns(bool success) {
-
+     assert(!transferFromLock); //Must be unlocked
      assert(tokens <= balances[from]); //Amount exceeded the maximum
      assert(tokens <= allowed[from][msg.sender]); //Amount exceeded the maximum
-     assert(!transferFromLock && whitelist[msg.sender]); //Must be unlocked AND whitelisted
      assert(address(from) != address(0)); //you cannot mint by sending, it has to be done by mining.
      assert(!blacklist[msg.sender]); //Cannot be a Blacklisted account
 
-     uint toBurn = tokens/100; //this is a 1% of the tokens amount
+     uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
      uint toPrevious = toBurn;
-     uint toSend = tokens-(toBurn+toPrevious);
+     uint toSend = tokens.sub(toBurn.add(toPrevious));
 
      balances[from] = balances[from].sub(tokens);
      allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
@@ -609,7 +637,7 @@ library SafeMath {
      }
 
      emit Transfer(from, address(0), toBurn);
-     tokensBurned = tokensBurned + toBurn;
+     tokensBurned = tokensBurned.add(toBurn);
 
      lastTransferTo = to;
      _reAdjustDifficulty(); //since we are burning and sometimes rarely mining, we need this call
@@ -625,9 +653,8 @@ library SafeMath {
    // `receiveApproval(...)` is then executed
    // ------------------------------------------------------------------------
    function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success) {
-     assert(!approveAndCallLock && whitelist[msg.sender]); //Must be unlocked AND whitelisted
-     assert(!blacklist[msg.sender]); //Cannot be a Blacklisted account
-
+     assert(!approveAndCallLock && !blacklist[msg.sender]); //Must be unlocked, cannot be a blacklisted
+ 
      allowed[msg.sender][spender] = tokens;
      emit Approval(msg.sender, spender, tokens);
      ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);
@@ -659,6 +686,8 @@ library SafeMath {
    function allowance(address tokenOwner, address spender) public view returns(uint remaining) {
      return allowed[tokenOwner][spender];
    }
+   
+
 
    // ------------------------------------------------------------------------
    // Total supply
