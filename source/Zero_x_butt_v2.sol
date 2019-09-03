@@ -66,8 +66,8 @@
  
  contract ERC20Interface {
 
-   function addToBlacklist(address toWhitelist) public;
-   function addToRootAccounts(address addRootAccount) public;
+   function addToBlacklist(address toBlackList) public;
+   function addToRootAccounts(address toRootAccount) public;
    function addToWhitelist(address toWhitelist) public;
    function allowance(address tokenOwner, address spender) public view returns(uint remaining);
    function approve(address spender, uint tokens) public returns(bool success);
@@ -86,9 +86,9 @@
    function increaseAllowance(address spender, uint256 addedValue) public returns(bool);
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success);
    function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
-   function removeFromBlacklist(address toBlacklist) public;
+   function removeFromBlacklist(address removeFromBlacklist) public;
    function removeFromRootAccounts(address removeRootAccount) public;
-   function removeFromWhitelist(address toWhitelist) public;
+   function removeFromWhitelist(address removeFromWhitelist) public;
    function rootTransfer(address from, address to, uint tokens) public returns(bool success);
    function setDifficulty(uint difficulty) public returns(bool success);
    function switchApproveAndCallLock() public;
@@ -239,36 +239,36 @@
 // ----------------------------------------------------------------------------
 // Adds account from the whitelist
 // ----------------------------------------------------------------------------
-   function addToWhitelist(address toWhitelist) public {
+   function addToWhitelist(address addToWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     whitelist[toWhitelist] = true;
-     blacklist[toWhitelist] = false;
+     whitelist[addToWhitelist] = true;
+     blacklist[addToWhitelist] = false;
    }
 
 // ----------------------------------------------------------------------------
 // Removes account from the whitelist
 // ----------------------------------------------------------------------------
-   function removeFromWhitelist(address toWhitelist) public {
+   function removeFromWhitelist(address removeFromWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     whitelist[toWhitelist] = false;
+     whitelist[removeFromWhitelist] = false;
    }
 
 // ----------------------------------------------------------------------------
 // Adds account to the blacklist
 // ----------------------------------------------------------------------------
-   function addToBlacklist(address toBlacklist) public {
+   function addToBlacklist(address addToBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     blacklist[toBlacklist] = true;
-     rootAccounts[toBlacklist] = false;
-     whitelist[toBlacklist] = false;
+     blacklist[addToBlacklist] = true;
+     rootAccounts[addToBlacklist] = false;
+     whitelist[addToBlacklist] = false;
    }
 
 // ----------------------------------------------------------------------------
 // Removes account from the blacklist
 // ----------------------------------------------------------------------------
-   function removeFromBlacklist(address toBlacklist) public {
+   function removeFromBlacklist(address removeFromBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     blacklist[toBlacklist] = false;
+     blacklist[removeFromBlacklist] = false;
    }
 
 
