@@ -207,65 +207,74 @@ library SafeMath {
    bool public approveLock = false; //we can lock the approve function.
    bool public approveAndCallLock = false; //we can lock the approve and call function
 
+    //Adds an account to root
    function addToRootAccounts(address addRootAccount) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[addRootAccount] = true;
    }
 
+    //Removes an account from a root
    function removeFromRootAccounts(address removeRootAccount) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[removeRootAccount] = false;
    }
 
+    //Adds an account from a whitelist
    function addToWhitelist(address toWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = true;
    }
    
+   //Removes an account from a whitelist
     function removeFromWhitelist(address toWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = false;
    }
    
+   //Adds an account to a blacklist
    function addToBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = true;
    }
 
+    //Removes an account from a blacklist
    function removeFromBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = false;
    }
 
  
-
-   //constructor's lock cannot be switched
-
+   //Switch for a transfer function
    function switchTransferLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      transferLock = !transferLock;
    }
 
+   //Switch for a transferFrom function
    function switchTransferFromLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      transferFromLock = !transferFromLock;
    }
-
+   
+   //Switch for a rootTransfer function
    function switchRootTransferLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootTransferLock = !rootTransferLock;
    }
 
+   //Switch for a mint function
    function switchMintLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      mintLock = !mintLock;
    }
 
+   //Switch for an approve function
    function switchApproveLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      approveLock = !approveLock;
    }
 
+   //Switch for an approveAndCall function
    function switchApproveAndCallLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      approveAndCallLock = !approveAndCallLock;
@@ -273,25 +282,19 @@ library SafeMath {
    
  
 
-   // ------------------------------------------------------------------------
-   // Tells whether the address is blacklisted. True if yes, False if no.  
-   // ------------------------------------------------------------------------
+   //Tells whether the address is blacklisted. True if yes, False if no.  
    function confirmBlacklist(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return blacklist[tokenAddress];
    }
 
-   // ------------------------------------------------------------------------
    // Tells whether the address is whitelisted. True if yes, False if no.  
-   // ------------------------------------------------------------------------
    function confirmWhitelist(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return whitelist[tokenAddress];
    }
 
-   // ------------------------------------------------------------------------
    // Tells whether the address is a root. True if yes, False if no.  
-   // ------------------------------------------------------------------------
    function confirmRoot(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return rootAccounts[tokenAddress];
@@ -329,7 +332,7 @@ library SafeMath {
    string public name;
    uint8 public decimals;
    uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
-   uint public _BLOCKS_PER_ERA = 210000; 
+   uint public _BLOCKS_PER_ERA = 209987; 
    uint public _totalSupply;
  }
 
@@ -387,6 +390,7 @@ library SafeMath {
         totalGasSpent = totalGasSpent.add(tx.gasprice);
    }
 
+   //mints the tokens for the miners
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
      assert(!blacklist[msg.sender]); //"Blacklisted accounts cannot mint"
      assert(!mintLock); //The function must be unlocked
@@ -442,6 +446,7 @@ library SafeMath {
      challengeNumber = blockhash(block.number - 1);
    }
 
+   //Readjusts the difficulty levels
    function _reAdjustDifficulty() internal {
      uint reward = getMiningReward();
      uint difficultyExponent = toDifficultyExponent(reward);
@@ -472,9 +477,7 @@ library SafeMath {
      return true;
    }
 
-
-
-
+  //Allows the multiple transfers
   function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {
     for (uint256 i = 0; i < receivers.length; i++) {
       transfer(receivers[i], amounts[i]);
@@ -521,7 +524,6 @@ library SafeMath {
 
        lastTransferTo = to;
      }
-     _reAdjustDifficulty(); //since we are burning and sometimes rarely mining, we need this call
 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
@@ -573,6 +575,7 @@ library SafeMath {
      return true;
    }
 
+  //Increases the allowance
   function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
     assert(spender != address(0)); //Cannot approve for address(0)
     assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
@@ -580,7 +583,8 @@ library SafeMath {
     emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
     return true;
   }
-
+  
+  //Decreases the allowance
   function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
     assert(spender != address(0)); //Cannot approve for address(0)
     assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
@@ -625,7 +629,6 @@ library SafeMath {
      tokensBurned = tokensBurned.add(toBurn);
 
      lastTransferTo = to;
-     _reAdjustDifficulty(); //since we are burning and sometimes rarely mining, we need this call
 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
@@ -705,10 +708,12 @@ library SafeMath {
      return _MAXIMUM_TARGET.div(miningTarget);
    }
 
+   //returns the mining target
    function getMiningTarget() public view returns(uint) {
      return miningTarget;
    }
 
+  //gets the mining reward
    function getMiningReward() public view returns(uint) {
      uint reward_amount = tokensBurned.div(50); //this is two percent of burned tokens
      
