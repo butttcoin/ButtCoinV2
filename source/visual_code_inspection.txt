@@ -1,0 +1,6 @@
+This is the visual-code inspection and a review before the testing.
+
+
+1. All comments are using the proper Enlgish, no garbage, format is proper for all functions... DONE
+
+
