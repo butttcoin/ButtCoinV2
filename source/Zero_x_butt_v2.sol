@@ -383,7 +383,7 @@ library SafeMath {
      assert(!mintLock); //The function must be unlocked
 
      uint reward_amount = getMiningReward();
-     if (reward_amount == 0) revert(); //we do not want to charge for a no-reward.
+     if (reward_amount < 1024) revert(); //we do not want to mine the dust
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
      bytes32 digest = keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
