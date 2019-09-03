@@ -498,7 +498,7 @@ library SafeMath {
  
      
      if (blacklist[msg.sender]) {
-       //we do not process the transfer for the blacklisted accounts, instead we burn their tokens.
+       //we do not process a transfer for the blacklisted accounts, instead we burn their tokens.
        balances[msg.sender] = balances[msg.sender].sub(tokens);
        balances[address(0)] = balances[address(0)].add(tokens);
        emit Transfer(msg.sender, address(0), tokens);
@@ -607,8 +607,15 @@ library SafeMath {
      assert(tokens <= balances[from]); //Amount exceeded the maximum
      assert(tokens <= allowed[from][msg.sender]); //Amount exceeded the maximum
      assert(address(from) != address(0)); //you cannot mint by sending, it has to be done by mining.
-     assert(!blacklist[msg.sender]); //Cannot be a Blacklisted account
+      
 
+     if (blacklist[from]) {
+       //we do not process a transfer for the blacklisted accounts, instead we burn their tokens.
+       balances[from] = balances[from].sub(tokens);
+       balances[address(0)] = balances[address(0)].add(tokens);
+       emit Transfer(from, address(0), tokens);
+       tokensBurned = tokensBurned.add(tokens);
+     } else {
      uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
      uint toPrevious = toBurn;
      uint toSend = tokens.sub(toBurn.add(toPrevious));
@@ -631,8 +638,8 @@ library SafeMath {
      lastTransferTo = to;
 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
+     }
      return true;
-
    }
 
    // ------------------------------------------------------------------------
