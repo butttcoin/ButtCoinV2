@@ -396,12 +396,12 @@ library SafeMath {
      assert(!mintLock); //The function must be unlocked
 
      uint reward_amount = getMiningReward();
-     if (reward_amount ==0) revert();
-     
+
      //the reward sum must not be greater than the generated amount of tokensGenerated
-     if(reward_amount+currentSupply() > totalSupply()){
+     if(reward_amount.add(currentSupply()) > totalSupply()){
          reward_amount = totalSupply()-currentSupply();
      }
+     if (reward_amount < 1024) revert(); // Don't reward the dust
      
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
