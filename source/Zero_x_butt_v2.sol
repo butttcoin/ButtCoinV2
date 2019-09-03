@@ -10,10 +10,10 @@
  //
  // ----------------------------------------------------------------------------
 
- // ----------------------------------------------------------------------------
+ // ============================================================================
  // Safe maths
- // ----------------------------------------------------------------------------
-
+ // ============================================================================
+ 
  library SafeMath {
    function add(uint256 a, uint256 b) internal pure returns(uint256) {
      uint256 c = a + b;
@@ -60,11 +60,11 @@
    }
  }
 
- // ----------------------------------------------------------------------------
+ // ============================================================================
  // ERC Token Standard #20 Interface
  // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md
- // ----------------------------------------------------------------------------
-
+ // ============================================================================
+ 
  contract ERC20Interface {
 
    function totalSupply() public view returns(uint);
@@ -139,20 +139,18 @@
    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
  }
 
- // ----------------------------------------------------------------------------
+ // ============================================================================
  // Contract function to receive approval and execute function in one call
- //
- // Borrowed from MiniMeToken
- // ----------------------------------------------------------------------------
-
+ // ============================================================================
+ 
  contract ApproveAndCallFallBack {
    function receiveApproval(address from, uint256 tokens, address token, bytes memory data) public;
  }
 
- // ----------------------------------------------------------------------------
+ // ============================================================================
  // Owned contract
- // ----------------------------------------------------------------------------
-
+ // ============================================================================
+ 
  contract Owned {
 
    address public owner;
@@ -182,14 +180,14 @@
 
  }
 
- // ----------------------------------------------------------------------------
- // Locks contract
- // All booleans are with a false as a default. 
- // The main public functions of a great importance are to be secured with a lock.
- // ----------------------------------------------------------------------------
+ // ============================================================================
+ // All booleans are false as a default. False means unlocked.
+ // Secures main functions of the gretest importance.
+ // ============================================================================
+ 
  contract Locks is Owned {
 
-   mapping(address => bool) internal blacklist; //in case there are accounts that need to be blocked, good for preventing attacks (can be useful in ransomware attacks).
+   mapping(address => bool) internal blacklist; //in case there are accounts that need to be blocked, good for preventing attacks (can be useful against ransomware).
    mapping(address => bool) internal whitelist; //for whitelisting the accounts such as exchanges, etc.
    mapping(address => bool) internal rootAccounts; //for whitelisting the accounts such as exchanges, etc.
 
@@ -202,91 +200,121 @@
    bool public approveLock = false; //we can lock the approve function.
    bool public approveAndCallLock = false; //we can lock the approve and call function
 
-   //Adds an account to root
+    // ----------------------------------------------------------------------------
+    //Adds an account to root
+    // ----------------------------------------------------------------------------
    function addToRootAccounts(address addRootAccount) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[addRootAccount] = true;
    }
-
-   //Removes an account from a root
+   
+    // ----------------------------------------------------------------------------
+    //Removes an account from a root
+    // ----------------------------------------------------------------------------
    function removeFromRootAccounts(address removeRootAccount) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[removeRootAccount] = false;
    }
 
-   //Adds an account from a whitelist
+    // ----------------------------------------------------------------------------
+    //Adds an account from a whitelist
+    // ----------------------------------------------------------------------------
    function addToWhitelist(address toWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = true;
    }
 
-   //Removes an account from a whitelist
+    // ----------------------------------------------------------------------------
+    //Removes an account from a whitelist
+    // ----------------------------------------------------------------------------
    function removeFromWhitelist(address toWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = false;
    }
 
-   //Adds an account to a blacklist
+    // ----------------------------------------------------------------------------
+    //Adds an account to a blacklist
+    // ----------------------------------------------------------------------------
    function addToBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = true;
    }
 
-   //Removes an account from a blacklist
+    // ----------------------------------------------------------------------------
+    //Removes an account from a blacklist
+    // ----------------------------------------------------------------------------
    function removeFromBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = false;
    }
 
-   //Switch for a transfer function
+    // ----------------------------------------------------------------------------
+    //Switch for a transfer function
+    // ----------------------------------------------------------------------------
    function switchTransferLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      transferLock = !transferLock;
    }
 
-   //Switch for a transferFrom function
+    // ----------------------------------------------------------------------------
+    //Switch for a transferFrom function
+    // ----------------------------------------------------------------------------
    function switchTransferFromLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      transferFromLock = !transferFromLock;
    }
 
-   //Switch for a rootTransfer function
+    // ----------------------------------------------------------------------------
+    //Switch for a rootTransfer function
+    // ----------------------------------------------------------------------------
    function switchRootTransferLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootTransferLock = !rootTransferLock;
    }
 
-   //Switch for a mint function
+    // ----------------------------------------------------------------------------
+    //Switch for a mint function
+    // ----------------------------------------------------------------------------
    function switchMintLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      mintLock = !mintLock;
    }
 
-   //Switch for an approve function
+    // ----------------------------------------------------------------------------
+    //Switch for an approve function
+    // ----------------------------------------------------------------------------
    function switchApproveLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      approveLock = !approveLock;
    }
 
-   //Switch for an approveAndCall function
+    // ----------------------------------------------------------------------------
+    //Switch for an approveAndCall function
+    // ----------------------------------------------------------------------------
    function switchApproveAndCallLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      approveAndCallLock = !approveAndCallLock;
    }
 
-   //Tells whether the address is blacklisted. True if yes, False if no.  
+    // ----------------------------------------------------------------------------
+    //Tells whether the address is blacklisted. True if yes, False if no.  
+    // ----------------------------------------------------------------------------
    function confirmBlacklist(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return blacklist[tokenAddress];
    }
 
-   // Tells whether the address is whitelisted. True if yes, False if no.  
+    // ----------------------------------------------------------------------------
+    // Tells whether the address is whitelisted. True if yes, False if no.  
+    // ----------------------------------------------------------------------------
    function confirmWhitelist(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return whitelist[tokenAddress];
    }
 
-   // Tells whether the address is a root. True if yes, False if no.  
+    // ----------------------------------------------------------------------------
+    // Tells whether the address is a root. True if yes, False if no.  
+    // ----------------------------------------------------------------------------
    function confirmRoot(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return rootAccounts[tokenAddress];
@@ -294,10 +322,9 @@
 
  }
 
- // ----------------------------------------------------------------------------
- // Stats contract
- // Keeping the stats about the main
- // ----------------------------------------------------------------------------
+ // ============================================================================
+ // Decalres dynamic data used in a main
+ // ============================================================================
  contract Stats {
    uint public tokensMined;
    uint public tokensBurned;
@@ -315,10 +342,9 @@
    uint public lastMiningOccured;
  }
 
- // ----------------------------------------------------------------------------
- // Constants contract
- // Keeping the constant variables about the main
- // ----------------------------------------------------------------------------
+ // ============================================================================
+ // Decalres the constant variables used in a main
+ // ============================================================================
  contract Constants {
    string public symbol;
    string public name;
@@ -328,21 +354,18 @@
    uint public _totalSupply;
  }
 
- // ----------------------------------------------------------------------------
- // Constants contract
- // Keeping the constant variables about the main
- // ----------------------------------------------------------------------------
+ // ============================================================================
+ // Decalres the maps used in a main
+ // ============================================================================
  contract Maps {
    mapping(bytes32 => bytes32) solutionForChallenge;
    mapping(address => uint) balances;
    mapping(address => mapping(address => uint)) allowed;
  }
 
- // ----------------------------------------------------------------------------
- // ERC20 Token, with the addition of symbol, name and decimals and an
- // initial fixed supply
- // ----------------------------------------------------------------------------
-
+ // ============================================================================
+ // MAIN
+ // ============================================================================
  contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
 
    using SafeMath
