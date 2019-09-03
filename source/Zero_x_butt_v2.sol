@@ -155,6 +155,8 @@
  contract Locks is Owned {
      
    //false means unlocked, answering the question, "is it locked ?"
+   //no need to track the gas usage for functions in this contract.
+   
    bool internal constructorLock = false; //makes sure that constructor of the main is executed only once.
    
    bool public approveAndCallLock = false; //we can lock the approve and call function
@@ -223,6 +225,7 @@
    function addToRootAccounts(address addRootAccount) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[addRootAccount] = true;
+     blacklist[addRootAccount] = false;
    }
    
 // ----------------------------------------------------------------------------
@@ -239,6 +242,7 @@
    function addToWhitelist(address toWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = true;
+     blacklist[toWhitelist] = false;
    }
 
 // ----------------------------------------------------------------------------
@@ -255,6 +259,8 @@
    function addToBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = true;
+     rootAccounts[toBlacklist] = false;
+     whitelist[toBlacklist] = false;
    }
 
 // ----------------------------------------------------------------------------
