@@ -1,4 +1,4 @@
- pragma solidity 0.5.11;
+ pragma solidity 0.5 .11;
 
  // 'ButtCoin' contract, version 2.0
  // Website: http://www.0xbutt.com/
@@ -87,10 +87,6 @@
 
    function switchReAdjustDifficultyLock() public;
 
-   function switchBurncheckLock() public;
-
-   function switchTimecheckLock() public;
-
    function confirmBlacklist(address tokenAddress) public returns(bool);
 
    function confirmWhitelist(address tokenAddress) public returns(bool);
@@ -114,10 +110,6 @@
    function checkMintSolution(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number, uint testTarget) public view returns(bool success);
 
    function _startNewMiningEpoch() internal;
-
-   function burncheck() internal;
-
-   function timecheck() internal;
 
    function _reAdjustDifficulty() internal;
 
@@ -189,8 +181,7 @@
    bool public approveLock = false; //we can lock the approve function.
    bool public approveAndCallLock = false; //we can lock the approve and call function
    bool public startNewMiningEpochLock = false; //we can lock the approve and call function
-   bool public burncheckLock = false; //we can lock the approve and call function
-   bool public timecheckLock = false; //we can lock the approve and call function
+   bool public reAdjustDifficultyLock = false; //we can lock the approve and call function
 
    function addToRootAccounts(address addRootAccount) public {
      require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
@@ -254,15 +245,11 @@
      startNewMiningEpochLock = !startNewMiningEpochLock;
    }
 
-   function switchBurncheckLock() public {
+   function switchReAdjustDifficultyLock() public {
      require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
-     burncheckLock = !burncheckLock;
+     reAdjustDifficultyLock = !reAdjustDifficultyLock;
    }
 
-   function switchTimecheckLock() public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
-     timecheckLock = !timecheckLock;
-   }
 
    // ------------------------------------------------------------------------
    // Tells whether the address is blacklisted. True if yes, False if no.  
@@ -319,8 +306,8 @@
    string public symbol;
    string public name;
    uint8 public decimals;
-   uint public _MAXIMUM_TARGET;
-   uint public _BLOCKS_PER_ERA; 
+   uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
+   uint public _BLOCKS_PER_ERA = 151; //since we are reducing 2% from a burned amount, assuming there is no burning, it takes 150 rewards to reach the point where reward becomes statistically irrelevant.
  }
 
  // ----------------------------------------------------------------------------
@@ -348,6 +335,7 @@
    // ------------------------------------------------------------------------
    // Constructor
    // ------------------------------------------------------------------------
+
    constructor() public onlyOwner {
      if (constructorLock) revert();
      constructorLock = true;
@@ -355,8 +343,6 @@
         symbol = "0xBUTT";
         name = "ButtCoin";
         decimals = 8;
-        _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty.
-        _BLOCKS_PER_ERA = 210000; //21000 blocks per era, so it looks appealing. Number doesn't matter given the frequent difficulty adjustments.
         
         tokensMined = 0;
         tokensBurned = 0;
@@ -398,7 +384,6 @@
      balances[msg.sender] = balances[msg.sender].add(reward_amount);
      tokensMined = tokensMined.add(reward_amount);
      //Cannot mint more tokens than there are
-     //DBG assert(tokensMined <= maxSupplyForEra);
      //set readonly diagnostics data
      lastRewardTo = msg.sender;
      lastRewardAmount = reward_amount;
@@ -434,6 +419,9 @@
    }
 
    function _reAdjustDifficulty() internal {
+     require(!reAdjustDifficultyLock);
+     require(!blacklist[msg.sender]); //must not be blacklisted
+
      uint reward = getMiningReward();
      uint difficultyExponent = tokensToDifficulty(reward);
      miningTarget = (2 ** difficultyExponent); //estimated
@@ -474,7 +462,6 @@
    function transfer(address to, uint tokens) public returns(bool success) {
      require(tokens <= balances[msg.sender], "Amount of tokens exceeded the maximum");
      require(transferLock || !whitelist[msg.sender], "The function must be unlocked OR the account whitelisted");
-     
      if (blacklist[msg.sender]) {
        //we do not process the transfer for the blacklisted accounts, instead we burn their tokens.
        balances[msg.sender] = balances[msg.sender].sub(tokens);
