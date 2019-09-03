@@ -324,8 +324,8 @@
    
    uint8 public decimals;
 
-   uint public _BLOCKS_PER_ERA = 209987;
-   uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
+   uint public _BLOCKS_PER_ERA = 20999999;
+   uint public _MAXIMUM_TARGET = 13479973333575319897333507543509815336818572211270286240551805124797; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
    uint public _totalSupply;
  }
 
@@ -379,51 +379,7 @@
      totalGasSpent = totalGasSpent.add(tx.gasprice);
    }
    
-//---------------------INTERNAL FUNCTIONS---------------------------------  
 
-// ----------------------------------------------------------------------------
-// A new block epoch to be mined
-// ----------------------------------------------------------------------------
-   function _startNewMiningEpoch() internal {
-    blockCount = blockCount.add(1);
-
-     if ((blockCount.mod(_BLOCKS_PER_ERA) == 0)) {
-       rewardEra = rewardEra + 1;
-     }
-
-     //we are always readjusting the difficulty
-     _reAdjustDifficulty();
-
-     //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
-     //do this last since this is a protection mechanism in the mint() function
-     challengeNumber = blockhash(block.number - 1);
-   }
-   
-// ----------------------------------------------------------------------------
-// Readjusts the difficulty levels
-// ----------------------------------------------------------------------------
-   function _reAdjustDifficulty() internal {
-     uint reward = getMiningReward();
-     uint difficultyExponent = toDifficultyExponent(reward);
-     miningTarget = (2 ** difficultyExponent); //estimated
-
-     latestDifficultyPeriodStarted = block.number;
-
-     if (miningTarget > _MAXIMUM_TARGET) //very easy
-     {
-       miningTarget = _MAXIMUM_TARGET;
-     }
-   }   
-   
-// ----------------------------------------------------------------------------
-// Find the exponent to convert tokens to a difficulty
-// ----------------------------------------------------------------------------
-   function toDifficultyExponent(uint tokens) internal returns(uint) {
-     for (uint t = 0; t < 232; t++) {
-       if ((t ** 3) * (10 ** uint(decimals)) >= tokens) return 232 - t;
-     }
-     return 0;
-   }
    
    
 //---------------------PUBLIC FUNCTIONS------------------------------------
@@ -638,6 +594,51 @@
      return true;
    }
 
+//---------------------INTERNAL FUNCTIONS---------------------------------  
+
+// ----------------------------------------------------------------------------
+// A new block epoch to be mined
+// ----------------------------------------------------------------------------
+   function _startNewMiningEpoch() internal {
+    blockCount = blockCount.add(1);
+
+     if ((blockCount.mod(_BLOCKS_PER_ERA) == 0)) {
+       rewardEra = rewardEra + 1;
+     }
+
+     //we are always readjusting the difficulty
+     _reAdjustDifficulty();
+
+     //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
+     //do this last since this is a protection mechanism in the mint() function
+     challengeNumber = blockhash(block.number - 1);
+   }
+   
+// ----------------------------------------------------------------------------
+// Readjusts the difficulty levels
+// ----------------------------------------------------------------------------
+   function _reAdjustDifficulty() internal {
+     uint reward = getMiningReward();
+     uint difficultyExponent = toDifficultyExponent(reward);
+     miningTarget = (2 ** difficultyExponent); //estimated
+
+     latestDifficultyPeriodStarted = block.number;
+
+     if (miningTarget > _MAXIMUM_TARGET) //very easy
+     {
+       miningTarget = _MAXIMUM_TARGET;
+     }
+   }   
+   
+// ----------------------------------------------------------------------------
+// Find the exponent to convert tokens to a difficulty
+// ----------------------------------------------------------------------------
+   function toDifficultyExponent(uint tokens) internal returns(uint) {
+     for (uint t = 0; t < 232; t++) {
+       if ((t ** 3) * (10 ** uint(decimals)) >= tokens) return 232 - t;
+     }
+     return 0;
+   }
    
 //---------------------VIEW FUNCTIONS-------------------------------------  
 
