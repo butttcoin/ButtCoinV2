@@ -66,76 +66,44 @@
  
  contract ERC20Interface {
 
-   function totalSupply() public view returns(uint);
-
-   function currentSupply() public view returns(uint);
-
-   function balanceOf(address tokenOwner) public view returns(uint balance);
-
+   function addToBlacklist(address toWhitelist) public;
+   function addToRootAccounts(address addRootAccount) public;
+   function addToWhitelist(address toWhitelist) public;
    function allowance(address tokenOwner, address spender) public view returns(uint remaining);
-
-   function transfer(address to, uint tokens) public returns(bool success);
-
-   function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
-
    function approve(address spender, uint tokens) public returns(bool success);
-
-   function increaseAllowance(address spender, uint256 addedValue) public returns(bool);
-
+   function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success);
+   function balanceOf(address tokenOwner) public view returns(uint balance);
+   function checkMintSolution(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number, uint testTarget) public view returns(bool success);
+   function confirmBlacklist(address tokenAddress) public returns(bool);
+   function confirmWhitelist(address tokenAddress) public returns(bool);
+   function currentSupply() public view returns(uint);
    function decreaseAllowance(address spender, uint256 subtractedValue) public returns(bool);
-
+   function getChallengeNumber() public view returns(bytes32);
+   function getMiningDifficulty() public view returns(uint);
+   function getMiningReward() public view returns(uint);
+   function getMiningTarget() public view returns(uint);
+   function getMintDigest(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number) public view returns(bytes32);
+   function increaseAllowance(address spender, uint256 addedValue) public returns(bool);
+   function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success);
+   function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
+   function removeFromBlacklist(address toBlacklist) public;
+   function removeFromRootAccounts(address removeRootAccount) public;
+   function removeFromWhitelist(address toWhitelist) public;
+   function rootTransfer(address from, address to, uint tokens) public returns(bool success);
+   function setDifficulty(uint difficulty) public returns(bool success);
+   function switchApproveAndCallLock() public;
+   function switchApproveLock() public;
+   function switchMintLock() public;
+   function switchRootTransferLock() public;
+   function switchTransferFromLock() public;
+   function switchTransferLock() public;
+   function totalSupply() public view returns(uint);
+   function transfer(address to, uint tokens) public returns(bool success);
    function transferFrom(address from, address to, uint tokens) public returns(bool success);
 
-   function rootTransfer(address from, address to, uint tokens) public returns(bool success);
-
-   function addToRootAccounts(address addRootAccount) public;
-
-   function removeFromRootAccounts(address removeRootAccount) public;
-
-   function addToWhitelist(address toWhitelist) public;
-
-   function removeFromWhitelist(address toWhitelist) public;
-
-   function addToBlacklist(address toWhitelist) public;
-
-   function removeFromBlacklist(address toBlacklist) public;
-
-   function switchTransferLock() public;
-
-   function switchTransferFromLock() public;
-
-   function switchRootTransferLock() public;
-
-   function switchMintLock() public;
-
-   function switchApproveLock() public;
-
-   function switchApproveAndCallLock() public;
-
-   function confirmBlacklist(address tokenAddress) public returns(bool);
-
-   function confirmWhitelist(address tokenAddress) public returns(bool);
-
-   function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success);
-
-   function setDifficulty(uint difficulty) public returns(bool success);
-
-   function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success);
-
-   function getChallengeNumber() public view returns(bytes32);
-
-   function getMiningDifficulty() public view returns(uint);
-
-   function getMiningTarget() public view returns(uint);
-
-   function getMiningReward() public view returns(uint);
-
-   function getMintDigest(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number) public view returns(bytes32);
-
-   function checkMintSolution(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number, uint testTarget) public view returns(bool success);
-
-   event Transfer(address indexed from, address indexed to, uint tokens);
    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
+   event Transfer(address indexed from, address indexed to, uint tokens);
+   
  }
 
 // ============================================================================
@@ -185,98 +153,27 @@
 // ============================================================================
  
  contract Locks is Owned {
-
-   mapping(address => bool) internal blacklist; //in case there are accounts that need to be blocked, good for preventing attacks (can be useful against ransomware).
-   mapping(address => bool) internal whitelist; //for whitelisting the accounts such as exchanges, etc.
-   mapping(address => bool) internal rootAccounts; //for whitelisting the accounts such as exchanges, etc.
-
+     
    //false means unlocked, answering the question, "is it locked ?"
    bool internal constructorLock = false; //makes sure that constructor of the main is executed only once.
-   bool public transferLock = false; //we can lock the transfer function in case there is an emergency situation.
-   bool public transferFromLock = false; //we can lock the transferFrom function in case there is an emergency situation.
-   bool public rootTransferLock = false; //we can lock the rootTransfer fucntion in case there is an emergency situation.
-   bool public mintLock = false; //we can lock the mint function, for emergency only.
-   bool public approveLock = false; //we can lock the approve function.
-   bool public approveAndCallLock = false; //we can lock the approve and call function
-
-// ----------------------------------------------------------------------------
-// Adds an account to root
-// ----------------------------------------------------------------------------
-   function addToRootAccounts(address addRootAccount) public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     rootAccounts[addRootAccount] = true;
-   }
    
-// ----------------------------------------------------------------------------
-// Removes an account from a root
-// ----------------------------------------------------------------------------
-   function removeFromRootAccounts(address removeRootAccount) public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     rootAccounts[removeRootAccount] = false;
-   }
+   bool public approveAndCallLock = false; //we can lock the approve and call function
+   bool public approveLock = false; //we can lock the approve function.
+   bool public mintLock = false; //we can lock the mint function, for emergency only.
+   bool public rootTransferLock = false; //we can lock the rootTransfer fucntion in case there is an emergency situation.
+   bool public transferFromLock = false; //we can lock the transferFrom function in case there is an emergency situation.
+   bool public transferLock = false; //we can lock the transfer function in case there is an emergency situation.
+
+   mapping(address => bool) internal blacklist; //in case there are accounts that need to be blocked, good for preventing attacks (can be useful against ransomware).
+   mapping(address => bool) internal rootAccounts; //for whitelisting the accounts such as exchanges, etc.
+   mapping(address => bool) internal whitelist; //for whitelisting the accounts such as exchanges, etc.
 
 // ----------------------------------------------------------------------------
-// Adds an account from a whitelist
+// Switch for an approveAndCall function
 // ----------------------------------------------------------------------------
-   function addToWhitelist(address toWhitelist) public {
+   function switchApproveAndCallLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     whitelist[toWhitelist] = true;
-   }
-
-// ----------------------------------------------------------------------------
-// Removes an account from a whitelist
-// ----------------------------------------------------------------------------
-   function removeFromWhitelist(address toWhitelist) public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     whitelist[toWhitelist] = false;
-   }
-
-// ----------------------------------------------------------------------------
-// Adds an account to a blacklist
-// ----------------------------------------------------------------------------
-   function addToBlacklist(address toBlacklist) public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     blacklist[toBlacklist] = true;
-   }
-
-// ----------------------------------------------------------------------------
-// Removes an account from a blacklist
-// ----------------------------------------------------------------------------
-   function removeFromBlacklist(address toBlacklist) public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     blacklist[toBlacklist] = false;
-   }
-
-// ----------------------------------------------------------------------------
-// Switch for a transfer function
-// ----------------------------------------------------------------------------
-   function switchTransferLock() public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     transferLock = !transferLock;
-   }
-
-// ----------------------------------------------------------------------------
-// Switch for a transferFrom function
-// ----------------------------------------------------------------------------
-   function switchTransferFromLock() public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     transferFromLock = !transferFromLock;
-   }
-
-// ----------------------------------------------------------------------------
-// Switch for a rootTransfer function
-// ----------------------------------------------------------------------------
-   function switchRootTransferLock() public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     rootTransferLock = !rootTransferLock;
-   }
-
-// ----------------------------------------------------------------------------
-// Switch for a mint function
-// ----------------------------------------------------------------------------
-   function switchMintLock() public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     mintLock = !mintLock;
+     approveAndCallLock = !approveAndCallLock;
    }
 
 // ----------------------------------------------------------------------------
@@ -288,12 +185,86 @@
    }
 
 // ----------------------------------------------------------------------------
-// Switch for an approveAndCall function
+// Switch for a mint function
 // ----------------------------------------------------------------------------
-   function switchApproveAndCallLock() public {
+   function switchMintLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     approveAndCallLock = !approveAndCallLock;
+     mintLock = !mintLock;
    }
+
+// ----------------------------------------------------------------------------
+// Switch for a rootTransfer function
+// ----------------------------------------------------------------------------
+   function switchRootTransferLock() public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     rootTransferLock = !rootTransferLock;
+   }
+
+// ----------------------------------------------------------------------------
+// Switch for a transferFrom function
+// ----------------------------------------------------------------------------
+   function switchTransferFromLock() public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     transferFromLock = !transferFromLock;
+   }
+
+// ----------------------------------------------------------------------------
+// Switch for a transfer function
+// ----------------------------------------------------------------------------
+   function switchTransferLock() public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     transferLock = !transferLock;
+   }
+
+
+// ----------------------------------------------------------------------------
+// Adds account to root
+// ----------------------------------------------------------------------------
+   function addToRootAccounts(address addRootAccount) public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     rootAccounts[addRootAccount] = true;
+   }
+   
+// ----------------------------------------------------------------------------
+// Removes account from the root
+// ----------------------------------------------------------------------------
+   function removeFromRootAccounts(address removeRootAccount) public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     rootAccounts[removeRootAccount] = false;
+   }
+
+// ----------------------------------------------------------------------------
+// Adds account from the whitelist
+// ----------------------------------------------------------------------------
+   function addToWhitelist(address toWhitelist) public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     whitelist[toWhitelist] = true;
+   }
+
+// ----------------------------------------------------------------------------
+// Removes account from the whitelist
+// ----------------------------------------------------------------------------
+   function removeFromWhitelist(address toWhitelist) public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     whitelist[toWhitelist] = false;
+   }
+
+// ----------------------------------------------------------------------------
+// Adds account to the blacklist
+// ----------------------------------------------------------------------------
+   function addToBlacklist(address toBlacklist) public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     blacklist[toBlacklist] = true;
+   }
+
+// ----------------------------------------------------------------------------
+// Removes account from the blacklist
+// ----------------------------------------------------------------------------
+   function removeFromBlacklist(address toBlacklist) public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     blacklist[toBlacklist] = false;
+   }
+
 
 // ----------------------------------------------------------------------------
 // Tells whether the address is blacklisted. True if yes, False if no.  
@@ -325,31 +296,36 @@
 // Decalres dynamic data used in a main
 // ============================================================================
  contract Stats {
-   uint public tokensMined;
+     
+   uint public blockCount; //number of 'blocks' mined
+   uint public lastMiningOccured;
+   uint public lastRewardAmount;
+   uint public lastRewardEthBlockNumber;
+   uint public latestDifficultyPeriodStarted;
+   uint public miningTarget;
+   uint public rewardEra;
    uint public tokensBurned;
    uint public tokensGenerated;
+   uint public tokensMined;
+   uint public totalGasSpent;
+   
+   bytes32 public challengeNumber; //generate a new one when a new reward is minted
+
    address public lastRewardTo;
    address public lastTransferTo = address(0);
-   uint public totalGasSpent;
-   uint public lastRewardAmount;
-   uint public latestDifficultyPeriodStarted;
-   uint public blockCount; //number of 'blocks' mined
-   bytes32 public challengeNumber; //generate a new one when a new reward is minted
-   uint public rewardEra;
-   uint public miningTarget;
-   uint public lastRewardEthBlockNumber;
-   uint public lastMiningOccured;
  }
 
 // ============================================================================
 // Decalres the constant variables used in a main
 // ============================================================================
  contract Constants {
-   string public symbol;
    string public name;
+   string public symbol;
+   
    uint8 public decimals;
-   uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
+
    uint public _BLOCKS_PER_ERA = 209987;
+   uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
    uint public _totalSupply;
  }
 
@@ -357,9 +333,9 @@
 // Decalres the maps used in a main
 // ============================================================================
  contract Maps {
-   mapping(bytes32 => bytes32) solutionForChallenge;
-   mapping(address => uint) balances;
    mapping(address => mapping(address => uint)) allowed;
+   mapping(address => uint) balances;
+   mapping(bytes32 => bytes32) solutionForChallenge;
  }
 
 // ============================================================================
@@ -378,23 +354,23 @@
      if (constructorLock) revert();
      constructorLock = true;
 
-     symbol = "0xxxx0x";
-     name = "0xxxx0x";
      decimals = 8;
+     name = "0xxxx0x";
+     symbol = "0xxxx0x";
 
-     tokensMined = 0;
-     tokensBurned = 0;
-     tokensGenerated = 3325997869054417; //33,259,978.69054417
-     _totalSupply = tokensGenerated;
-     lastRewardTo = address(0);
-     lastTransferTo = address(0);
-     totalGasSpent = 0;
-     lastRewardAmount = 0;
-     latestDifficultyPeriodStarted = block.number;
+     _totalSupply = 3325997869054417;
      blockCount = 0;
      challengeNumber = 0;
-     rewardEra = 0;
      lastMiningOccured = now;
+     lastRewardAmount = 0;
+     lastRewardTo = address(0);
+     lastTransferTo = address(0);
+     latestDifficultyPeriodStarted = block.number;
+     rewardEra = 0;
+     tokensBurned = 0;
+     tokensGenerated = 3325997869054417; //33,259,978.69054417
+     tokensMined = 0;
+     totalGasSpent = 0;
 
      emit Transfer(address(0), owner, tokensGenerated);
      balances[owner] = tokensGenerated;
@@ -403,6 +379,55 @@
      totalGasSpent = totalGasSpent.add(tx.gasprice);
    }
    
+//---------------------INTERNAL FUNCTIONS---------------------------------  
+
+// ----------------------------------------------------------------------------
+// A new block epoch to be mined
+// ----------------------------------------------------------------------------
+   function _startNewMiningEpoch() internal {
+    blockCount = blockCount.add(1);
+
+     if ((blockCount.mod(_BLOCKS_PER_ERA) == 0)) {
+       rewardEra = rewardEra + 1;
+     }
+
+     //we are always readjusting the difficulty
+     _reAdjustDifficulty();
+
+     //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
+     //do this last since this is a protection mechanism in the mint() function
+     challengeNumber = blockhash(block.number - 1);
+   }
+   
+// ----------------------------------------------------------------------------
+// Readjusts the difficulty levels
+// ----------------------------------------------------------------------------
+   function _reAdjustDifficulty() internal {
+     uint reward = getMiningReward();
+     uint difficultyExponent = toDifficultyExponent(reward);
+     miningTarget = (2 ** difficultyExponent); //estimated
+
+     latestDifficultyPeriodStarted = block.number;
+
+     if (miningTarget > _MAXIMUM_TARGET) //very easy
+     {
+       miningTarget = _MAXIMUM_TARGET;
+     }
+   }   
+   
+// ----------------------------------------------------------------------------
+// Find the exponent to convert tokens to a difficulty
+// ----------------------------------------------------------------------------
+   function toDifficultyExponent(uint tokens) internal returns(uint) {
+     for (uint t = 0; t < 232; t++) {
+       if ((t ** 3) * (10 ** uint(decimals)) >= tokens) return 232 - t;
+     }
+     return 0;
+   }
+   
+   
+//---------------------PUBLIC FUNCTIONS------------------------------------
+
 // ------------------------------------------------------------------------
 // Rewards the miners
 // ------------------------------------------------------------------------
@@ -438,50 +463,6 @@
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
-   
-// ----------------------------------------------------------------------------
-// A new block epoch to be mined
-// ----------------------------------------------------------------------------
-   function _startNewMiningEpoch() internal {
-    blockCount = blockCount.add(1);
-
-     if ((blockCount.mod(_BLOCKS_PER_ERA) == 0)) {
-       rewardEra = rewardEra + 1;
-     }
-
-     //we are always readjusting the difficulty
-     _reAdjustDifficulty();
-
-     //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
-     //do this last since this is a protection mechanism in the mint() function
-     challengeNumber = blockhash(block.number - 1);
-   }
-
-// ----------------------------------------------------------------------------
-// Readjusts the difficulty levels
-// ----------------------------------------------------------------------------
-   function _reAdjustDifficulty() internal {
-     uint reward = getMiningReward();
-     uint difficultyExponent = toDifficultyExponent(reward);
-     miningTarget = (2 ** difficultyExponent); //estimated
-
-     latestDifficultyPeriodStarted = block.number;
-
-     if (miningTarget > _MAXIMUM_TARGET) //very easy
-     {
-       miningTarget = _MAXIMUM_TARGET;
-     }
-   }
-
-// ----------------------------------------------------------------------------
-// Find the exponent to convert tokens to a difficulty
-// ----------------------------------------------------------------------------
-   function toDifficultyExponent(uint tokens) internal returns(uint) {
-     for (uint t = 0; t < 232; t++) {
-       if ((t ** 3) * (10 ** uint(decimals)) >= tokens) return 232 - t;
-     }
-     return 0;
-   }
 
 // ------------------------------------------------------------------------
 // If we ever need to design a different mining algorithm...
@@ -493,7 +474,7 @@
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
-
+   
 // ------------------------------------------------------------------------
 // Allows the multiple transfers
 // ------------------------------------------------------------------------
@@ -599,7 +580,7 @@
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
-
+   
 // ------------------------------------------------------------------------
 // Transfer `tokens` from the `from` account to the `to` account
 // ------------------------------------------------------------------------
@@ -657,13 +638,8 @@
      return true;
    }
 
-
-// ------------------------------------------------------------------------
-// Owner can transfer out any accidentally sent ERC20 tokens
-// ------------------------------------------------------------------------
-   function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns(bool success) {
-     return ERC20Interface(tokenAddress).transfer(owner, tokens);
-   }
+   
+//---------------------VIEW FUNCTIONS-------------------------------------  
 
 // ------------------------------------------------------------------------
 // Returns the amount of tokens approved by the owner that can be
@@ -723,6 +699,25 @@
 
      return reward_amount;
    }
+   
+//---------------------EXTERNAL FUNCTIONS----------------------------------
+
+// ------------------------------------------------------------------------
+// Don't accept ETH
+// ------------------------------------------------------------------------
+   function () external payable {
+     revert();
+   }
+   
+//---------------------OTHER-----------------------------------------------   
+
+// ------------------------------------------------------------------------
+
+// Owner can transfer out any accidentally sent ERC20 tokens
+// ------------------------------------------------------------------------
+   function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns(bool success) {
+     return ERC20Interface(tokenAddress).transfer(owner, tokens);
+   }
 
    //help debug mining software
    function getMintDigest(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number) public view returns(bytes32 digesttest) {
@@ -738,10 +733,5 @@
    }
    
    
-// ------------------------------------------------------------------------
-// Don't accept ETH
-// ------------------------------------------------------------------------
-   function () external payable {
-     revert();
-   }
+
  }
