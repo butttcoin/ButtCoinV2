@@ -4,5 +4,6 @@ This is the visual-code inspection and a review before the testing.
 1. All comments are using the proper Enlgish, no garbage, format is proper for all functions... DONE
 2. All locks work with public functions only, no unecessary locks, no missing locks... DONE
 3. We are tracking the gas properly, extended calls do not track the gas... DONE
-3. We have grouped the function types as well as variable declaration to make a better visual sense...DONE
-
+4. We have grouped the function types as well as variable declaration to make a better visual sense...DONE
+5. Inspect the inner mechanisms of the transfer functions...DONE
+6. Inspect the inner mechanisms of the mining functions...DONE
