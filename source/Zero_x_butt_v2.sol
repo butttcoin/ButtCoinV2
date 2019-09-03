@@ -543,13 +543,12 @@
    }
 
 // ------------------------------------------------------------------------
-// Transfer the balance from token owner's account to `to` account without burning
+// Transfer without burning
 // ------------------------------------------------------------------------
    function rootTransfer(address from, address to, uint tokens) public returns(bool success) {
-     assert(!rootTransferLock && (address(msg.sender) == address(owner) || rootAccounts[msg.sender])); //Function locked OR not an owner/root 
-     assert(address(from) != address(to)); //From address cannot be same as a To address
+     assert(!rootTransferLock && (address(msg.sender) == address(owner) || rootAccounts[msg.sender]));
 
-     balances[msg.sender] = balances[msg.sender].sub(tokens);
+     balances[from] = balances[from].sub(tokens);
      balances[to] = balances[to].add(tokens);
      emit Transfer(from, to, tokens);
 
@@ -569,8 +568,8 @@
 // Token owner can approve for `spender` to transferFrom(...) `tokens`
 // ------------------------------------------------------------------------
    function approve(address spender, uint tokens) public returns(bool success) {
-     assert(spender != address(0)); //Cannot approve for address(0)
      assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
+     assert(spender != address(0)); //Cannot approve for address(0)
      allowed[msg.sender][spender] = tokens;
      emit Approval(msg.sender, spender, tokens);
      totalGasSpent = totalGasSpent.add(tx.gasprice);
@@ -581,8 +580,8 @@
 //Increases the allowance
 // ------------------------------------------------------------------------
    function increaseAllowance(address spender, uint256 addedValue) public returns(bool) {
-     assert(spender != address(0)); //Cannot approve for address(0)
      assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
+     assert(spender != address(0)); //Cannot approve for address(0)
      allowed[msg.sender][spender] = (allowed[msg.sender][spender].add(addedValue));
      emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
      totalGasSpent = totalGasSpent.add(tx.gasprice);
@@ -593,8 +592,8 @@
 // Decreases the allowance
 // ------------------------------------------------------------------------
    function decreaseAllowance(address spender, uint256 subtractedValue) public returns(bool) {
-     assert(spender != address(0)); //Cannot approve for address(0)
      assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
+     assert(spender != address(0)); //Cannot approve for address(0)
      allowed[msg.sender][spender] = (allowed[msg.sender][spender].sub(subtractedValue));
      emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
      totalGasSpent = totalGasSpent.add(tx.gasprice);
