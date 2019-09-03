@@ -146,6 +146,9 @@ contract Owned {
 
 }
 
+
+ 
+
 // ----------------------------------------------------------------------------
 // Locks contract
 // All booleans are with a false as a default. 
@@ -295,6 +298,8 @@ contract Stats{
     uint public maxSupplyForEra;
     uint public lastRewardEthBlockNumber;
     uint public lastMiningOccurence;
+    uint public difficultyExponent;
+
 }
 
 
@@ -306,9 +311,10 @@ contract Constants{
     string public symbol;
     string public name;
     uint8 public decimals;
-    uint public _BLOCKS_PER_READJUSTMENT = 150;//In this case we will make it same as _BLOCKS_PER_ERA
-    uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty
-    uint public _BLOCKS_PER_ERA = 150; //since we are reducing 2% from a burned amount, assuming there is no burning, it takes 150 rewards to reach the point where reward becomes statistically irrelevant.
+    uint public _BLOCKS_PER_READJUSTMENT = 151;//In this case we will make it same as _BLOCKS_PER_ERA
+    uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
+    uint public _MINIMUM_TARGET = 2 ** 16; //assume this is 95% of burning
+    uint public _BLOCKS_PER_ERA = 151; //since we are reducing 2% from a burned amount, assuming there is no burning, it takes 150 rewards to reach the point where reward becomes statistically irrelevant.
 }
 
 
@@ -329,7 +335,8 @@ contract Maps{
 // ----------------------------------------------------------------------------
 
 contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
-
+    
+ 
     using SafeMath for uint;
     using ExtendedMath for uint;
     event Mint(address indexed from, uint reward_amount, uint epochCount, bytes32 newChallengeNumber);
@@ -345,19 +352,24 @@ contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
         symbol = "0x0x0x0x0x0";
         name = "0x0x0x0x0x0x0x0x0x0x0x0x0x0x1";
         decimals = 8;
-        //tokensGenerated = 33554467 * 10 ** uint(decimals);
-        tokensGenerated = 0; //DBG
+        tokensGenerated = 33554467 * 10 ** uint(decimals);
+        //DBG: 
+        tokensBurned = tokensGenerated/2;
+        //tokensGenerated = 0; //DBG
+        //DBG
+ 
         tokensMined = 0;
         rewardEra = 0;
         maxSupplyForEra = 210000; //this is a maximum supply without the 8 decimals 
-        miningTarget = _MAXIMUM_TARGET;
+
+        
         latestDifficultyPeriodStarted = block.number;
         blockCount = 0;
         lastMiningOccurence = now;
+        
 
         _startNewMiningEpoch();
-
-        //The coin is pre-generated since the mining difficulty gets too high.
+         //The coin is pre-generated since the mining difficulty gets too high.
         balances[owner] = tokensGenerated;
         emit Transfer(address(0), owner, tokensGenerated);
  
@@ -367,6 +379,9 @@ contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
     function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
         require(!blacklist[msg.sender],"Blacklisted accounts cannot mint");
         require(!mintLock,"The function must be unlocked");
+        
+        uint reward_amount = getMiningReward();
+        if(reward_amount==0) revert(); //we do not want to charge for a no-reward.
         
         //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
         bytes32 digest = keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
@@ -378,7 +393,6 @@ contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
         bytes32 solution = solutionForChallenge[challengeNumber];
         solutionForChallenge[challengeNumber] = digest;
         if (solution != 0x0) revert(); //prevent the same answer from awarding twice
-        uint reward_amount = getMiningReward();
         balances[msg.sender] = balances[msg.sender].add(reward_amount);
         tokensMined = tokensMined.add(reward_amount);
         //Cannot mint more tokens than there are
@@ -406,14 +420,14 @@ contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
         //set the next minted supply at which the era will change
          blockCount = blockCount.add(1);
         
-        if(blockCount % _BLOCKS_PER_ERA == 0){
+        if((blockCount % _BLOCKS_PER_ERA == 0)) {
             rewardEra = rewardEra + 1;
         }
         
         //readjust difficulty when needed.
-        if (blockCount % _BLOCKS_PER_READJUSTMENT == 0) {
+        //if ((blockCount % _BLOCKS_PER_READJUSTMENT == 0)) {
             _reAdjustDifficulty();
-        }
+        //}
         //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
         //do this last since this is a protection mechanism in the mint() function
         challengeNumber = blockhash(block.number - 1);
@@ -421,24 +435,30 @@ contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
     }
     
 
-    
-    //https://en.bitcoin.it/wiki/Difficulty#What_is_the_formula_for_difficulty.3F
-    //as of 2017 the bitcoin difficulty was up to 17 zeroes, it was only 8 in the early days
-    //readjust the target by 5 percent
+ 
     function _reAdjustDifficulty() internal {
         require(!reAdjustDifficultyLock);
         require(!blacklist[msg.sender]); //must not be blacklisted
- 
-        //make a difficulty proportional to burned tokens
-        uint overallTotal = tokensGenerated+tokensMined; //this will include the burned tokens
-        miningTarget = _MAXIMUM_TARGET.sub ((tokensBurned.div(overallTotal)).mul( _MAXIMUM_TARGET));
 
+        uint reward = getMiningReward();
+        difficultyExponent = tokensToDifficulty(reward);
+        miningTarget = (2**difficultyExponent); //estimated
+ 
         latestDifficultyPeriodStarted = block.number;
 
         if (miningTarget > _MAXIMUM_TARGET) //very easy
         {
             miningTarget = _MAXIMUM_TARGET;
         }
+    }
+    
+    
+    //Find the exponent to convert tokens to a difficulty
+    function tokensToDifficulty(uint n) internal returns(uint){
+        for(uint t=0;t<232;t++){
+            if((t**3)*( 10 ** uint(decimals))>=n) return 232-t;
+        }
+        return 0;
     }
     
     
