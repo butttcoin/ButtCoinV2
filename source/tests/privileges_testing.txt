@@ -1,0 +1,7 @@
+Add user to a root, check if root, whitelisted, blacklisted (should be root only).
+Add user to a whitelist, check if root, whitelisted, blacklisted (should be whitelisted AND root).
+Add user to a blacklist, check if root, whitelisted, blacklisted (should be blacklisted only).
+Add user to a blacklist then root, should be root only
+Add user to blacklist then whitelist, should be whitelist only
+Add to blacklist then whitelist then root, should be whitelisted AND root 
+
