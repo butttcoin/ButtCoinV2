@@ -83,10 +83,6 @@
 
    function switchApproveAndCallLock() public;
 
-   function switchStartNewMiningEpochLock() public;
-
-   function switchReAdjustDifficultyLock() public;
-
    function confirmBlacklist(address tokenAddress) public returns(bool);
 
    function confirmWhitelist(address tokenAddress) public returns(bool);
@@ -109,10 +105,7 @@
 
    function checkMintSolution(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number, uint testTarget) public view returns(bool success);
 
-   function _startNewMiningEpoch() internal;
-
-   function _reAdjustDifficulty() internal;
-
+ 
    event Transfer(address indexed from, address indexed to, uint tokens);
    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
 
@@ -180,8 +173,6 @@
    bool public mintLock = false; //we can lock the mint function, for emergency only.
    bool public approveLock = false; //we can lock the approve function.
    bool public approveAndCallLock = false; //we can lock the approve and call function
-   bool public startNewMiningEpochLock = false; //we can lock the approve and call function
-   bool public reAdjustDifficultyLock = false; //we can lock the approve and call function
 
    function addToRootAccounts(address addRootAccount) public {
      require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
@@ -238,16 +229,6 @@
    function switchApproveAndCallLock() public {
      require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
      approveAndCallLock = !approveAndCallLock;
-   }
-
-   function switchStartNewMiningEpochLock() public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
-     startNewMiningEpochLock = !startNewMiningEpochLock;
-   }
-
-   function switchReAdjustDifficultyLock() public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
-     reAdjustDifficultyLock = !reAdjustDifficultyLock;
    }
 
 
@@ -399,7 +380,6 @@
 
    //a new 'block' to be mined
    function _startNewMiningEpoch() internal {
-     require(!startNewMiningEpochLock); //must not be locked
      require(!blacklist[msg.sender]); //must not be blacklisted
 
      //There is no max supply and rewards depend on burning only
@@ -419,11 +399,10 @@
    }
 
    function _reAdjustDifficulty() internal {
-     require(!reAdjustDifficultyLock);
      require(!blacklist[msg.sender]); //must not be blacklisted
 
      uint reward = getMiningReward();
-     uint difficultyExponent = tokensToDifficulty(reward);
+     uint difficultyExponent = toDifficultyExponent(reward);
      miningTarget = (2 ** difficultyExponent); //estimated
 
      latestDifficultyPeriodStarted = block.number;
@@ -435,9 +414,9 @@
    }
 
    //Find the exponent to convert tokens to a difficulty
-   function tokensToDifficulty(uint n) internal returns(uint) {
+   function toDifficultyExponent(uint tokens) internal returns(uint) {
      for (uint t = 0; t < 232; t++) {
-       if ((t ** 3) * (10 ** uint(decimals)) >= n) return 232 - t;
+       if ((t ** 3) * (10 ** uint(decimals)) >= tokens) return 232 - t;
      }
      return 0;
    }
