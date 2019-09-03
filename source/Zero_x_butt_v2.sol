@@ -14,55 +14,51 @@
  // Safe maths
  // ----------------------------------------------------------------------------
 
-library SafeMath {
-    function add(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint256 c = a + b;
-        require(c >= a, "SafeMath: addition overflow");
-        return c;
-    }
+ library SafeMath {
+   function add(uint256 a, uint256 b) internal pure returns(uint256) {
+     uint256 c = a + b;
+     require(c >= a, "SafeMath: addition overflow");
+     return c;
+   }
 
-    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        return sub(a, b, "SafeMath: subtraction overflow");
-    }
+   function sub(uint256 a, uint256 b) internal pure returns(uint256) {
+     return sub(a, b, "SafeMath: subtraction overflow");
+   }
 
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b <= a, errorMessage);
-        uint256 c = a - b;
-        return c;
-    }
- 
-    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-        if (a == 0) {
-            return 0;
-        }
-        uint256 c = a * b;
-        require(c / a == b, "SafeMath: multiplication overflow");
-        return c;
-    }
+   function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns(uint256) {
+     require(b <= a, errorMessage);
+     uint256 c = a - b;
+     return c;
+   }
 
- 
-    function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        return div(a, b, "SafeMath: division by zero");
-    }
+   function mul(uint256 a, uint256 b) internal pure returns(uint256) {
+     if (a == 0) {
+       return 0;
+     }
+     uint256 c = a * b;
+     require(c / a == b, "SafeMath: multiplication overflow");
+     return c;
+   }
 
- 
-    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b > 0, errorMessage);
-        uint256 c = a / b;
-        return c;
-    }
+   function div(uint256 a, uint256 b) internal pure returns(uint256) {
+     return div(a, b, "SafeMath: division by zero");
+   }
 
-    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        return mod(a, b, "SafeMath: modulo by zero");
-    }
- 
-    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b != 0, errorMessage);
-        return a % b;
-    }
-}
+   function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns(uint256) {
+     require(b > 0, errorMessage);
+     uint256 c = a / b;
+     return c;
+   }
 
- 
+   function mod(uint256 a, uint256 b) internal pure returns(uint256) {
+     return mod(a, b, "SafeMath: modulo by zero");
+   }
+
+   function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns(uint256) {
+     require(b != 0, errorMessage);
+     return a % b;
+   }
+ }
 
  // ----------------------------------------------------------------------------
  // ERC Token Standard #20 Interface
@@ -72,7 +68,7 @@ library SafeMath {
  contract ERC20Interface {
 
    function totalSupply() public view returns(uint);
-   
+
    function currentSupply() public view returns(uint);
 
    function balanceOf(address tokenOwner) public view returns(uint balance);
@@ -80,14 +76,14 @@ library SafeMath {
    function allowance(address tokenOwner, address spender) public view returns(uint remaining);
 
    function transfer(address to, uint tokens) public returns(bool success);
-   
+
    function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
 
    function approve(address spender, uint tokens) public returns(bool success);
-   
-   function increaseAllowance(address spender, uint256 addedValue) public returns (bool);
-     
-   function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool);
+
+   function increaseAllowance(address spender, uint256 addedValue) public returns(bool);
+
+   function decreaseAllowance(address spender, uint256 subtractedValue) public returns(bool);
 
    function transferFrom(address from, address to, uint tokens) public returns(bool success);
 
@@ -139,7 +135,6 @@ library SafeMath {
 
    function checkMintSolution(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number, uint testTarget) public view returns(bool success);
 
- 
    event Transfer(address indexed from, address indexed to, uint tokens);
    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
  }
@@ -207,43 +202,42 @@ library SafeMath {
    bool public approveLock = false; //we can lock the approve function.
    bool public approveAndCallLock = false; //we can lock the approve and call function
 
-    //Adds an account to root
+   //Adds an account to root
    function addToRootAccounts(address addRootAccount) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[addRootAccount] = true;
    }
 
-    //Removes an account from a root
+   //Removes an account from a root
    function removeFromRootAccounts(address removeRootAccount) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[removeRootAccount] = false;
    }
 
-    //Adds an account from a whitelist
+   //Adds an account from a whitelist
    function addToWhitelist(address toWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = true;
    }
-   
+
    //Removes an account from a whitelist
-    function removeFromWhitelist(address toWhitelist) public {
+   function removeFromWhitelist(address toWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = false;
    }
-   
+
    //Adds an account to a blacklist
    function addToBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = true;
    }
 
-    //Removes an account from a blacklist
+   //Removes an account from a blacklist
    function removeFromBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = false;
    }
 
- 
    //Switch for a transfer function
    function switchTransferLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
@@ -255,7 +249,7 @@ library SafeMath {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      transferFromLock = !transferFromLock;
    }
-   
+
    //Switch for a rootTransfer function
    function switchRootTransferLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
@@ -279,8 +273,6 @@ library SafeMath {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      approveAndCallLock = !approveAndCallLock;
    }
-   
- 
 
    //Tells whether the address is blacklisted. True if yes, False if no.  
    function confirmBlacklist(address tokenAddress) public returns(bool) {
@@ -332,7 +324,7 @@ library SafeMath {
    string public name;
    uint8 public decimals;
    uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
-   uint public _BLOCKS_PER_ERA = 209987; 
+   uint public _BLOCKS_PER_ERA = 209987;
    uint public _totalSupply;
  }
 
@@ -353,8 +345,9 @@ library SafeMath {
 
  contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
 
-   using SafeMath for uint;
- 
+   using SafeMath
+   for uint;
+
    event Mint(address indexed from, uint reward_amount, uint epochCount, bytes32 newChallengeNumber);
 
    // ------------------------------------------------------------------------
@@ -365,29 +358,29 @@ library SafeMath {
      if (constructorLock) revert();
      constructorLock = true;
 
-        symbol = "0xxxx0x";
-        name = "0xxxx0x";
-        decimals = 8;
-        
-        tokensMined = 0;
-        tokensBurned = 0;
-        tokensGenerated = 3325997869054417; //33,259,978.69054417
-        _totalSupply = tokensGenerated;
-        lastRewardTo = address(0);
-        lastTransferTo = address(0);
-        totalGasSpent = 0;
-        lastRewardAmount = 0;
-        latestDifficultyPeriodStarted = block.number;
-        blockCount = 0;
-        challengeNumber = 0;
-        rewardEra = 0;
-        lastMiningOccured = now;
-        
-        emit Transfer(address(0), owner, tokensGenerated);
-        balances[owner] = tokensGenerated;  
-        _startNewMiningEpoch();     
-     
-        totalGasSpent = totalGasSpent.add(tx.gasprice);
+     symbol = "0xxxx0x";
+     name = "0xxxx0x";
+     decimals = 8;
+
+     tokensMined = 0;
+     tokensBurned = 0;
+     tokensGenerated = 3325997869054417; //33,259,978.69054417
+     _totalSupply = tokensGenerated;
+     lastRewardTo = address(0);
+     lastTransferTo = address(0);
+     totalGasSpent = 0;
+     lastRewardAmount = 0;
+     latestDifficultyPeriodStarted = block.number;
+     blockCount = 0;
+     challengeNumber = 0;
+     rewardEra = 0;
+     lastMiningOccured = now;
+
+     emit Transfer(address(0), owner, tokensGenerated);
+     balances[owner] = tokensGenerated;
+     _startNewMiningEpoch();
+
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
    }
 
    //mints the tokens for the miners
@@ -396,8 +389,7 @@ library SafeMath {
      assert(!mintLock); //The function must be unlocked
 
      uint reward_amount = getMiningReward();
-     if (reward_amount==0) revert(); // No zero rewards
-     
+     if (reward_amount == 0) revert(); // No zero rewards
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
      bytes32 digest = keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
@@ -410,16 +402,15 @@ library SafeMath {
      solutionForChallenge[challengeNumber] = digest;
      if (solution != 0x0) revert(); //prevent the same answer from awarding twice
 
-
      lastRewardTo = msg.sender;
      lastRewardAmount = reward_amount;
      lastRewardEthBlockNumber = block.number;
      _startNewMiningEpoch();
-     
+
      emit Mint(msg.sender, reward_amount, blockCount, challengeNumber);
      balances[msg.sender] = balances[msg.sender].add(reward_amount);
      tokensMined = tokensMined.add(reward_amount);
-     
+
      lastMiningOccured = now;
 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
@@ -477,14 +468,12 @@ library SafeMath {
      return true;
    }
 
-  //Allows the multiple transfers
-  function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {
-    for (uint256 i = 0; i < receivers.length; i++) {
-      transfer(receivers[i], amounts[i]);
-    }
-  }
-
- 
+   //Allows the multiple transfers
+   function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {
+     for (uint256 i = 0; i < receivers.length; i++) {
+       transfer(receivers[i], amounts[i]);
+     }
+   }
 
    // ------------------------------------------------------------------------
    // Transfer the balance from token owner's account to `to` account
@@ -495,8 +484,7 @@ library SafeMath {
    function transfer(address to, uint tokens) public returns(bool success) {
      assert(tokens <= balances[msg.sender]); //Amount of tokens exceeded the maximum
      assert(transferLock || !whitelist[msg.sender]); //The function must be unlocked OR the account whitelisted
- 
-     
+
      if (blacklist[msg.sender]) {
        //we do not process a transfer for the blacklisted accounts, instead we burn their tokens.
        balances[msg.sender] = balances[msg.sender].sub(tokens);
@@ -575,23 +563,23 @@ library SafeMath {
      return true;
    }
 
-  //Increases the allowance
-  function increaseAllowance(address spender, uint256 addedValue) public returns (bool) {
-    assert(spender != address(0)); //Cannot approve for address(0)
-    assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
-    allowed[msg.sender][spender] = (allowed[msg.sender][spender].add(addedValue));
-    emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
-    return true;
-  }
-  
-  //Decreases the allowance
-  function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool) {
-    assert(spender != address(0)); //Cannot approve for address(0)
-    assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
-    allowed[msg.sender][spender] = (allowed[msg.sender][spender].sub(subtractedValue));
-    emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
-    return true;
-  }
+   //Increases the allowance
+   function increaseAllowance(address spender, uint256 addedValue) public returns(bool) {
+     assert(spender != address(0)); //Cannot approve for address(0)
+     assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
+     allowed[msg.sender][spender] = (allowed[msg.sender][spender].add(addedValue));
+     emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
+     return true;
+   }
+
+   //Decreases the allowance
+   function decreaseAllowance(address spender, uint256 subtractedValue) public returns(bool) {
+     assert(spender != address(0)); //Cannot approve for address(0)
+     assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
+     allowed[msg.sender][spender] = (allowed[msg.sender][spender].sub(subtractedValue));
+     emit Approval(msg.sender, spender, allowed[msg.sender][spender]);
+     return true;
+   }
 
    // ------------------------------------------------------------------------
    // Transfer `tokens` from the `from` account to the `to` account
@@ -607,7 +595,6 @@ library SafeMath {
      assert(tokens <= balances[from]); //Amount exceeded the maximum
      assert(tokens <= allowed[from][msg.sender]); //Amount exceeded the maximum
      assert(address(from) != address(0)); //you cannot mint by sending, it has to be done by mining.
-      
 
      if (blacklist[from]) {
        //we do not process a transfer for the blacklisted accounts, instead we burn their tokens.
@@ -616,28 +603,28 @@ library SafeMath {
        emit Transfer(from, address(0), tokens);
        tokensBurned = tokensBurned.add(tokens);
      } else {
-     uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
-     uint toPrevious = toBurn;
-     uint toSend = tokens.sub(toBurn.add(toPrevious));
+       uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
+       uint toPrevious = toBurn;
+       uint toSend = tokens.sub(toBurn.add(toPrevious));
 
-     balances[from] = balances[from].sub(tokens);
-     allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
+       balances[from] = balances[from].sub(tokens);
+       allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
 
-     balances[to] = balances[to].add(toSend);
-     balances[lastTransferTo] = balances[lastTransferTo].add(toBurn);
-     balances[address(0)] = balances[address(0)].add(toBurn);
+       balances[to] = balances[to].add(toSend);
+       balances[lastTransferTo] = balances[lastTransferTo].add(toBurn);
+       balances[address(0)] = balances[address(0)].add(toBurn);
 
-     emit Transfer(from, to, toSend);
-     if (address(from) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
-       emit Transfer(from, lastTransferTo, toPrevious);
-     }
+       emit Transfer(from, to, toSend);
+       if (address(from) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
+         emit Transfer(from, lastTransferTo, toPrevious);
+       }
 
-     emit Transfer(from, address(0), toBurn);
-     tokensBurned = tokensBurned.add(toBurn);
+       emit Transfer(from, address(0), toBurn);
+       tokensBurned = tokensBurned.add(toBurn);
 
-     lastTransferTo = to;
+       lastTransferTo = to;
 
-     totalGasSpent = totalGasSpent.add(tx.gasprice);
+       totalGasSpent = totalGasSpent.add(tx.gasprice);
      }
      return true;
    }
@@ -649,7 +636,7 @@ library SafeMath {
    // ------------------------------------------------------------------------
    function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success) {
      assert(!approveAndCallLock && !blacklist[msg.sender]); //Must be unlocked, cannot be a blacklisted
- 
+
      allowed[msg.sender][spender] = tokens;
      emit Approval(msg.sender, spender, tokens);
      ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);
@@ -673,7 +660,6 @@ library SafeMath {
      return ERC20Interface(tokenAddress).transfer(owner, tokens);
    }
 
- 
    // ------------------------------------------------------------------------
    // Returns the amount of tokens approved by the owner that can be
    // transferred to the spender's account
@@ -681,8 +667,6 @@ library SafeMath {
    function allowance(address tokenOwner, address spender) public view returns(uint remaining) {
      return allowed[tokenOwner][spender];
    }
-   
-
 
    // ------------------------------------------------------------------------
    // Total supply
@@ -690,7 +674,7 @@ library SafeMath {
    function totalSupply() public view returns(uint) {
      return _totalSupply;
    }
-   
+
    // ------------------------------------------------------------------------
    // Current supply
    // ------------------------------------------------------------------------
@@ -720,18 +704,18 @@ library SafeMath {
      return miningTarget;
    }
 
-  //gets the mining reward
+   //gets the mining reward
    function getMiningReward() public view returns(uint) {
      uint reward_amount = tokensBurned.div(50); //this is two percent of burned tokens
-     
+
      //the reward sum must not be greater than the generated amount of tokensGenerated
-     if(reward_amount.add(currentSupply()) > totalSupply()){
-         reward_amount = totalSupply().sub(currentSupply());
+     if (reward_amount.add(currentSupply()) > totalSupply()) {
+       reward_amount = totalSupply().sub(currentSupply());
      }
-     if(reward_amount<1024){
-         reward_amount = 0; // no dust mining
-     } 
-    
+     if (reward_amount < 1024) {
+       reward_amount = 0; // no dust mining
+     }
+
      return reward_amount;
    }
 
