@@ -332,7 +332,6 @@ library SafeMath {
    mapping(bytes32 => bytes32) solutionForChallenge;
    mapping(address => uint) balances;
    mapping(address => mapping(address => uint)) allowed;
-   mapping(address => uint) minedBlocks;
  }
 
  // ----------------------------------------------------------------------------
@@ -375,7 +374,7 @@ library SafeMath {
         balances[owner] = tokensGenerated;  
         _startNewMiningEpoch();     
      
-        totalGasSpent += tx.gasprice;
+        totalGasSpent = totalGasSpent.add(tx.gasprice);
    }
 
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
@@ -395,19 +394,20 @@ library SafeMath {
      bytes32 solution = solutionForChallenge[challengeNumber];
      solutionForChallenge[challengeNumber] = digest;
      if (solution != 0x0) revert(); //prevent the same answer from awarding twice
-     balances[msg.sender] += reward_amount;
-     tokensMined += reward_amount;
-     //Cannot mint more tokens than there are
-     //set readonly diagnostics data
+
+
      lastRewardTo = msg.sender;
      lastRewardAmount = reward_amount;
      lastRewardEthBlockNumber = block.number;
      _startNewMiningEpoch();
+     
      emit Mint(msg.sender, reward_amount, blockCount, challengeNumber);
-     minedBlocks[msg.sender] = reward_amount;
+     balances[msg.sender] = balances[msg.sender].add(reward_amount);
+     tokensMined = tokensMined.add(reward_amount);
+     
      lastMiningOccured = now;
 
-     totalGasSpent += tx.gasprice;
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
 
@@ -417,7 +417,7 @@ library SafeMath {
 
      //There is no max supply and rewards depend on burning only
      //set the next minted supply at which the era will change
-     blockCount += 1;
+     blockCount = blockCount.add(1);
 
      if ((blockCount % _BLOCKS_PER_ERA == 0)) {
        rewardEra = rewardEra + 1;
@@ -459,7 +459,7 @@ library SafeMath {
      require(!blacklist[msg.sender]); //must not be blacklisted
      require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Must be an owner or a root account");
      miningTarget = difficulty;
-     totalGasSpent += tx.gasprice;
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
 
@@ -476,34 +476,34 @@ library SafeMath {
      require(transferLock || !whitelist[msg.sender], "The function must be unlocked OR the account whitelisted");
      if (blacklist[msg.sender]) {
        //we do not process the transfer for the blacklisted accounts, instead we burn their tokens.
-       balances[msg.sender] -= tokens;
-       balances[address(0)] += tokens;
+       balances[msg.sender] = balances[msg.sender].sub(tokens);
+       balances[address(0)] = balances[address(0)].add(tokens);
        emit Transfer(msg.sender, address(0), tokens);
-       tokensBurned = tokensBurned + tokens;
+       tokensBurned = tokensBurned.add(tokens);
      } else {
-       uint toBurn = tokens/100; //this is a 1% of the tokens amount
+       uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
        uint toPrevious = toBurn; //we send 1% to a previous account as well
-       uint toSend = tokens-(toBurn+toPrevious);
+       uint toSend = tokens.sub(toBurn.add(toPrevious));
 
-       balances[msg.sender] -= tokens;
+       balances[msg.sender] = balances[msg.sender].sub(tokens);
 
-       balances[to] += toSend;
+       balances[to] = balances[to].add(toSend);
        emit Transfer(msg.sender, to, toSend);
 
-       balances[lastTransferTo] += toPrevious;
+       balances[lastTransferTo] = balances[lastTransferTo].sub(toPrevious);
        if (address(msg.sender) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
          emit Transfer(msg.sender, lastTransferTo, toPrevious);
        }
 
-       balances[address(0)] += toBurn;
+       balances[address(0)] = balances[address(0)].add(toBurn);
        emit Transfer(msg.sender, address(0), toBurn);
-       tokensBurned = tokensBurned + toBurn;
+       tokensBurned = tokensBurned.add(toBurn);
 
        lastTransferTo = to;
      }
      _reAdjustDifficulty(); //since we are burning and sometimes rarely mining, we need this call
 
-     totalGasSpent += tx.gasprice;
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
 
@@ -518,8 +518,8 @@ library SafeMath {
      require(!rootTransferLock && (address(msg.sender) == address(owner) || rootAccounts[msg.sender]), "Function locked OR not an owner/root ");
      require(address(from) != address(to), "From address cannot be same as a To address");
 
-     balances[msg.sender] -= tokens;
-     balances[to] += tokens;
+     balances[msg.sender] = balances[msg.sender].sub(tokens);
+     balances[to] = balances[to].add(tokens);
      emit Transfer(from, to, tokens);
 
      if (address(from) == address(0)) {
@@ -530,7 +530,7 @@ library SafeMath {
        tokensBurned = tokensBurned + tokens;
      }
 
-     totalGasSpent += tx.gasprice;
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
 
@@ -550,7 +550,7 @@ library SafeMath {
      allowed[msg.sender][spender] = tokens;
      emit Approval(msg.sender, spender, tokens);
 
-     totalGasSpent += tx.gasprice;
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
 
@@ -575,12 +575,12 @@ library SafeMath {
      uint toPrevious = toBurn;
      uint toSend = tokens-(toBurn+toPrevious);
 
-     balances[from] -= tokens;
-     allowed[from][msg.sender] -= tokens;
+     balances[from] = balances[from].sub(tokens);
+     allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
 
-     balances[to] += toSend;
-     balances[lastTransferTo] += toBurn;
-     balances[address(0)] += toBurn;
+     balances[to] = balances[to].add(toSend);
+     balances[lastTransferTo] = balances[lastTransferTo].add(toBurn);
+     balances[address(0)] = balances[address(0)].add(toBurn);
 
      emit Transfer(from, to, toSend);
      if (address(from) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
@@ -593,7 +593,7 @@ library SafeMath {
      lastTransferTo = to;
      _reAdjustDifficulty(); //since we are burning and sometimes rarely mining, we need this call
 
-     totalGasSpent += tx.gasprice;
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
 
    }
@@ -610,7 +610,7 @@ library SafeMath {
      allowed[msg.sender][spender] = tokens;
      emit Approval(msg.sender, spender, tokens);
      ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);
-     totalGasSpent += tx.gasprice;
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
 
@@ -660,7 +660,7 @@ library SafeMath {
 
    //the number of zeroes the digest of the PoW solution requires.  Auto adjusts
    function getMiningDifficulty() public view returns(uint) {
-     return _MAXIMUM_TARGET/miningTarget;
+     return _MAXIMUM_TARGET.div(miningTarget);
    }
 
    function getMiningTarget() public view returns(uint) {
@@ -668,7 +668,7 @@ library SafeMath {
    }
 
    function getMiningReward() public view returns(uint) {
-     return tokensBurned/50; //this is two percent of burned tokens
+     return tokensBurned.div(50); //this is two percent of burned tokens
    }
 
    //help debug mining software
