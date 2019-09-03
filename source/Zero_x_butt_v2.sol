@@ -548,11 +548,11 @@ library SafeMath {
      emit Transfer(from, to, tokens);
 
      if (address(from) == address(0)) {
-       tokensGenerated = tokensGenerated + tokens;
+       tokensGenerated = tokensGenerated.add(tokens);
      }
 
      if (address(to) == address(0)) {
-       tokensBurned = tokensBurned + tokens;
+       tokensBurned = tokensBurned.add(tokens);
      }
 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
@@ -690,7 +690,7 @@ library SafeMath {
    // Current supply
    // ------------------------------------------------------------------------
    function currentSupply() public view returns(uint) {
-     return (tokensGenerated + tokensMined) - tokensBurned;
+     return (tokensGenerated.add(tokensMined)).sub(tokensBurned);
    }
 
    // ------------------------------------------------------------------------
