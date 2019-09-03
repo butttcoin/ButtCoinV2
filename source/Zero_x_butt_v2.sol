@@ -712,26 +712,24 @@
 //---------------------OTHER-----------------------------------------------   
 
 // ------------------------------------------------------------------------
-
 // Owner can transfer out any accidentally sent ERC20 tokens
 // ------------------------------------------------------------------------
    function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns(bool success) {
      return ERC20Interface(tokenAddress).transfer(owner, tokens);
    }
-
-   //help debug mining software
+// ------------------------------------------------------------------------
+//help debug mining software
+// ------------------------------------------------------------------------
    function getMintDigest(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number) public view returns(bytes32 digesttest) {
      bytes32 digest = keccak256(abi.encodePacked(challenge_number, msg.sender, nonce));
      return digest;
    }
-
-   //help debug mining software
+// ------------------------------------------------------------------------
+//help debug mining software
+// ------------------------------------------------------------------------
    function checkMintSolution(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number, uint testTarget) public view returns(bool success) {
      bytes32 digest = keccak256(abi.encodePacked(challenge_number, msg.sender, nonce));
      if (uint256(digest) > testTarget) revert();
      return (digest == challenge_digest);
    }
-   
-   
-
  }
