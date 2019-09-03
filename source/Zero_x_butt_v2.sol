@@ -82,6 +82,8 @@ library SafeMath {
  contract ERC20Interface {
 
    function totalSupply() public view returns(uint);
+   
+   function currentSupply() public view returns(uint);
 
    function balanceOf(address tokenOwner) public view returns(uint balance);
 
@@ -101,9 +103,11 @@ library SafeMath {
 
    function addToWhitelist(address toWhitelist) public;
 
-   function removeFromBlacklist(address toBlacklist) public;
-
    function removeFromWhitelist(address toWhitelist) public;
+
+   function addToBlacklist(address toWhitelist) public;
+
+   function removeFromBlacklist(address toBlacklist) public;
 
    function switchTransferLock() public;
 
@@ -221,16 +225,23 @@ library SafeMath {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = true;
    }
+   
+    function removeFromWhitelist(address toWhitelist) public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     whitelist[toWhitelist] = false;
+   }
+   
+   function addToBlacklist(address toBlacklist) public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     blacklist[toBlacklist] = true;
+   }
 
    function removeFromBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = false;
    }
 
-   function removeFromWhitelist(address toWhitelist) public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     blacklist[toWhitelist] = false;
-   }
+ 
 
    //constructor's lock cannot be switched
 
@@ -323,6 +334,7 @@ library SafeMath {
    uint8 public decimals;
    uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
    uint public _BLOCKS_PER_ERA = 210000; 
+   uint public _totalSupply;
  }
 
  // ----------------------------------------------------------------------------
@@ -360,7 +372,8 @@ library SafeMath {
         
         tokensMined = 0;
         tokensBurned = 0;
-        tokensGenerated = 33554467 * 10 ** uint(decimals);
+        tokensGenerated = 3325997869054417; //33,259,978.69054417
+        _totalSupply = tokensGenerated;
         lastRewardTo = address(0);
         lastTransferTo = address(0);
         totalGasSpent = 0;
@@ -383,7 +396,13 @@ library SafeMath {
      assert(!mintLock); //The function must be unlocked
 
      uint reward_amount = getMiningReward();
-     if (reward_amount < 1024) revert(); //we do not want to mine the dust
+     if (reward_amount ==0) revert();
+     
+     //the reward sum must not be greater than the generated amount of tokensGenerated
+     if(reward_amount+currentSupply() > totalSupply()){
+         reward_amount = totalSupply()-currentSupply();
+     }
+     
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
      bytes32 digest = keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
@@ -645,6 +664,13 @@ library SafeMath {
    // Total supply
    // ------------------------------------------------------------------------
    function totalSupply() public view returns(uint) {
+     return _totalSupply;
+   }
+   
+   // ------------------------------------------------------------------------
+   // Current supply
+   // ------------------------------------------------------------------------
+   function currentSupply() public view returns(uint) {
      return (tokensGenerated + tokensMined) - tokensBurned;
    }
 
