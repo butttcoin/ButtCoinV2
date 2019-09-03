@@ -5,7 +5,7 @@
  //
  // Symbol      : ButtCoin
  // Name        : 0xBUTT 
- // Total supply: 33,554,467.00
+ // Total supply: 33,259,978.69054417
  // Decimals    : 8
  //
  // ----------------------------------------------------------------------------
@@ -392,12 +392,7 @@ library SafeMath {
      assert(!mintLock); //The function must be unlocked
 
      uint reward_amount = getMiningReward();
-
-     //the reward sum must not be greater than the generated amount of tokensGenerated
-     if(reward_amount.add(currentSupply()) > totalSupply()){
-         reward_amount = totalSupply()-currentSupply();
-     }
-     if (reward_amount < 1024) revert(); // Don't reward the dust
+     if (reward_amount==0) revert(); // No zero rewards
      
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
@@ -715,7 +710,17 @@ library SafeMath {
    }
 
    function getMiningReward() public view returns(uint) {
-     return tokensBurned.div(50); //this is two percent of burned tokens
+     uint reward_amount = tokensBurned.div(50); //this is two percent of burned tokens
+     
+     //the reward sum must not be greater than the generated amount of tokensGenerated
+     if(reward_amount.add(currentSupply()) > totalSupply()){
+         reward_amount = totalSupply().sub(currentSupply());
+     }
+     if(reward_amount<1024){
+         reward_amount = 0; // no dust mining
+     } 
+    
+     return reward_amount;
    }
 
    //help debug mining software
