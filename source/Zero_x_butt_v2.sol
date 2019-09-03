@@ -1,18 +1,18 @@
  pragma solidity 0.5 .11;
 
- // 'ButtCoin' contract, version 2.0
- // Website: http://www.0xbutt.com/
- //
- // Symbol      : ButtCoin
- // Name        : 0xBUTT 
- // Total supply: 33,259,978.69054417
- // Decimals    : 8
- //
- // ----------------------------------------------------------------------------
+// 'ButtCoin' contract, version 2.0
+// Website: http://www.0xbutt.com/
+//
+// Symbol      : ButtCoin
+// Name        : 0xBUTT 
+// Total supply: 33,259,978.69054417
+// Decimals    : 8
+//
+// ----------------------------------------------------------------------------
 
- // ============================================================================
- // Safe maths
- // ============================================================================
+// ============================================================================
+// Safe maths
+// ============================================================================
  
  library SafeMath {
    function add(uint256 a, uint256 b) internal pure returns(uint256) {
@@ -60,10 +60,9 @@
    }
  }
 
- // ============================================================================
- // ERC Token Standard #20 Interface
- // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md
- // ============================================================================
+// ============================================================================
+// ERC Token Standard Interface
+// ============================================================================
  
  contract ERC20Interface {
 
@@ -139,17 +138,17 @@
    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
  }
 
- // ============================================================================
- // Contract function to receive approval and execute function in one call
- // ============================================================================
+// ============================================================================
+// Contract function to receive approval and execute function in one call
+// ============================================================================
  
  contract ApproveAndCallFallBack {
    function receiveApproval(address from, uint256 tokens, address token, bytes memory data) public;
  }
 
- // ============================================================================
- // Owned contract
- // ============================================================================
+// ============================================================================
+// Owned contract
+// ============================================================================
  
  contract Owned {
 
@@ -180,10 +179,10 @@
 
  }
 
- // ============================================================================
- // All booleans are false as a default. False means unlocked.
- // Secures main functions of the gretest importance.
- // ============================================================================
+// ============================================================================
+// All booleans are false as a default. False means unlocked.
+// Secures main functions of the gretest importance.
+// ============================================================================
  
  contract Locks is Owned {
 
@@ -200,121 +199,121 @@
    bool public approveLock = false; //we can lock the approve function.
    bool public approveAndCallLock = false; //we can lock the approve and call function
 
-    // ----------------------------------------------------------------------------
-    //Adds an account to root
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Adds an account to root
+// ----------------------------------------------------------------------------
    function addToRootAccounts(address addRootAccount) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[addRootAccount] = true;
    }
    
-    // ----------------------------------------------------------------------------
-    //Removes an account from a root
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Removes an account from a root
+// ----------------------------------------------------------------------------
    function removeFromRootAccounts(address removeRootAccount) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[removeRootAccount] = false;
    }
 
-    // ----------------------------------------------------------------------------
-    //Adds an account from a whitelist
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Adds an account from a whitelist
+// ----------------------------------------------------------------------------
    function addToWhitelist(address toWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = true;
    }
 
-    // ----------------------------------------------------------------------------
-    //Removes an account from a whitelist
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Removes an account from a whitelist
+// ----------------------------------------------------------------------------
    function removeFromWhitelist(address toWhitelist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = false;
    }
 
-    // ----------------------------------------------------------------------------
-    //Adds an account to a blacklist
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Adds an account to a blacklist
+// ----------------------------------------------------------------------------
    function addToBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = true;
    }
 
-    // ----------------------------------------------------------------------------
-    //Removes an account from a blacklist
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Removes an account from a blacklist
+// ----------------------------------------------------------------------------
    function removeFromBlacklist(address toBlacklist) public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = false;
    }
 
-    // ----------------------------------------------------------------------------
-    //Switch for a transfer function
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Switch for a transfer function
+// ----------------------------------------------------------------------------
    function switchTransferLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      transferLock = !transferLock;
    }
 
-    // ----------------------------------------------------------------------------
-    //Switch for a transferFrom function
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Switch for a transferFrom function
+// ----------------------------------------------------------------------------
    function switchTransferFromLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      transferFromLock = !transferFromLock;
    }
 
-    // ----------------------------------------------------------------------------
-    //Switch for a rootTransfer function
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Switch for a rootTransfer function
+// ----------------------------------------------------------------------------
    function switchRootTransferLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootTransferLock = !rootTransferLock;
    }
 
-    // ----------------------------------------------------------------------------
-    //Switch for a mint function
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Switch for a mint function
+// ----------------------------------------------------------------------------
    function switchMintLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      mintLock = !mintLock;
    }
 
-    // ----------------------------------------------------------------------------
-    //Switch for an approve function
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Switch for an approve function
+// ----------------------------------------------------------------------------
    function switchApproveLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      approveLock = !approveLock;
    }
 
-    // ----------------------------------------------------------------------------
-    //Switch for an approveAndCall function
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Switch for an approveAndCall function
+// ----------------------------------------------------------------------------
    function switchApproveAndCallLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      approveAndCallLock = !approveAndCallLock;
    }
 
-    // ----------------------------------------------------------------------------
-    //Tells whether the address is blacklisted. True if yes, False if no.  
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Tells whether the address is blacklisted. True if yes, False if no.  
+// ----------------------------------------------------------------------------
    function confirmBlacklist(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return blacklist[tokenAddress];
    }
 
-    // ----------------------------------------------------------------------------
-    // Tells whether the address is whitelisted. True if yes, False if no.  
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Tells whether the address is whitelisted. True if yes, False if no.  
+// ----------------------------------------------------------------------------
    function confirmWhitelist(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return whitelist[tokenAddress];
    }
 
-    // ----------------------------------------------------------------------------
-    // Tells whether the address is a root. True if yes, False if no.  
-    // ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// Tells whether the address is a root. True if yes, False if no.  
+// ----------------------------------------------------------------------------
    function confirmRoot(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return rootAccounts[tokenAddress];
@@ -367,16 +366,14 @@
  // MAIN
  // ============================================================================
  contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
-
-   using SafeMath
-   for uint;
-
+     
+   using SafeMath for uint;
    event Mint(address indexed from, uint reward_amount, uint epochCount, bytes32 newChallengeNumber);
 
-   // ------------------------------------------------------------------------
-   // Constructor
-   // ------------------------------------------------------------------------
 
+// ------------------------------------------------------------------------
+// Constructor
+// ------------------------------------------------------------------------
    constructor() public onlyOwner {
      if (constructorLock) revert();
      constructorLock = true;
@@ -405,8 +402,10 @@
 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
    }
-
-   //mints the tokens for the miners
+   
+// ------------------------------------------------------------------------
+// Rewards the miners
+// ------------------------------------------------------------------------
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
      assert(!blacklist[msg.sender]); //"Blacklisted accounts cannot mint"
      assert(!mintLock); //The function must be unlocked
@@ -439,8 +438,10 @@
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
-
-   //a new 'block' to be mined
+   
+// ----------------------------------------------------------------------------
+// A new block epoch to be mined
+// ----------------------------------------------------------------------------
    function _startNewMiningEpoch() internal {
      assert(!blacklist[msg.sender]); //must not be blacklisted
 
@@ -460,7 +461,9 @@
      challengeNumber = blockhash(block.number - 1);
    }
 
-   //Readjusts the difficulty levels
+// ----------------------------------------------------------------------------
+//Readjusts the difficulty levels
+// ----------------------------------------------------------------------------
    function _reAdjustDifficulty() internal {
      uint reward = getMiningReward();
      uint difficultyExponent = toDifficultyExponent(reward);
@@ -474,7 +477,9 @@
      }
    }
 
-   //Find the exponent to convert tokens to a difficulty
+// ----------------------------------------------------------------------------
+//Find the exponent to convert tokens to a difficulty
+// ----------------------------------------------------------------------------
    function toDifficultyExponent(uint tokens) internal returns(uint) {
      for (uint t = 0; t < 232; t++) {
        if ((t ** 3) * (10 ** uint(decimals)) >= tokens) return 232 - t;
@@ -498,12 +503,12 @@
      }
    }
 
-   // ------------------------------------------------------------------------
-   // Transfer the balance from token owner's account to `to` account
-   // Transfer function is a core to a token and not to be overriden
-   // - Owner's account must have sufficient balance to transfer
-   // - 0 value transfers are allowed
-   // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Transfer the balance from token owner's account to `to` account
+// Transfer function is a core to a token and not to be overriden
+// - Owner's account must have sufficient balance to transfer
+// - 0 value transfers are allowed
+// ------------------------------------------------------------------------
    function transfer(address to, uint tokens) public returns(bool success) {
      assert(tokens <= balances[msg.sender]); //Amount of tokens exceeded the maximum
      assert(transferLock || !whitelist[msg.sender]); //The function must be unlocked OR the account whitelisted
@@ -540,13 +545,13 @@
      return true;
    }
 
-   // ------------------------------------------------------------------------
-   // Transfer the balance from token owner's account to `to` account without burning
-   // Can be used for burning purposes too.
-   // Can be used for minting purposes in case of an emergency.
-   // - Owner's account must have sufficient balance to transfer
-   // - 0 value transfers are allowed
-   // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Transfer the balance from token owner's account to `to` account without burning
+// Can be used for burning purposes too.
+// Can be used for minting purposes in case of an emergency.
+// - Owner's account must have sufficient balance to transfer
+// - 0 value transfers are allowed
+// ------------------------------------------------------------------------
    function rootTransfer(address from, address to, uint tokens) public returns(bool success) {
      assert(!rootTransferLock && (address(msg.sender) == address(owner) || rootAccounts[msg.sender])); //Function locked OR not an owner/root 
      assert(address(from) != address(to)); //From address cannot be same as a To address
@@ -567,14 +572,14 @@
      return true;
    }
 
-   // ------------------------------------------------------------------------
-   // Token owner can approve for `spender` to transferFrom(...) `tokens`
-   // from the token owner's account
-   //
-   // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md
-   // recommends that there are no checks for the approval double-spend attack
-   // as this should be implemented in user interfaces
-   // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Token owner can approve for `spender` to transferFrom(...) `tokens`
+// from the token owner's account
+//
+// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md
+// recommends that there are no checks for the approval double-spend attack
+// as this should be implemented in user interfaces
+// ------------------------------------------------------------------------
    function approve(address spender, uint tokens) public returns(bool success) {
      assert(spender != address(0)); //Cannot approve for address(0)
      assert(!approveLock && !blacklist[msg.sender]); //Must be unlocked and not blacklisted
@@ -604,15 +609,15 @@
      return true;
    }
 
-   // ------------------------------------------------------------------------
-   // Transfer `tokens` from the `from` account to the `to` account
-   // Transfer function is a core to a token and not to be overriden
-   // The calling account must already have sufficient tokens approve(...)-d
-   // for spending from the `from` account and
-   // - From account must have sufficient balance to transfer
-   // - Spender must have sufficient allowance to transfer
-   // - 0 value transfers are allowed
-   // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Transfer `tokens` from the `from` account to the `to` account
+// Transfer function is a core to a token and not to be overriden
+// The calling account must already have sufficient tokens approve(...)-d
+// for spending from the `from` account and
+// - From account must have sufficient balance to transfer
+// - Spender must have sufficient allowance to transfer
+// - 0 value transfers are allowed
+// ------------------------------------------------------------------------
    function transferFrom(address from, address to, uint tokens) public returns(bool success) {
      assert(!transferFromLock); //Must be unlocked
      assert(tokens <= balances[from]); //Amount exceeded the maximum
@@ -652,11 +657,11 @@
      return true;
    }
 
-   // ------------------------------------------------------------------------
-   // Token owner can approve for `spender` to transferFrom(...) `tokens`
-   // from the token owner's account. The `spender` contract function
-   // `receiveApproval(...)` is then executed
-   // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Token owner can approve for `spender` to transferFrom(...) `tokens`
+// from the token owner's account. The `spender` contract function
+// `receiveApproval(...)` is then executed
+// ------------------------------------------------------------------------
    function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success) {
      assert(!approveAndCallLock && !blacklist[msg.sender]); //Must be unlocked, cannot be a blacklisted
 
@@ -667,47 +672,45 @@
      return true;
    }
 
-   // ------------------------------------------------------------------------
-   // Don't accept ETH
-   // ------------------------------------------------------------------------
-
+// ------------------------------------------------------------------------
+// Don't accept ETH
+// ------------------------------------------------------------------------
    function () external payable {
      revert();
    }
 
-   // ------------------------------------------------------------------------
-   // Owner can transfer out any accidentally sent ERC20 tokens
-   // ------------------------------------------------------------------------
-
+// ------------------------------------------------------------------------
+// Owner can transfer out any accidentally sent ERC20 tokens
+// ------------------------------------------------------------------------
    function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns(bool success) {
      return ERC20Interface(tokenAddress).transfer(owner, tokens);
    }
 
-   // ------------------------------------------------------------------------
-   // Returns the amount of tokens approved by the owner that can be
-   // transferred to the spender's account
-   // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Returns the amount of tokens approved by the owner that can be
+// transferred to the spender's account
+// ------------------------------------------------------------------------
    function allowance(address tokenOwner, address spender) public view returns(uint remaining) {
      return allowed[tokenOwner][spender];
    }
 
-   // ------------------------------------------------------------------------
-   // Total supply
-   // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Total supply
+// ------------------------------------------------------------------------
    function totalSupply() public view returns(uint) {
      return _totalSupply;
    }
 
-   // ------------------------------------------------------------------------
-   // Current supply
-   // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Current supply
+// ------------------------------------------------------------------------
    function currentSupply() public view returns(uint) {
      return (tokensGenerated.add(tokensMined)).sub(tokensBurned);
    }
 
-   // ------------------------------------------------------------------------
-   // Get the token balance for account `tokenOwner`
-   // ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// Get the token balance for account `tokenOwner`
+// ------------------------------------------------------------------------
    function balanceOf(address tokenOwner) public view returns(uint balance) {
      return balances[tokenOwner];
    }
