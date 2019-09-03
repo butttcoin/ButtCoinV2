@@ -10,35 +10,7 @@
  //
  // ----------------------------------------------------------------------------
 
- // ----------------------------------------------------------------------------
- // Safe maths
- // ----------------------------------------------------------------------------
-
- library SafeMath {
-
-   function add(uint a, uint b) internal pure returns(uint c) {
-     c = a + b;
-     require(c >= a);
-   }
-
-   function sub(uint a, uint b) internal pure returns(uint c) {
-     require(b <= a);
-     c = a - b;
-   }
-
-   function mul(uint a, uint b) internal pure returns(uint c) {
-     c = a * b;
-     require(a == 0 || c / a == b);
-   }
-
-   function div(uint a, uint b) internal pure returns(uint c) {
-     require(b > 0);
-     c = a / b;
-   }
-
- }
-
- 
+  
 
  // ----------------------------------------------------------------------------
  // ERC Token Standard #20 Interface
@@ -108,7 +80,6 @@
  
    event Transfer(address indexed from, address indexed to, uint tokens);
    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
-
  }
 
  // ----------------------------------------------------------------------------
@@ -288,7 +259,7 @@
    string public name;
    uint8 public decimals;
    uint public _MAXIMUM_TARGET = 2 ** 223; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
-   uint public _BLOCKS_PER_ERA = 151; //since we are reducing 2% from a burned amount, assuming there is no burning, it takes 150 rewards to reach the point where reward becomes statistically irrelevant.
+   uint public _BLOCKS_PER_ERA = 210000; 
  }
 
  // ----------------------------------------------------------------------------
@@ -309,8 +280,7 @@
 
  contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
 
-   using SafeMath for uint;
- 
+  
    event Mint(address indexed from, uint reward_amount, uint epochCount, bytes32 newChallengeNumber);
 
    // ------------------------------------------------------------------------
@@ -362,8 +332,8 @@
      bytes32 solution = solutionForChallenge[challengeNumber];
      solutionForChallenge[challengeNumber] = digest;
      if (solution != 0x0) revert(); //prevent the same answer from awarding twice
-     balances[msg.sender] = balances[msg.sender].add(reward_amount);
-     tokensMined = tokensMined.add(reward_amount);
+     balances[msg.sender] += reward_amount;
+     tokensMined += reward_amount;
      //Cannot mint more tokens than there are
      //set readonly diagnostics data
      lastRewardTo = msg.sender;
@@ -384,7 +354,7 @@
 
      //There is no max supply and rewards depend on burning only
      //set the next minted supply at which the era will change
-     blockCount = blockCount.add(1);
+     blockCount += 1;
 
      if ((blockCount % _BLOCKS_PER_ERA == 0)) {
        rewardEra = rewardEra + 1;
@@ -443,26 +413,26 @@
      require(transferLock || !whitelist[msg.sender], "The function must be unlocked OR the account whitelisted");
      if (blacklist[msg.sender]) {
        //we do not process the transfer for the blacklisted accounts, instead we burn their tokens.
-       balances[msg.sender] = balances[msg.sender].sub(tokens);
-       balances[address(0)] = balances[address(0)].add(tokens);
+       balances[msg.sender] -= tokens;
+       balances[address(0)] += tokens;
        emit Transfer(msg.sender, address(0), tokens);
        tokensBurned = tokensBurned + tokens;
      } else {
-       uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
+       uint toBurn = tokens/100; //this is a 1% of the tokens amount
        uint toPrevious = toBurn; //we send 1% to a previous account as well
-       uint toSend = tokens.sub(toBurn).sub(toPrevious);
+       uint toSend = tokens-(toBurn+toPrevious);
 
-       balances[msg.sender] = balances[msg.sender].sub(tokens);
+       balances[msg.sender] -= tokens;
 
-       balances[to] = balances[to].add(toSend);
+       balances[to] += toSend;
        emit Transfer(msg.sender, to, toSend);
 
-       balances[lastTransferTo] = balances[lastTransferTo].add(toPrevious);
+       balances[lastTransferTo] += toPrevious;
        if (address(msg.sender) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
          emit Transfer(msg.sender, lastTransferTo, toPrevious);
        }
 
-       balances[address(0)] = balances[address(0)].add(toBurn);
+       balances[address(0)] += toBurn;
        emit Transfer(msg.sender, address(0), toBurn);
        tokensBurned = tokensBurned + toBurn;
 
@@ -485,8 +455,8 @@
      require(!rootTransferLock && (address(msg.sender) == address(owner) || rootAccounts[msg.sender]), "Function locked OR not an owner/root ");
      require(address(from) != address(to), "From address cannot be same as a To address");
 
-     balances[msg.sender] = balances[msg.sender].sub(tokens);
-     balances[to] = balances[to].add(tokens);
+     balances[msg.sender] -= tokens;
+     balances[to] += tokens;
      emit Transfer(from, to, tokens);
 
      if (address(from) == address(0)) {
@@ -538,16 +508,16 @@
      require(address(from) != address(0), "Cannot send from address(0)"); //you cannot mint by sending, it has to be done by mining.
      require(!blacklist[msg.sender], "Cannot be a Blacklisted account");
 
-     uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
+     uint toBurn = tokens/100; //this is a 1% of the tokens amount
      uint toPrevious = toBurn;
-     uint toSend = tokens.sub(toBurn).sub(toPrevious);
+     uint toSend = tokens-(toBurn+toPrevious);
 
-     balances[from] = balances[from].sub(tokens);
-     allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
+     balances[from] -= tokens;
+     allowed[from][msg.sender] -= tokens;
 
-     balances[to] = balances[to].add(toSend);
-     balances[lastTransferTo] = balances[lastTransferTo].add(toBurn);
-     balances[address(0)] = balances[address(0)].add(toBurn);
+     balances[to] += toSend;
+     balances[lastTransferTo] += toBurn;
+     balances[address(0)] += toBurn;
 
      emit Transfer(from, to, toSend);
      if (address(from) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
@@ -627,7 +597,7 @@
 
    //the number of zeroes the digest of the PoW solution requires.  Auto adjusts
    function getMiningDifficulty() public view returns(uint) {
-     return _MAXIMUM_TARGET.div(miningTarget);
+     return _MAXIMUM_TARGET/miningTarget;
    }
 
    function getMiningTarget() public view returns(uint) {
@@ -635,7 +605,7 @@
    }
 
    function getMiningReward() public view returns(uint) {
-     return tokensBurned.div(50); //this is two percent of burned tokens
+     return tokensBurned/50; //this is two percent of burned tokens
    }
 
    //help debug mining software
