@@ -1,5 +1,5 @@
-1. Flip the switches with a non-owner account, all should fail.
-2. Flip the switches with an owner account, all should pass.
-3. Add the account to root, switch all, all should pass.
-3. Add the root account to a whitelist, remove from root, all should fail.
-4. Add the root account to a blacklist, remove from root, all should fail.
+1. Flip the switches with a non-owner account, all should fail. -PASS
+2. Flip the switches with an owner account, all should pass. -PASS
+3. Add the account to root, switch all, all should pass. -PASS
+3. Add the root account to a whitelist, self-remove from root, all should fail. -PASS
+4. Add the root account to a blacklist, remove from root, all should fail. -PASS
