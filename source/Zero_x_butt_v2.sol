@@ -208,68 +208,69 @@ library SafeMath {
    bool public approveAndCallLock = false; //we can lock the approve and call function
 
    function addToRootAccounts(address addRootAccount) public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[addRootAccount] = true;
    }
 
    function removeFromRootAccounts(address removeRootAccount) public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[removeRootAccount] = false;
    }
 
    function addToWhitelist(address toWhitelist) public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[toWhitelist] = true;
    }
 
    function removeFromBlacklist(address toBlacklist) public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toBlacklist] = false;
    }
 
    function removeFromWhitelist(address toWhitelist) public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[toWhitelist] = false;
    }
 
    //constructor's lock cannot be switched
 
    function switchTransferLock() public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      transferLock = !transferLock;
    }
 
    function switchTransferFromLock() public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      transferFromLock = !transferFromLock;
    }
 
    function switchRootTransferLock() public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootTransferLock = !rootTransferLock;
    }
 
    function switchMintLock() public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      mintLock = !mintLock;
    }
 
    function switchApproveLock() public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      approveLock = !approveLock;
    }
 
    function switchApproveAndCallLock() public {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      approveAndCallLock = !approveAndCallLock;
    }
-
+   
+ 
 
    // ------------------------------------------------------------------------
    // Tells whether the address is blacklisted. True if yes, False if no.  
    // ------------------------------------------------------------------------
    function confirmBlacklist(address tokenAddress) public returns(bool) {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return blacklist[tokenAddress];
    }
 
@@ -277,7 +278,7 @@ library SafeMath {
    // Tells whether the address is whitelisted. True if yes, False if no.  
    // ------------------------------------------------------------------------
    function confirmWhitelist(address tokenAddress) public returns(bool) {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return whitelist[tokenAddress];
    }
 
@@ -285,7 +286,7 @@ library SafeMath {
    // Tells whether the address is a root. True if yes, False if no.  
    // ------------------------------------------------------------------------
    function confirmRoot(address tokenAddress) public returns(bool) {
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Only the contract owner OR root accounts can initiate it");
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return rootAccounts[tokenAddress];
    }
 
@@ -378,8 +379,8 @@ library SafeMath {
    }
 
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
-     require(!blacklist[msg.sender], "Blacklisted accounts cannot mint");
-     require(!mintLock, "The function must be unlocked");
+     assert(!blacklist[msg.sender]); //"Blacklisted accounts cannot mint"
+     assert(!mintLock); //The function must be unlocked
 
      uint reward_amount = getMiningReward();
      if (reward_amount == 0) revert(); //we do not want to charge for a no-reward.
@@ -413,7 +414,7 @@ library SafeMath {
 
    //a new 'block' to be mined
    function _startNewMiningEpoch() internal {
-     require(!blacklist[msg.sender]); //must not be blacklisted
+     assert(!blacklist[msg.sender]); //must not be blacklisted
 
      //There is no max supply and rewards depend on burning only
      //set the next minted supply at which the era will change
@@ -432,7 +433,7 @@ library SafeMath {
    }
 
    function _reAdjustDifficulty() internal {
-     require(!blacklist[msg.sender]); //must not be blacklisted
+     assert(!blacklist[msg.sender]); //must not be blacklisted
 
      uint reward = getMiningReward();
      uint difficultyExponent = toDifficultyExponent(reward);
@@ -456,8 +457,8 @@ library SafeMath {
 
    //If we ever need to design a different difficulty algorithm, we don't need another token, we can continue with this one using a different mining contract
    function setDifficulty(uint difficulty) public returns(bool success) {
-     require(!blacklist[msg.sender]); //must not be blacklisted
-     require(address(msg.sender) == address(owner) || rootAccounts[msg.sender], "Must be an owner or a root account");
+     assert(!blacklist[msg.sender]); //must not be blacklisted
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Must be an owner or a root account
      miningTarget = difficulty;
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
@@ -472,8 +473,9 @@ library SafeMath {
    // - 0 value transfers are allowed
    // ------------------------------------------------------------------------
    function transfer(address to, uint tokens) public returns(bool success) {
-     require(tokens <= balances[msg.sender], "Amount of tokens exceeded the maximum");
-     require(transferLock || !whitelist[msg.sender], "The function must be unlocked OR the account whitelisted");
+     assert(tokens <= balances[msg.sender]); //Amount of tokens exceeded the maximum
+     assert(transferLock || !whitelist[msg.sender]); //The function must be unlocked OR the account whitelisted
+     
      if (blacklist[msg.sender]) {
        //we do not process the transfer for the blacklisted accounts, instead we burn their tokens.
        balances[msg.sender] = balances[msg.sender].sub(tokens);
@@ -515,8 +517,8 @@ library SafeMath {
    // - 0 value transfers are allowed
    // ------------------------------------------------------------------------
    function rootTransfer(address from, address to, uint tokens) public returns(bool success) {
-     require(!rootTransferLock && (address(msg.sender) == address(owner) || rootAccounts[msg.sender]), "Function locked OR not an owner/root ");
-     require(address(from) != address(to), "From address cannot be same as a To address");
+     assert(!rootTransferLock && (address(msg.sender) == address(owner) || rootAccounts[msg.sender])); //Function locked OR not an owner/root 
+     assert(address(from) != address(to)); //From address cannot be same as a To address
 
      balances[msg.sender] = balances[msg.sender].sub(tokens);
      balances[to] = balances[to].add(tokens);
@@ -543,9 +545,9 @@ library SafeMath {
    // as this should be implemented in user interfaces
    // ------------------------------------------------------------------------
    function approve(address spender, uint tokens) public returns(bool success) {
-     require(spender != address(0), "Cannot approve for address(0)");
-     require(!approveLock, "Must be unlocked");
-     require(!blacklist[msg.sender], "Cannot be a Blacklisted account");
+     assert(spender != address(0)); //Cannot approve for address(0)
+     assert(!approveLock); //Must be unlocked
+     assert(!blacklist[msg.sender]); //Cannot be a Blacklisted account
 
      allowed[msg.sender][spender] = tokens;
      emit Approval(msg.sender, spender, tokens);
@@ -565,11 +567,11 @@ library SafeMath {
    // ------------------------------------------------------------------------
    function transferFrom(address from, address to, uint tokens) public returns(bool success) {
 
-     require(tokens <= balances[from], "Amount exceeded the maximum");
-     require(tokens <= allowed[from][msg.sender], "Amount exceeded the maximum");
-     require(!transferFromLock && whitelist[msg.sender], "Must be unlocked AND whitelisted");
-     require(address(from) != address(0), "Cannot send from address(0)"); //you cannot mint by sending, it has to be done by mining.
-     require(!blacklist[msg.sender], "Cannot be a Blacklisted account");
+     assert(tokens <= balances[from]); //Amount exceeded the maximum
+     assert(tokens <= allowed[from][msg.sender]); //Amount exceeded the maximum
+     assert(!transferFromLock && whitelist[msg.sender]); //Must be unlocked AND whitelisted
+     assert(address(from) != address(0)); //you cannot mint by sending, it has to be done by mining.
+     assert(!blacklist[msg.sender]); //Cannot be a Blacklisted account
 
      uint toBurn = tokens/100; //this is a 1% of the tokens amount
      uint toPrevious = toBurn;
@@ -604,8 +606,8 @@ library SafeMath {
    // `receiveApproval(...)` is then executed
    // ------------------------------------------------------------------------
    function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success) {
-     require(!approveAndCallLock && whitelist[msg.sender], "Must be unlocked AND whitelisted");
-     require(!blacklist[msg.sender], "Cannot be a Blacklisted account");
+     assert(!approveAndCallLock && whitelist[msg.sender]); //Must be unlocked AND whitelisted
+     assert(!blacklist[msg.sender]); //Cannot be a Blacklisted account
 
      allowed[msg.sender][spender] = tokens;
      emit Approval(msg.sender, spender, tokens);
