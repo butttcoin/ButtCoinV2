@@ -67,14 +67,14 @@
  contract ERC20Interface {
 
    function addToBlacklist(address addToBlacklist) public;
-   function addToRootAccounts(address addRootAccount) public;
+   function addToRootAccounts(address addToRoot) public;
    function addToWhitelist(address addToWhitelist) public;
    function allowance(address tokenOwner, address spender) public view returns(uint remaining);
    function approve(address spender, uint tokens) public returns(bool success);
    function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success);
    function balanceOf(address tokenOwner) public view returns(uint balance);
    function checkMintSolution(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number, uint testTarget) public view returns(bool success);
-   function confirmBlacklist(address tokenAddress) public returns(bool);
+   function confirmBlacklist(address confirmBlacklist) public returns(bool);
    function confirmWhitelist(address tokenAddress) public returns(bool);
    function currentSupply() public view returns(uint);
    function decreaseAllowance(address spender, uint256 subtractedValue) public returns(bool);
@@ -87,7 +87,7 @@
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success);
    function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
    function removeFromBlacklist(address removeFromBlacklist) public;
-   function removeFromRootAccounts(address removeRootAccount) public;
+   function removeFromRootAccounts(address removeFromRoot) public;
    function removeFromWhitelist(address removeFromWhitelist) public;
    function rootTransfer(address from, address to, uint tokens) public returns(bool success);
    function setDifficulty(uint difficulty) public returns(bool success);
@@ -222,27 +222,27 @@
 // ----------------------------------------------------------------------------
 // Adds account to root
 // ----------------------------------------------------------------------------
-   function addToRootAccounts(address addRootAccount) public {
-     assert(!rootAccounts[addRootAccount]); //we need to have something to add
+   function addToRootAccounts(address addToRoot) public {
+     require(!rootAccounts[addToRoot]); //we need to have something to add
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     rootAccounts[addRootAccount] = true;
-     blacklist[addRootAccount] = false;
+     rootAccounts[addToRoot] = true;
+     blacklist[addToRoot] = false;
    }
    
 // ----------------------------------------------------------------------------
 // Removes account from the root
 // ----------------------------------------------------------------------------
-   function removeFromRootAccounts(address removeRootAccount) public {
-     assert(rootAccounts[removeRootAccount]); //we need to have something to remove  
+   function removeFromRootAccounts(address removeFromRoot) public {
+     require(rootAccounts[removeFromRoot]); //we need to have something to remove  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     rootAccounts[removeRootAccount] = false;
+     rootAccounts[removeFromRoot] = false;
    }
 
 // ----------------------------------------------------------------------------
 // Adds account from the whitelist
 // ----------------------------------------------------------------------------
    function addToWhitelist(address addToWhitelist) public {
-     assert(!whitelist[addToWhitelist]); //we need to have something to add  
+     require(!whitelist[addToWhitelist]); //we need to have something to add  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[addToWhitelist] = true;
      blacklist[addToWhitelist] = false;
@@ -252,7 +252,7 @@
 // Removes account from the whitelist
 // ----------------------------------------------------------------------------
    function removeFromWhitelist(address removeFromWhitelist) public {
-     assert(whitelist[removeFromWhitelist]); //we need to have something to remove  
+     require(whitelist[removeFromWhitelist]); //we need to have something to remove  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[removeFromWhitelist] = false;
    }
@@ -261,7 +261,7 @@
 // Adds account to the blacklist
 // ----------------------------------------------------------------------------
    function addToBlacklist(address addToBlacklist) public {
-     assert(!blacklist[addToBlacklist]); //we need to have something to add  
+     require(!blacklist[addToBlacklist]); //we need to have something to add  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[addToBlacklist] = true;
      rootAccounts[addToBlacklist] = false;
@@ -272,7 +272,7 @@
 // Removes account from the blacklist
 // ----------------------------------------------------------------------------
    function removeFromBlacklist(address removeFromBlacklist) public {
-     assert(blacklist[removeFromBlacklist]); //we need to have something to remove  
+     require(blacklist[removeFromBlacklist]); //we need to have something to remove  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[removeFromBlacklist] = false;
    }
@@ -281,25 +281,25 @@
 // ----------------------------------------------------------------------------
 // Tells whether the address is blacklisted. True if yes, False if no.  
 // ----------------------------------------------------------------------------
-   function confirmBlacklist(address tokenAddress) public returns(bool) {
-     require(blacklist[tokenAddress]);
-     return blacklist[tokenAddress];
+   function confirmBlacklist(address confirmBlacklist) public returns(bool) {
+     require(blacklist[confirmBlacklist]);
+     return blacklist[confirmBlacklist];
    }
 
 // ----------------------------------------------------------------------------
 // Tells whether the address is whitelisted. True if yes, False if no.  
 // ----------------------------------------------------------------------------
-   function confirmWhitelist(address tokenAddress) public returns(bool) {
-     require(whitelist[tokenAddress]);
-     return whitelist[tokenAddress];
+   function confirmWhitelist(address confirmWhitelist) public returns(bool) {
+     require(whitelist[confirmWhitelist]);
+     return whitelist[confirmWhitelist];
    }
 
 // ----------------------------------------------------------------------------
 // Tells whether the address is a root. True if yes, False if no.  
 // ----------------------------------------------------------------------------
    function confirmRoot(address tokenAddress) public returns(bool) {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      require(rootAccounts[tokenAddress]);
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
      return rootAccounts[tokenAddress];
    }
 
