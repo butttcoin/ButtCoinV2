@@ -223,6 +223,7 @@
 // Adds account to root
 // ----------------------------------------------------------------------------
    function addToRootAccounts(address addRootAccount) public {
+     assert(!rootAccounts[addRootAccount]); //we need to have something to add
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[addRootAccount] = true;
      blacklist[addRootAccount] = false;
@@ -232,6 +233,7 @@
 // Removes account from the root
 // ----------------------------------------------------------------------------
    function removeFromRootAccounts(address removeRootAccount) public {
+     assert(rootAccounts[removeRootAccount]); //we need to have something to remove  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      rootAccounts[removeRootAccount] = false;
    }
@@ -240,6 +242,7 @@
 // Adds account from the whitelist
 // ----------------------------------------------------------------------------
    function addToWhitelist(address addToWhitelist) public {
+     assert(!whitelist[addToWhitelist]); //we need to have something to add  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[addToWhitelist] = true;
      blacklist[addToWhitelist] = false;
@@ -249,6 +252,7 @@
 // Removes account from the whitelist
 // ----------------------------------------------------------------------------
    function removeFromWhitelist(address removeFromWhitelist) public {
+     assert(whitelist[removeFromWhitelist]); //we need to have something to remove  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      whitelist[removeFromWhitelist] = false;
    }
@@ -257,6 +261,7 @@
 // Adds account to the blacklist
 // ----------------------------------------------------------------------------
    function addToBlacklist(address addToBlacklist) public {
+     assert(!blacklist[addToBlacklist]); //we need to have something to add  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[addToBlacklist] = true;
      rootAccounts[addToBlacklist] = false;
@@ -267,6 +272,7 @@
 // Removes account from the blacklist
 // ----------------------------------------------------------------------------
    function removeFromBlacklist(address removeFromBlacklist) public {
+     assert(blacklist[removeFromBlacklist]); //we need to have something to remove  
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
      blacklist[removeFromBlacklist] = false;
    }
@@ -276,7 +282,7 @@
 // Tells whether the address is blacklisted. True if yes, False if no.  
 // ----------------------------------------------------------------------------
    function confirmBlacklist(address tokenAddress) public returns(bool) {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
+     require(blacklist[tokenAddress]);
      return blacklist[tokenAddress];
    }
 
@@ -284,7 +290,7 @@
 // Tells whether the address is whitelisted. True if yes, False if no.  
 // ----------------------------------------------------------------------------
    function confirmWhitelist(address tokenAddress) public returns(bool) {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
+     require(whitelist[tokenAddress]);
      return whitelist[tokenAddress];
    }
 
@@ -293,6 +299,7 @@
 // ----------------------------------------------------------------------------
    function confirmRoot(address tokenAddress) public returns(bool) {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]);
+     require(rootAccounts[tokenAddress]);
      return rootAccounts[tokenAddress];
    }
 
@@ -477,7 +484,8 @@
        balances[address(0)] = balances[address(0)].add(toBurn);
        emit Transfer(msg.sender, address(0), toBurn);
        tokensBurned = tokensBurned.add(toBurn);
-
+       _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
+       
        lastTransferTo = to;
      }
 
@@ -579,7 +587,7 @@
        tokensBurned = tokensBurned.add(toBurn);
 
        lastTransferTo = to;
-
+       _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
        totalGasSpent = totalGasSpent.add(tx.gasprice);
      }
      return true;
