@@ -632,8 +632,7 @@
    function reAdjustDifficulty() public {
      assert(!reAdjustDifficultyLock);
      
-     uint reward = getMiningReward();
-     uint difficultyExponent = toDifficultyExponent(reward);
+     uint difficultyExponent = toDifficultyExponent();
      miningTarget = (2 ** difficultyExponent); //estimated
 
      latestDifficultyPeriodStarted = block.number;
@@ -667,11 +666,13 @@
  
    
 // ----------------------------------------------------------------------------
-// Find the exponent to convert tokens to a difficulty
+// Find the difficulty exponent
 // ----------------------------------------------------------------------------
-   function toDifficultyExponent(uint tokens) internal returns(uint) {
+   function toDifficultyExponent() internal returns(uint) {
+    
+    uint burnedTokensFract = tokensBurned.div(50); //the two percent of total burned tokens    
      for (uint t = 0; t < 232; t++) {
-       if ((2 ** uint(t)) * (10 ** uint(decimals)) >= tokens) return 232 - t;
+       if ((2 ** uint(t)) * (10 ** uint(decimals)) >= burnedTokensFract) return 232 - t;
      }
      return 0;
    }
@@ -724,7 +725,8 @@
 
    //gets the mining reward
    function getMiningReward() public view returns(uint) {
-     uint reward_amount = tokensBurned.div(50); //this is two percent of burned tokens
+     //the reward is 2% of the (_totalSupply - _currentSupply)  
+     uint reward_amount = (_totalSupply.sub(_currentSupply)).div(50); //this is two percent of burned tokens
 
      //the reward sum must not be greater than the generated amount of tokensGenerated
      if (reward_amount.add(currentSupply()) > totalSupply()) {
