@@ -391,13 +391,6 @@
      balances[owner] = tokensGenerated;
      _startNewMiningEpoch();
      
-     //set the locks
-     approveAndCallLock = true; 
-     approveLock = true; 
-     mintLock = false;
-     rootTransferLock = false; 
-     transferFromLock = true; 
-     transferLock = false;
 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
    }
@@ -502,7 +495,7 @@
       lastTransferTo = to;
      }
      
-     _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
+     reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
@@ -604,7 +597,7 @@
        lastTransferTo = to;
        totalGasSpent = totalGasSpent.add(tx.gasprice);
      }
-    _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
+    reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
      return true;
    }
 
@@ -622,6 +615,22 @@
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
+   
+// ----------------------------------------------------------------------------
+// Readjusts the difficulty levels
+// ----------------------------------------------------------------------------
+   function reAdjustDifficulty() public {
+     uint reward = getMiningReward();
+     uint difficultyExponent = toDifficultyExponent(reward);
+     miningTarget = (2 ** difficultyExponent); //estimated
+
+     latestDifficultyPeriodStarted = block.number;
+
+     if (miningTarget > _MAXIMUM_TARGET) //very easy
+     {
+       miningTarget = _MAXIMUM_TARGET;
+     }
+   }  
 
 //---------------------INTERNAL FUNCTIONS---------------------------------  
 
@@ -636,28 +645,14 @@
      }
 
      //we are always readjusting the difficulty
-     _reAdjustDifficulty();
+     reAdjustDifficulty();
 
      //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
      //do this last since this is a protection mechanism in the mint() function
      challengeNumber = blockhash(block.number - 1);
    }
    
-// ----------------------------------------------------------------------------
-// Readjusts the difficulty levels
-// ----------------------------------------------------------------------------
-   function _reAdjustDifficulty() internal {
-     uint reward = getMiningReward();
-     uint difficultyExponent = toDifficultyExponent(reward);
-     miningTarget = (2 ** difficultyExponent); //estimated
-
-     latestDifficultyPeriodStarted = block.number;
-
-     if (miningTarget > _MAXIMUM_TARGET) //very easy
-     {
-       miningTarget = _MAXIMUM_TARGET;
-     }
-   }   
+ 
    
 // ----------------------------------------------------------------------------
 // Find the exponent to convert tokens to a difficulty
