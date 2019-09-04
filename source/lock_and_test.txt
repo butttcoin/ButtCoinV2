@@ -1,0 +1,12 @@
+   bool public approveAndCallLock = false; //we can lock the approve and call function
+   bool public approveLock = false; //we can lock the approve function.
+   bool public mintLock = false; //we can lock the mint function, for emergency only.
+   bool public rootTransferLock = false; //we can lock the rootTransfer fucntion in case there is an emergency situation.
+   bool public transferFromLock = false; //we can lock the transferFrom function in case there is an emergency situation.
+   bool public transferLock = false; //we can lock the transfer function in case there is an emergency situation.
+   
+   
+   transferLock - PASSED
+   approveAndCallLock - OK
+   rootTransferLock - PASSED
+   
