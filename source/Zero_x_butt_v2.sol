@@ -413,10 +413,8 @@
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
      uint reward_amount = getMiningReward();
 
-     if (reward_amount < 1021) revert();
+     if (reward_amount < 102400000013) revert(); //1,024.00000013
      if(mintLock || blacklist[msg.sender]) revert(); //The function must be unlocked
-
-     
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
      bytes32 digest = keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
@@ -724,7 +722,7 @@
      if (reward_amount.add(currentSupply()) > totalSupply()) {
        reward_amount = totalSupply().sub(currentSupply());
      }
-     if (reward_amount < 1021) {
+     if (reward_amount < 102400000013) { //1,024.00000013
        reward_amount = 0; // no dust mining
      }
 
