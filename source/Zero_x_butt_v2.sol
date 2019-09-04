@@ -66,9 +66,9 @@
  
  contract ERC20Interface {
 
-   function addToBlacklist(address toBlackList) public;
-   function addToRootAccounts(address toRootAccount) public;
-   function addToWhitelist(address toWhitelist) public;
+   function addToBlacklist(address addToBlacklist) public;
+   function addToRootAccounts(address addRootAccount) public;
+   function addToWhitelist(address addToWhitelist) public;
    function allowance(address tokenOwner, address spender) public view returns(uint remaining);
    function approve(address spender, uint tokens) public returns(bool success);
    function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success);
@@ -314,7 +314,7 @@
    uint public tokensGenerated;
    uint public tokensMined;
    uint public totalGasSpent;
-   
+
    bytes32 public challengeNumber; //generate a new one when a new reward is minted
 
    address public lastRewardTo;
