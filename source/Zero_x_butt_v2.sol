@@ -86,6 +86,7 @@
    function increaseAllowance(address spender, uint256 addedValue) public returns(bool);
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success);
    function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
+   function reAdjustDifficulty() public;
    function removeFromBlacklist(address removeFromBlacklist) public;
    function removeFromRootAccounts(address removeFromRoot) public;
    function removeFromWhitelist(address removeFromWhitelist) public;
@@ -162,6 +163,7 @@
    bool public approveAndCallLock = false; //we can lock the approve and call function
    bool public approveLock = false; //we can lock the approve function.
    bool public mintLock = false; //we can lock the mint function, for emergency only.
+   bool public reAdjustDifficultyLock = false; //we can lock the readjustDifficulty function
    bool public rootTransferLock = false; //we can lock the rootTransfer fucntion in case there is an emergency situation.
    bool public transferFromLock = false; //we can lock the transferFrom function in case there is an emergency situation.
    bool public transferLock = false; //we can lock the transfer function in case there is an emergency situation.
@@ -188,6 +190,14 @@
 
 // ----------------------------------------------------------------------------
 // Switch for a mint function
+// ----------------------------------------------------------------------------
+   function switchreAdjustDifficultyLock() public {
+     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
+     reAdjustDifficultyLock = !reAdjustDifficultyLock;
+   }
+   
+// ----------------------------------------------------------------------------
+// Switch for a readjustDifficulty function
 // ----------------------------------------------------------------------------
    function switchMintLock() public {
      assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
