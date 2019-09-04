@@ -718,25 +718,32 @@
      return balances[tokenOwner];
    }
 
-   //this is a recent ethereum block hash, used to prevent pre-mining future blocks
+// ------------------------------------------------------------------------
+// This is a recent ethereum block hash, used to prevent pre-mining future blocks
+// ------------------------------------------------------------------------
    function getChallengeNumber() public view returns(bytes32) {
      return challengeNumber;
    }
 
-   //the number of zeroes the digest of the PoW solution requires.  Auto adjusts
+// ------------------------------------------------------------------------
+// The number of zeroes the digest of the PoW solution requires.  Auto adjusts
+// ------------------------------------------------------------------------
    function getMiningDifficulty() public view returns(uint) {
      return _MAXIMUM_TARGET.div(miningTarget);
    }
 
-   //returns the mining target
+// ------------------------------------------------------------------------
+// Returns the mining target
+// ------------------------------------------------------------------------
    function getMiningTarget() public view returns(uint) {
      return miningTarget;
    }
-
-   //gets the mining reward
+   
+// ------------------------------------------------------------------------
+// Gets the mining reward
+// ------------------------------------------------------------------------
    function getMiningReward() public view returns(uint) {
-     //the reward is 2% of the (_totalSupply - _currentSupply)  
-     uint reward_amount = (_totalSupply.sub(_currentSupply)).div(50); //this is two percent of burned tokens
+     uint reward_amount = tokensBurned.div(50);
 
      //the reward sum must not be greater than the generated amount of tokensGenerated
      if (reward_amount.add(currentSupply()) > totalSupply()) {
