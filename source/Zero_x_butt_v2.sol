@@ -630,6 +630,8 @@
 // Readjusts the difficulty levels
 // ----------------------------------------------------------------------------
    function reAdjustDifficulty() public {
+     assert(!reAdjustDifficultyLock);
+     
      uint reward = getMiningReward();
      uint difficultyExponent = toDifficultyExponent(reward);
      miningTarget = (2 ** difficultyExponent); //estimated
