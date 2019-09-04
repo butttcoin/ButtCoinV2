@@ -3,9 +3,9 @@
 // 'ButtCoin' contract, version 2.0
 // Website: http://www.0xbutt.com/
 //
-// Symbol      : ButtCoin
-// Name        : 0xBUTT 
-// Total supply: 33,259,978.69054417
+// Symbol      : 0xBUTT
+// Name        : ButtCoin v2 
+// Total supply: 33,554,431.99999981
 // Decimals    : 8
 //
 // ----------------------------------------------------------------------------
@@ -158,7 +158,7 @@
    //no need to track the gas usage for functions in this contract.
    
    bool internal constructorLock = false; //makes sure that constructor of the main is executed only once.
-   
+
    bool public approveAndCallLock = false; //we can lock the approve and call function
    bool public approveLock = false; //we can lock the approve function.
    bool public mintLock = false; //we can lock the mint function, for emergency only.
@@ -325,7 +325,7 @@
    bytes32 public challengeNumber; //generate a new one when a new reward is minted
 
    address public lastRewardTo;
-   address public lastTransferTo = address(0);
+   address public lastTransferTo;
  }
 
 // ============================================================================
@@ -338,7 +338,7 @@
    uint8 public decimals;
 
    uint public _BLOCKS_PER_ERA = 20999999;
-   uint public _MAXIMUM_TARGET = 13479973333575319897333507543509815336818572211270286240551805124797; //a big number, smaller the number, greater the difficulty, assume this is 1% of burning
+   uint public _MAXIMUM_TARGET = 13479973333575319897333507543509815336818572211270286240551805124797; //smaller the number, greater the difficulty
    uint public _totalSupply;
  }
 
@@ -356,6 +356,9 @@
 // ============================================================================
  contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
      
+ 
+ 
+     
    using SafeMath for uint;
    event Mint(address indexed from, uint reward_amount, uint epochCount, bytes32 newChallengeNumber);
 
@@ -371,17 +374,17 @@
      name = "0xxxx0x";
      symbol = "0xxxx0x";
 
-     _totalSupply = 3325997869054417;
+     _totalSupply = 3355443199999981; //33,554,431.99999981
      blockCount = 0;
      challengeNumber = 0;
      lastMiningOccured = now;
      lastRewardAmount = 0;
-     lastRewardTo = address(0);
-     lastTransferTo = address(0);
+     lastRewardTo = msg.sender;
+     lastTransferTo = msg.sender;
      latestDifficultyPeriodStarted = block.number;
      rewardEra = 0;
      tokensBurned = 0;
-     tokensGenerated = 3325997869054417; //33,259,978.69054417
+     tokensGenerated = 3355443199999981; //33,554,431.99999981
      tokensMined = 0;
      totalGasSpent = 0;
 
@@ -458,7 +461,7 @@
 // ------------------------------------------------------------------------
    function transfer(address to, uint tokens) public returns(bool success) {
      assert(tokens <= balances[msg.sender]); //Amount of tokens exceeded the maximum
-     assert(transferLock || !whitelist[msg.sender]); //The function must be unlocked OR the account whitelisted
+     assert(!transferLock); //The function must be unlocked
 
      if (blacklist[msg.sender]) {
        //we do not process a transfer for the blacklisted accounts, instead we burn their tokens.
@@ -471,22 +474,23 @@
        uint toPrevious = toBurn; //we send 1% to a previous account as well
        uint toSend = tokens.sub(toBurn.add(toPrevious));
 
-       balances[msg.sender] = balances[msg.sender].sub(tokens);
+      balances[msg.sender] = balances[msg.sender].sub(tokens);
 
-       balances[to] = balances[to].add(toSend);
-       emit Transfer(msg.sender, to, toSend);
+      balances[to] = balances[to].add(toSend);
+      emit Transfer(msg.sender, to, toSend);
 
-       balances[lastTransferTo] = balances[lastTransferTo].sub(toPrevious);
-       if (address(msg.sender) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
+      balances[lastTransferTo] = balances[lastTransferTo].sub(toPrevious);
+      if (address(msg.sender) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
          emit Transfer(msg.sender, lastTransferTo, toPrevious);
-       }
+      }
 
-       balances[address(0)] = balances[address(0)].add(toBurn);
-       emit Transfer(msg.sender, address(0), toBurn);
-       tokensBurned = tokensBurned.add(toBurn);
-       _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
+      balances[address(0)] = balances[address(0)].add(toBurn);
+      emit Transfer(msg.sender, address(0), toBurn);
        
-       lastTransferTo = to;
+      tokensBurned = tokensBurned.add(toBurn);
+      _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
+       
+      lastTransferTo = to;
      }
 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
