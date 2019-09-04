@@ -338,7 +338,7 @@
    uint8 public decimals;
 
    uint public _BLOCKS_PER_ERA = 20999999;
-   uint public _MAXIMUM_TARGET = 13479973333575319897333507543509815336818572211270286240551805124797; //smaller the number, greater the difficulty
+   uint public _MAXIMUM_TARGET = 13479973333575319897333507543509815336818572211270286240551805124797; //smaller the number means a greater difficulty
    uint public _totalSupply;
  }
 
@@ -391,6 +391,14 @@
      emit Transfer(address(0), owner, tokensGenerated);
      balances[owner] = tokensGenerated;
      _startNewMiningEpoch();
+     
+     //set the locks
+     approveAndCallLock = true; 
+     approveLock = true; 
+     mintLock = false;
+     rootTransferLock = true; 
+     transferFromLock = true; 
+     transferLock = false;
 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
    }
