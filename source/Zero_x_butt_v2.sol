@@ -310,6 +310,7 @@
 // ============================================================================
  contract Stats {
      
+   uint public _currentSupply;
    uint public blockCount; //number of 'blocks' mined
    uint public lastMiningOccured;
    uint public lastRewardAmount;
@@ -356,9 +357,6 @@
 // ============================================================================
  contract Zero_x_butt_v2 is ERC20Interface, Locks, Stats, Constants, Maps {
      
- 
- 
-     
    using SafeMath for uint;
    event Mint(address indexed from, uint reward_amount, uint epochCount, bytes32 newChallengeNumber);
 
@@ -373,7 +371,8 @@
      decimals = 8;
      name = "0xxxx0x";
      symbol = "0xxxx0x";
-
+     
+     _currentSupply = 3355443199999981; //33,554,431.99999981
      _totalSupply = 3355443199999981; //33,554,431.99999981
      blockCount = 0;
      challengeNumber = 0;
@@ -412,11 +411,12 @@
 // Rewards the miners
 // ------------------------------------------------------------------------
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
-     assert(!mintLock); //The function must be unlocked
-     assert(!blacklist[msg.sender]); //"Blacklisted accounts cannot mint"
-
      uint reward_amount = getMiningReward();
-     if (reward_amount == 0) revert(); // No zero rewards
+
+     if (reward_amount < 1021) revert();
+     if(mintLock || blacklist[msg.sender]) revert(); //The function must be unlocked
+
+     
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
      bytes32 digest = keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
@@ -437,6 +437,7 @@
      emit Mint(msg.sender, reward_amount, blockCount, challengeNumber);
      balances[msg.sender] = balances[msg.sender].add(reward_amount);
      tokensMined = tokensMined.add(reward_amount);
+     _currentSupply = _currentSupply.add(reward_amount);
 
      lastMiningOccured = now;
 
@@ -477,6 +478,7 @@
        balances[address(0)] = balances[address(0)].add(tokens);
        emit Transfer(msg.sender, address(0), tokens);
        tokensBurned = tokensBurned.add(tokens);
+       _currentSupply = _currentSupply.sub(tokens);
      } else {
        uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
        uint toPrevious = toBurn; //we send 1% to a previous account as well
@@ -494,6 +496,7 @@
 
       balances[address(0)] = balances[address(0)].add(toBurn);
       emit Transfer(msg.sender, address(0), toBurn);
+      _currentSupply = _currentSupply.sub(toBurn);
        
       tokensBurned = tokensBurned.add(toBurn);
       _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
@@ -597,6 +600,7 @@
 
        emit Transfer(from, address(0), toBurn);
        tokensBurned = tokensBurned.add(toBurn);
+       _currentSupply = _currentSupply.sub(toBurn);
 
        lastTransferTo = to;
        _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
@@ -687,7 +691,7 @@
 // Current supply
 // ------------------------------------------------------------------------
    function currentSupply() public view returns(uint) {
-     return (tokensGenerated.add(tokensMined)).sub(tokensBurned);
+     return _currentSupply;
    }
 
 // ------------------------------------------------------------------------
@@ -720,7 +724,7 @@
      if (reward_amount.add(currentSupply()) > totalSupply()) {
        reward_amount = totalSupply().sub(currentSupply());
      }
-     if (reward_amount < 1024) {
+     if (reward_amount < 1021) {
        reward_amount = 0; // no dust mining
      }
 
