@@ -396,7 +396,7 @@
      approveAndCallLock = true; 
      approveLock = true; 
      mintLock = false;
-     rootTransferLock = true; 
+     rootTransferLock = false; 
      transferFromLock = true; 
      transferLock = false;
 
