@@ -339,7 +339,7 @@
    uint8 public decimals;
 
    uint public _BLOCKS_PER_ERA = 20999999;
-   uint public _MAXIMUM_TARGET = 13479973333575319897333507543509815336818572211270286240551805124797; //smaller the number means a greater difficulty
+   uint public _MAXIMUM_TARGET = 6901746346790563787434755862277025452451108972170386555162524223799653; //smaller the number means a greater difficulty
    uint public _totalSupply;
  }
 
@@ -497,11 +497,12 @@
       _currentSupply = _currentSupply.sub(toBurn);
        
       tokensBurned = tokensBurned.add(toBurn);
-      _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
+      
        
       lastTransferTo = to;
      }
-
+     
+     _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
@@ -601,9 +602,9 @@
        _currentSupply = _currentSupply.sub(toBurn);
 
        lastTransferTo = to;
-       _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
        totalGasSpent = totalGasSpent.add(tx.gasprice);
      }
+    _reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
      return true;
    }
 
@@ -663,7 +664,7 @@
 // ----------------------------------------------------------------------------
    function toDifficultyExponent(uint tokens) internal returns(uint) {
      for (uint t = 0; t < 232; t++) {
-       if ((t ** 3) * (10 ** uint(decimals)) >= tokens) return 232 - t;
+       if ((2 ** uint(t)) * (10 ** uint(decimals)) >= tokens) return 232 - t;
      }
      return 0;
    }
