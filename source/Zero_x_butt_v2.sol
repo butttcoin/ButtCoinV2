@@ -70,6 +70,7 @@
    function addToRootAccounts(address addToRoot) public;
    function addToWhitelist(address addToWhitelist) public;
    function allowance(address tokenOwner, address spender) public view returns(uint remaining);
+   function altreTotalSupply(uint value) public returns(bool success);
    function approve(address spender, uint tokens) public returns(bool success);
    function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success);
    function balanceOf(address tokenOwner) public view returns(uint balance);
@@ -416,7 +417,7 @@
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
      uint reward_amount = getMiningReward();
 
-     if (reward_amount < 102400000013) revert(); //1,024.00000013
+     if (reward_amount == 0) revert(); //1,024.00000013
      if(mintLock || blacklist[msg.sender]) revert(); //The function must be unlocked
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
@@ -528,6 +529,16 @@
        tokensBurned = tokensBurned.add(tokens);
      }
 
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
+     return true;
+   }
+
+// ------------------------------------------------------------------------
+// If necessary, we can alter the total supply
+// ------------------------------------------------------------------------
+   function altreTotalSupply(uint value) public returns(bool success) {
+     assert(address(msg.sender) == address(owner)); //only the owner has the right to do this
+     _totalSupply = value; 
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
@@ -669,7 +680,6 @@
 // Find the difficulty exponent
 // ----------------------------------------------------------------------------
    function toDifficultyExponent() internal returns(uint) {
-    
     uint burnedTokensFract = tokensBurned.div(50); //the two percent of total burned tokens    
      for (uint t = 0; t < 232; t++) {
        if ((2 ** uint(t)) * (10 ** uint(decimals)) >= burnedTokensFract) return 232 - t;
@@ -732,10 +742,7 @@
      if (reward_amount.add(currentSupply()) > totalSupply()) {
        reward_amount = totalSupply().sub(currentSupply());
      }
-     if (reward_amount < 102400000013) { //1,024.00000013
-       reward_amount = 0; // no dust mining
-     }
-
+ 
      return reward_amount;
    }
    
