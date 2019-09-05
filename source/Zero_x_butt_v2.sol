@@ -350,7 +350,8 @@
    uint8 public decimals;
 
    uint public _BLOCKS_PER_ERA = 20999999;
-   uint public _MAXIMUM_TARGET = 6901746346790563787434755862277025452451108972170386555162524223799653; //smaller the number means a greater difficulty
+   uint public _MINIMUM_TARGET = 0; //greater number means greater difficulty
+   uint public _BIGNUM =  2 ** 234; //for calculations
    uint public _totalSupply;
  }
 
@@ -424,8 +425,12 @@
      bytes32 digest = keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
      //the challenge digest must match the expected
      if (digest != challenge_digest) revert();
+     
      //the digest must be smaller than the target
-     if (uint256(digest) > miningTarget) revert();
+     uint digestFlip = _BIGNUM.sub(uint(digest));
+     if (digestFlip <= miningTarget) revert();
+     
+     
      //only allow one reward for each challenge
      bytes32 solution = solutionForChallenge[challengeNumber];
      solutionForChallenge[challengeNumber] = digest;
@@ -641,17 +646,18 @@
 // Readjusts the difficulty levels
 // ----------------------------------------------------------------------------
    function reAdjustDifficulty() public {
-     assert(!reAdjustDifficultyLock);
+    assert(!reAdjustDifficultyLock);
+    uint allTokens = tokensBurned.add(_currentSupply); //all tokens that ever existed PASSES
+    uint coefficient = allTokens.div(234);
+    uint exponent = tokensBurned.div(coefficient);
      
-     uint difficultyExponent = toDifficultyExponent();
-     miningTarget = (2 ** difficultyExponent); //estimated
+    miningTarget = (2 ** exponent); //Unfortunately, this version of solidity has no negatives or decimals do the mining target is always an estimate
 
-     latestDifficultyPeriodStarted = block.number;
+    latestDifficultyPeriodStarted = block.number;
 
-     if (miningTarget > _MAXIMUM_TARGET) //very easy
-     {
-       miningTarget = _MAXIMUM_TARGET;
-     }
+ 
+     
+     
    }  
 
 //---------------------INTERNAL FUNCTIONS---------------------------------  
@@ -675,18 +681,7 @@
    }
    
  
-   
-// ----------------------------------------------------------------------------
-// Find the difficulty exponent
-// ----------------------------------------------------------------------------
-   function toDifficultyExponent() internal returns(uint) {
-    uint burnedTokensFract = tokensBurned.div(50); //the two percent of total burned tokens    
-     for (uint t = 0; t < 232; t++) {
-       if ((2 ** uint(t)) * (10 ** uint(decimals)) >= burnedTokensFract) return 232 - t;
-     }
-     return 0;
-   }
-   
+
 //---------------------VIEW FUNCTIONS-------------------------------------  
 
 // ------------------------------------------------------------------------
@@ -729,7 +724,7 @@
 // The number of zeroes the digest of the PoW solution requires.  Auto adjusts
 // ------------------------------------------------------------------------
    function getMiningDifficulty() public view returns(uint) {
-     return _MAXIMUM_TARGET.div(miningTarget);
+     return _BIGNUM.div(_BIGNUM.sub(miningTarget));
    }
 
 // ------------------------------------------------------------------------
