@@ -393,7 +393,7 @@
      lastRewardTo = msg.sender;
      lastTransferTo = msg.sender;
      latestDifficultyPeriodStarted = block.number;
-     rewardEra = 0;
+     rewardEra = 1;
      tokensBurned = 0;
      tokensGenerated = 3355443199999981; //33,554,431.99999981
      tokensMined = 0;
@@ -647,21 +647,22 @@
 // ----------------------------------------------------------------------------
    function reAdjustDifficulty() public {
     assert(!reAdjustDifficultyLock);
-    uint allTokens = tokensBurned.add(_currentSupply); //all tokens that ever existed PASSES
-    uint coefficient = allTokens.div(234);
-    uint exponent = tokensBurned.div(coefficient);
-     
-    miningTarget = (2 ** exponent); //Unfortunately, this version of solidity has no negatives or decimals do the mining target is always an estimate
+
+    miningTarget = (2 ** getDifficultyExponent()); //Unfortunately, this version of solidity has no negatives or decimals so the mining target is always an estimate
 
     latestDifficultyPeriodStarted = block.number;
-
- 
-     
-     
    }  
 
 //---------------------INTERNAL FUNCTIONS---------------------------------  
-
+   function getDifficultyExponent() internal returns (uint) {
+       
+       uint tokens = (getMiningReward().div(10 ** decimals)).mul(rewardEra); //each era is harder
+       for(uint t=0;t<235;t++){
+           if( (2 ** t) >= tokens) {return t;}
+       }
+       return 234;
+       
+   }
 // ----------------------------------------------------------------------------
 // A new block epoch to be mined
 // ----------------------------------------------------------------------------
@@ -738,9 +739,9 @@
 // Gets the mining reward
 // ------------------------------------------------------------------------
    function getMiningReward() public view returns(uint) {
-     uint reward_amount = tokensBurned.div(50);
+     uint reward_amount = tokensBurned.div(50); //2% of all tokens that were burned, ever.
 
-     //the reward sum must not be greater than the generated amount of tokensGenerated
+     //the reward sum must not be greater than the total suply
      if (reward_amount.add(currentSupply()) > totalSupply()) {
        reward_amount = totalSupply().sub(currentSupply());
      }
