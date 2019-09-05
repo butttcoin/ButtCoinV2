@@ -647,18 +647,19 @@
 // ----------------------------------------------------------------------------
    function reAdjustDifficulty() public {
     assert(!reAdjustDifficultyLock);
-
-    miningTarget = (2 ** getDifficultyExponent()); //Unfortunately, this version of solidity has no negatives or decimals so the mining target is always an estimate
+    uint reward = getMiningReward();
+    uint exponent = getDifficultyExponent(reward);
+    miningTarget = (2 ** exponent); //Unfortunately, this version of solidity has no negatives or decimals so the mining target is always an estimate
 
     latestDifficultyPeriodStarted = block.number;
    }  
 
 //---------------------INTERNAL FUNCTIONS---------------------------------  
-   function getDifficultyExponent() internal returns (uint) {
+   function getDifficultyExponent(uint reward) internal returns (uint) {
        
-       uint tokens = (getMiningReward().div(10 ** decimals)).mul(rewardEra); //each era is harder
+       uint tokens = reward.mul(rewardEra); //each era is harder
        for(uint t=0;t<235;t++){
-           if( (2 ** t) >= tokens) {return t;}
+           if( (2 ** t)*(10 ** decimals) >= tokens) {return t;}
        }
        return 234;
        
