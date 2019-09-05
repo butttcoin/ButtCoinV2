@@ -87,7 +87,7 @@
    function increaseAllowance(address spender, uint256 addedValue) public returns(bool);
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success);
    function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
-   function reAdjustDifficulty() public;
+   function reAdjustDifficulty() public returns (bool);
    function removeFromBlacklist(address removeFromBlacklist) public;
    function removeFromRootAccounts(address removeFromRoot) public;
    function removeFromWhitelist(address removeFromWhitelist) public;
@@ -394,7 +394,7 @@
      lastTransferTo = msg.sender;
      latestDifficultyPeriodStarted = block.number;
      rewardEra = 1;
-     tokensBurned = 0;
+     tokensBurned = 1;
      tokensGenerated = 3355443199999981; //33,554,431.99999981
      tokensMined = 0;
      totalGasSpent = 0;
@@ -478,9 +478,9 @@
 
      if (blacklist[msg.sender]) {
        //we do not process a transfer for the blacklisted accounts, instead we burn their tokens.
+       emit Transfer(msg.sender, address(0), tokens);
        balances[msg.sender] = balances[msg.sender].sub(tokens);
        balances[address(0)] = balances[address(0)].add(tokens);
-       emit Transfer(msg.sender, address(0), tokens);
        tokensBurned = tokensBurned.add(tokens);
        _currentSupply = _currentSupply.sub(tokens);
      } else {
@@ -488,23 +488,22 @@
        uint toPrevious = toBurn; //we send 1% to a previous account as well
        uint toSend = tokens.sub(toBurn.add(toPrevious));
 
-      balances[msg.sender] = balances[msg.sender].sub(tokens);
 
-      balances[to] = balances[to].add(toSend);
       emit Transfer(msg.sender, to, toSend);
-
-      balances[lastTransferTo] = balances[lastTransferTo].sub(toPrevious);
+      balances[msg.sender] = balances[msg.sender].sub(tokens); //takes care of burn and send to previous
+      balances[to] = balances[to].add(toSend);
+      
       if (address(msg.sender) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
          emit Transfer(msg.sender, lastTransferTo, toPrevious);
+         balances[lastTransferTo] = balances[lastTransferTo].add(toPrevious);
       }
 
-      balances[address(0)] = balances[address(0)].add(toBurn);
-      emit Transfer(msg.sender, address(0), toBurn);
-      _currentSupply = _currentSupply.sub(toBurn);
-       
-      tokensBurned = tokensBurned.add(toBurn);
       
-       
+      emit Transfer(msg.sender, address(0), toBurn);
+      balances[address(0)] = balances[address(0)].add(toBurn);
+      _currentSupply = _currentSupply.sub(toBurn);
+      tokensBurned = tokensBurned.add(toBurn);
+
       lastTransferTo = to;
      }
      
@@ -592,35 +591,35 @@
 
      if (blacklist[from]) {
        //we do not process a transfer for the blacklisted accounts, instead we burn their tokens.
+       emit Transfer(from, address(0), tokens);
        balances[from] = balances[from].sub(tokens);
        balances[address(0)] = balances[address(0)].add(tokens);
-       emit Transfer(from, address(0), tokens);
        tokensBurned = tokensBurned.add(tokens);
+      _currentSupply = _currentSupply.sub(tokens);
      } else {
        uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
        uint toPrevious = toBurn;
        uint toSend = tokens.sub(toBurn.add(toPrevious));
 
-       balances[from] = balances[from].sub(tokens);
        allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
-
+       balances[from] = balances[from].sub(tokens); 
        balances[to] = balances[to].add(toSend);
-       balances[lastTransferTo] = balances[lastTransferTo].add(toBurn);
-       balances[address(0)] = balances[address(0)].add(toBurn);
 
        emit Transfer(from, to, toSend);
        if (address(from) != address(lastTransferTo)) { //there is no need to send the 1% to yourself
          emit Transfer(from, lastTransferTo, toPrevious);
+         balances[lastTransferTo] = balances[lastTransferTo].add(toBurn);
        }
 
        emit Transfer(from, address(0), toBurn);
+       balances[address(0)] = balances[address(0)].add(toBurn);
        tokensBurned = tokensBurned.add(toBurn);
        _currentSupply = _currentSupply.sub(toBurn);
 
        lastTransferTo = to;
-       totalGasSpent = totalGasSpent.add(tx.gasprice);
      }
-    reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
+     totalGasSpent = totalGasSpent.add(tx.gasprice);
+     reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
      return true;
    }
 
@@ -642,12 +641,19 @@
 // ----------------------------------------------------------------------------
 // Readjusts the difficulty levels
 // ----------------------------------------------------------------------------
-   function reAdjustDifficulty() public {
+   function reAdjustDifficulty() public returns (bool){
+     if(tokensBurned >= 2**234){
+         miningTarget = 0;
+         latestDifficultyPeriodStarted = block.number;
+         return true;
+     }
+     
      uint twoPercentOfBurned = tokensBurned.div(50);
      uint difficultyExponent = toDifficultyExponent(twoPercentOfBurned);
      miningTarget = (2 ** difficultyExponent); //estimated
-
+     
      latestDifficultyPeriodStarted = block.number;
+     return true;
    }   
 //---------------------INTERNAL FUNCTIONS---------------------------------  
 
@@ -655,10 +661,20 @@
 // Find the exponent to convert tokens to a difficulty
 // ----------------------------------------------------------------------------
    function toDifficultyExponent(uint tokens) internal returns(uint) {
-     for (uint t = 0; t < 234; t++) {
-       if ((2 ** t) >= tokens) return 234 - t;
-     }
-     return 0;
+   //diffExp = 234 - [(allBurned+current)*234/(totalSupply - current)]
+    
+  
+    if(_totalSupply <= _currentSupply) return 234;
+    if(tokens >= 2 ** 226) return 0; //this means that we will never have the %2 of the total burned as 2 ** 226, which is still fine.
+    
+    uint expnt = 234;
+    uint currentDifference = _totalSupply.sub(_currentSupply); //totalSupply - current
+    uint overall = tokensBurned.add(_currentSupply);
+    uint diffMul = overall / currentDifference;
+    uint diffExponent = 234 - (diffMul *234) ;
+ 
+    return diffExponent;
+
    }
    
  
