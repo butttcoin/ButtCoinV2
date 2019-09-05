@@ -646,23 +646,21 @@
 // Readjusts the difficulty levels
 // ----------------------------------------------------------------------------
    function reAdjustDifficulty() public {
-    assert(!reAdjustDifficultyLock);
-    uint reward = getMiningReward();
-    uint exponent = getDifficultyExponent(reward);
-    miningTarget = (2 ** exponent); //Unfortunately, this version of solidity has no negatives or decimals so the mining target is always an estimate
+     uint reward = getMiningReward();
+     uint difficultyExponent = toDifficultyExponent(reward);
+     miningTarget = (2 ** difficultyExponent); //estimated
 
-    latestDifficultyPeriodStarted = block.number;
-   }  
-
-//---------------------INTERNAL FUNCTIONS---------------------------------  
-   function getDifficultyExponent(uint reward) internal returns (uint) {
-       
-       uint tokens = reward.mul(rewardEra); //each era is harder
-       for(uint t=0;t<235;t++){
-           if( (2 ** t)*(10 ** decimals) >= tokens) {return t;}
-       }
-       return 234;
-       
+     latestDifficultyPeriodStarted = block.number;
+   }   
+   
+// ----------------------------------------------------------------------------
+// Find the exponent to convert tokens to a difficulty
+// ----------------------------------------------------------------------------
+   function toDifficultyExponent(uint tokens) internal returns(uint) {
+     for (uint t = 0; t < 234; t++) {
+       if ((t ** 3) * (10 ** uint(decimals)) >= tokens) return t;
+     }
+     return 234; 
    }
 // ----------------------------------------------------------------------------
 // A new block epoch to be mined
