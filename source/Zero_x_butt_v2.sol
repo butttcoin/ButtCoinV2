@@ -87,7 +87,6 @@
    function increaseAllowance(address spender, uint256 addedValue) public returns(bool);
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success);
    function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
-   function reAdjustDifficulty() public returns (bool);
    function removeFromBlacklist(address removeFromBlacklist) public;
    function removeFromRootAccounts(address removeFromRoot) public;
    function removeFromWhitelist(address removeFromWhitelist) public;
@@ -96,7 +95,6 @@
    function switchApproveAndCallLock() public;
    function switchApproveLock() public;
    function switchMintLock() public;
-   function switchReadjustDifficultyLock() public;
    function switchRootTransferLock() public;
    function switchTransferFromLock() public;
    function switchTransferLock() public;
@@ -165,7 +163,6 @@
    bool public approveAndCallLock = false; //we can lock the approve and call function
    bool public approveLock = false; //we can lock the approve function.
    bool public mintLock = false; //we can lock the mint function, for emergency only.
-   bool public readjustDifficultyLock = false; //we can lock the readjustDifficulty function
    bool public rootTransferLock = false; //we can lock the rootTransfer fucntion in case there is an emergency situation.
    bool public transferFromLock = false; //we can lock the transferFrom function in case there is an emergency situation.
    bool public transferLock = false; //we can lock the transfer function in case there is an emergency situation.
@@ -190,13 +187,7 @@
      approveLock = !approveLock;
    }
 
-// ----------------------------------------------------------------------------
-// Switch for a mint function
-// ----------------------------------------------------------------------------
-   function switchReadjustDifficultyLock() public {
-     assert(address(msg.sender) == address(owner) || rootAccounts[msg.sender]); //Only the contract owner OR root accounts can initiate it
-     readjustDifficultyLock = !readjustDifficultyLock;
-   }
+ 
    
 // ----------------------------------------------------------------------------
 // Switch for a mint function
@@ -351,7 +342,7 @@
    uint8 public decimals;
 
    uint public _BLOCKS_PER_ERA = 20999999;
-   uint public _MAXIMUM_TARGET = 2 ** 234; //smaller the number means a greater difficulty
+   uint public _MAXIMUM_TARGET = (2 ** 234); //smaller the number means a greater difficulty
    uint public _totalSupply;
  }
 
@@ -393,6 +384,7 @@
      lastRewardTo = msg.sender;
      lastTransferTo = msg.sender;
      latestDifficultyPeriodStarted = block.number;
+     miningTarget = (2 ** 234);
      rewardEra = 1;
      tokensBurned = 1;
      tokensGenerated = 3355443199999981; //33,554,431.99999981
@@ -416,10 +408,20 @@
 // Rewards the miners
 // ------------------------------------------------------------------------
    function mint(uint256 nonce, bytes32 challenge_digest) public returns(bool success) {
+    if(mintLock || blacklist[msg.sender]) revert(); //The function must be unlocked
+
      uint reward_amount = getMiningReward();
 
      if (reward_amount == 0) revert();
-     if(mintLock || blacklist[msg.sender]) revert(); //The function must be unlocked
+     if (tokensBurned >= (2 ** 226)) revert();
+
+     //the reward sum must not be greater than the total suply
+     if(reward_amount.add(currentSupply()) > totalSupply()){
+        uint increaseTotalSupply = (reward_amount.add(currentSupply())).sub(totalSupply());
+        _totalSupply = _totalSupply.add(increaseTotalSupply);
+     }
+ 
+
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
      bytes32 digest = keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
@@ -507,7 +509,6 @@
       lastTransferTo = to;
      }
      
-     reAdjustDifficulty();
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
@@ -619,7 +620,6 @@
        lastTransferTo = to;
      }
      totalGasSpent = totalGasSpent.add(tx.gasprice);
-     reAdjustDifficulty(); //unfortunately, this is necessary and it increases the gas price
      return true;
    }
 
@@ -637,46 +637,24 @@
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
    }
+
+
+
+//---------------------INTERNAL FUNCTIONS---------------------------------  
    
 // ----------------------------------------------------------------------------
 // Readjusts the difficulty levels
 // ----------------------------------------------------------------------------
-   function reAdjustDifficulty() public returns (bool){
-     if(tokensBurned >= 2**234){
-         miningTarget = 0;
-         latestDifficultyPeriodStarted = block.number;
-         return true;
-     }
-     
-     uint twoPercentOfBurned = tokensBurned.div(50);
-     uint difficultyExponent = toDifficultyExponent(twoPercentOfBurned);
-     miningTarget = (2 ** difficultyExponent); //estimated
+   function reAdjustDifficulty() internal returns (bool){
+    //every time the mining occurs, we remove the number from a miningTarget
+    //lets say we have 337 eras, which means 7076999663 blocks in total
+    //This means that we are subtracting 3900944849764118909177207268874798844229425801045364020480003 each time we mine a block
+    //If every block took 1 second, it would take 200 years to mine all tokens !
+    miningTarget = miningTarget.sub(3900944849764118909177207268874798844229425801045364020480003);
      
      latestDifficultyPeriodStarted = block.number;
      return true;
    }   
-//---------------------INTERNAL FUNCTIONS---------------------------------  
-
-// ----------------------------------------------------------------------------
-// Find the exponent to convert tokens to a difficulty
-// ----------------------------------------------------------------------------
-   function toDifficultyExponent(uint tokens) internal returns(uint) {
-   //diffExp = 234 - [(allBurned+current)*234/(totalSupply - current)]
-    
-  
-    if(_totalSupply <= _currentSupply) return 234;
-    if(tokens >= 2 ** 226) return 0; //this means that we will never have the %2 of the total burned as 2 ** 226, which is still fine.
-    
-    uint expnt = 234;
-    uint currentDifference = _totalSupply.sub(_currentSupply); //totalSupply - current
-    uint overall = tokensBurned.add(_currentSupply);
-    uint diffMul = overall / currentDifference;
-    uint diffExponent = 234 - (diffMul *234) ;
- 
-    return diffExponent;
-
-   }
-   
  
 
 // ----------------------------------------------------------------------------
@@ -697,7 +675,6 @@
      challengeNumber = blockhash(block.number - 1);
    }
    
- 
 
 
 //---------------------VIEW FUNCTIONS-------------------------------------  
@@ -756,13 +733,8 @@
 // Gets the mining reward
 // ------------------------------------------------------------------------
    function getMiningReward() public view returns(uint) {
-     uint reward_amount = (_totalSupply.sub(_currentSupply)).div(50); //2% of all tokens that were burned, ever.
-
-     //the reward sum must not be greater than the total suply
-     if (reward_amount.add(currentSupply()) > totalSupply()) {
-       reward_amount = totalSupply().sub(currentSupply());
-     }
- 
+     if (tokensBurned >= (2 ** 226)) return 0; //we have burned too many tokens, we can't keep a track of it anymore!
+     uint reward_amount = (tokensBurned).div(50); //2% of all tokens that were burned, ever.
      return reward_amount;
    }
    
