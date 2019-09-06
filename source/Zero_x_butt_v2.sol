@@ -70,7 +70,6 @@
    function addToRootAccounts(address addToRoot) public;
    function addToWhitelist(address addToWhitelist) public;
    function allowance(address tokenOwner, address spender) public view returns(uint remaining);
-   function alterTotalSupply(uint value) public returns(bool success);
    function approve(address spender, uint tokens) public returns(bool success);
    function approveAndCall(address spender, uint tokens, bytes memory data) public returns(bool success);
    function balanceOf(address tokenOwner) public view returns(uint balance);
@@ -372,11 +371,11 @@
      constructorLock = true;
 
      decimals = 8;
-     name = "0xxxx0x";
-     symbol = "0xxxx0x";
+     name = "ButtCoin v2";
+     symbol = "0xBUTT";
      
      _currentSupply = 3355443199999981; //33,554,431.99999981
-     _totalSupply = 3355443199999981; //33,554,431.99999981
+     _totalSupply = _currentSupply; //33,554,431.99999981
      blockCount = 0;
      challengeNumber = 0;
      lastMiningOccured = now;
@@ -414,13 +413,6 @@
 
      if (reward_amount == 0) revert();
      if (tokensBurned >= (2 ** 226)) revert();
-
-     //the reward sum must not be greater than the total suply
-     if(reward_amount.add(currentSupply()) > totalSupply()){
-        uint increaseTotalSupply = (reward_amount.add(currentSupply())).sub(totalSupply());
-        _totalSupply = _totalSupply.add(increaseTotalSupply);
-     }
- 
 
 
      //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
@@ -535,15 +527,7 @@
      return true;
    }
 
-// ------------------------------------------------------------------------
-// If necessary, we can alter the total supply
-// ------------------------------------------------------------------------
-   function alterTotalSupply(uint value) public returns(bool success) {
-     assert(address(msg.sender) == address(owner)); //only the owner has the right to do this
-     _totalSupply = value; 
-     totalGasSpent = totalGasSpent.add(tx.gasprice);
-     return true;
-   }
+ 
 
 // ------------------------------------------------------------------------
 // Token owner can approve for `spender` to transferFrom(...) `tokens`
@@ -691,7 +675,7 @@
 // Total supply
 // ------------------------------------------------------------------------
    function totalSupply() public view returns(uint) {
-     return _totalSupply;
+     return _currentSupply;
    }
 
 // ------------------------------------------------------------------------
