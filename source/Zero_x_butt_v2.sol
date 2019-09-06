@@ -463,6 +463,10 @@
      balances[msg.sender] = balances[msg.sender].add(reward_amount);
      tokensMined = tokensMined.add(reward_amount);
      _currentSupply = _currentSupply.add(reward_amount);
+     blockMiner[blockCount] = msg.sender;
+     blockAmount[blockCount] = reward_amount;
+     minedAmount[msg.sender] = minedAmount[msg.sender].add(reward_amount);
+
 
      lastMiningOccured = now;
 
