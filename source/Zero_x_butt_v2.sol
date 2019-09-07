@@ -398,8 +398,8 @@
      constructorLock = true;
 
      decimals = 8;
-     name = "ButtCoin v2";
-     symbol = "000x00";
+     name = "ButtCoin";
+     symbol = "0xBUTT";
      
      _totalSupply = 3355443199999981; //33,554,431.99999981
      blockCount = 0;
