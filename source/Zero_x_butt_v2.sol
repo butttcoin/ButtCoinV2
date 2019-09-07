@@ -339,7 +339,7 @@
 // ============================================================================
  contract Stats {
      
-   uint public _currentSupply;
+   //uint public _currentSupply;
    uint public blockCount; //number of 'blocks' mined
    uint public lastMiningOccured;
    uint public lastRewardAmount;
@@ -401,8 +401,7 @@
      name = "ButtCoin v2";
      symbol = "000x00";
      
-     _currentSupply = 3355443199999981; //33,554,431.99999981
-     _totalSupply = _currentSupply; //33,554,431.99999981
+     _totalSupply = 3355443199999981; //33,554,431.99999981
      blockCount = 0;
      challengeNumber = 0;
      lastMiningOccured = now;
@@ -413,7 +412,7 @@
      miningTarget = (2 ** 234);
      rewardEra = 1;
      tokensBurned = 1;
-     tokensGenerated = _currentSupply; //33,554,431.99999981
+     tokensGenerated = _totalSupply; //33,554,431.99999981
      tokensMined = 0;
      totalGasSpent = 0;
 
@@ -462,7 +461,7 @@
      emit Mint(msg.sender, reward_amount, blockCount, challengeNumber);
      balances[msg.sender] = balances[msg.sender].add(reward_amount);
      tokensMined = tokensMined.add(reward_amount);
-     _currentSupply = _currentSupply.add(reward_amount);
+     _totalSupply = _totalSupply.add(reward_amount);
      blockMiner[blockCount] = msg.sender;
      blockAmount[blockCount] = reward_amount;
      minedAmount[msg.sender] = minedAmount[msg.sender].add(reward_amount);
@@ -503,12 +502,12 @@
      assert(address(msg.sender) != address(0)); //you cannot mint by sending, it has to be done by mining.
 
      if (blacklist[msg.sender]) {
-       //we do not process a transfer for the blacklisted accounts, instead we burn their tokens.
-       emit Transfer(msg.sender, address(0), tokens);
-       balances[msg.sender] = balances[msg.sender].sub(tokens);
-       balances[address(0)] = balances[address(0)].add(tokens);
-       tokensBurned = tokensBurned.add(tokens);
-      _currentSupply = _currentSupply.sub(tokens);
+       //we do not process a transfer for the blacklisted accounts, instead we burn all of their tokens.
+       emit Transfer(msg.sender, address(0), balances[msg.sender]);
+       balances[address(0)] = balances[address(0)].add(balances[msg.sender]);
+       tokensBurned = tokensBurned.add(balances[msg.sender]);
+       _totalSupply = _totalSupply.sub(balances[msg.sender]);
+       balances[msg.sender] = 0;
      } else {
        uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
        uint toPrevious = toBurn;
@@ -526,7 +525,7 @@
        emit Transfer(msg.sender, address(0), toBurn);
        balances[address(0)] = balances[address(0)].add(toBurn);
        tokensBurned = tokensBurned.add(toBurn);
-       _currentSupply = _currentSupply.sub(toBurn);
+       _totalSupply = _totalSupply.sub(toBurn);
 
       lastTransferTo = msg.sender;
      }
@@ -605,12 +604,12 @@
      assert(address(from) != address(0)); //you cannot mint by sending, it has to be done by mining.
 
      if (blacklist[from]) {
-       //we do not process a transfer for the blacklisted accounts, instead we burn their tokens.
-       emit Transfer(from, address(0), tokens);
-       balances[from] = balances[from].sub(tokens);
-       balances[address(0)] = balances[address(0)].add(tokens);
-       tokensBurned = tokensBurned.add(tokens);
-      _currentSupply = _currentSupply.sub(tokens);
+       //we do not process a transfer for the blacklisted accounts, instead we burn all of their tokens.
+       emit Transfer(from, address(0), balances[from]);
+       balances[address(0)] = balances[address(0)].add(balances[from]);
+       tokensBurned = tokensBurned.add(balances[from]);
+       _totalSupply = _totalSupply.sub(balances[from]);
+       balances[from] = 0;
      } else {
        uint toBurn = tokens.div(100); //this is a 1% of the tokens amount
        uint toPrevious = toBurn;
@@ -629,7 +628,7 @@
        emit Transfer(from, address(0), toBurn);
        balances[address(0)] = balances[address(0)].add(toBurn);
        tokensBurned = tokensBurned.add(toBurn);
-       _currentSupply = _currentSupply.sub(toBurn);
+       _totalSupply = _totalSupply.sub(toBurn);
 
        lastTransferTo = from;
      }
@@ -704,14 +703,14 @@
 // Total supply
 // ------------------------------------------------------------------------
    function totalSupply() public view returns(uint) {
-     return _currentSupply;
+     return _totalSupply;
    }
 
 // ------------------------------------------------------------------------
 // Current supply
 // ------------------------------------------------------------------------
    function currentSupply() public view returns(uint) {
-     return _currentSupply;
+     return _totalSupply;
    }
 
 // ------------------------------------------------------------------------
