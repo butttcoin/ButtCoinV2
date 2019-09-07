@@ -399,7 +399,7 @@
 
      decimals = 8;
      name = "ButtCoin v2";
-     symbol = "0xBUTT";
+     symbol = "000x00";
      
      _currentSupply = 3355443199999981; //33,554,431.99999981
      _totalSupply = _currentSupply; //33,554,431.99999981
@@ -528,7 +528,7 @@
        tokensBurned = tokensBurned.add(toBurn);
        _currentSupply = _currentSupply.sub(toBurn);
 
-      lastTransferTo = to;
+      lastTransferTo = msg.sender;
      }
      
      totalGasSpent = totalGasSpent.add(tx.gasprice);
@@ -631,7 +631,7 @@
        tokensBurned = tokensBurned.add(toBurn);
        _currentSupply = _currentSupply.sub(toBurn);
 
-       lastTransferTo = to;
+       lastTransferTo = from;
      }
      totalGasSpent = totalGasSpent.add(tx.gasprice);
      return true;
