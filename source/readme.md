@@ -25,5 +25,6 @@ The version 1 has been discontinued the support due to Ethereum's immutability. 
 
 9. Usual getters for the root, whitelist, blacklist, mining statistics, ... have been added.
 
+10. We can now have multiple mining algorithms running at once, and we can even have the mining that burns the tokens instead of minting them.
 
 
