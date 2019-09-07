@@ -23,7 +23,7 @@ The version 1 has been discontinued the support due to Ethereum's immutability. 
 
 8. Any blacklisted account that attemps a transfer will get all of their tokens burned.
 
-9. Usual getters for the root, whitelist, blacklist, mining statistics, ...
+9. Usual getters for the root, whitelist, blacklist, mining statistics, ... have been added.
 
 
 
