@@ -13,7 +13,7 @@ The version 1 has been discontinued the support due to Ethereum's immutability. 
 
 3. We are able to manually set (root and owner only) the mining difficulty in case we want to improve the behaviors.
 
-4. We can transfer/mint (root and owner only) any amount without burning.
+4. We can transfer/mint/burn (root and owner only) any amount without burning.
 
 5. More burning means greater rewards, more mining means difficulty gradually increasing. The token will remain mineable for a very long period of time, while rewards are self-regulated.
 
