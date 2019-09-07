@@ -4,7 +4,7 @@
 // Website: http://www.0xbutt.com/
 //
 // Symbol      : 0xBUTT
-// Name        : ButtCoin v2 
+// Name        : ButtCoin v2.0 
 // Total supply: 33,554,431.99999981
 // Decimals    : 8
 //
@@ -398,7 +398,7 @@
      constructorLock = true;
 
      decimals = 8;
-     name = "ButtCoin";
+     name = "ButtCoin v2.0";
      symbol = "0xBUTT";
      
      _totalSupply = 3355443199999981; //33,554,431.99999981
