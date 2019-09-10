@@ -49,19 +49,30 @@ addToWhitelist (addressaddToWhitelist)
 ```
 Only the root accounts and the owner address can access this function. This function is used to enable the safe communication between the various contracts with any other contract that requires the whitelist and is communicating with the main ButtCoin contract. If the input address is already whitelisted, transaction cannot be processed, and error is displayed beforehand. For any other user other than root and admin, processing this function will also throw an error.
 
-
 ``` js
 allowance (addresstokenOwner,addressspender)
 ```
+Returns the amount of tokens approved by the owner that can be transferred to the spender's account.
+
+
 ``` js
 approve (addressspender,uinttokens)
 ```
+Token owner can approve for `spender` to transferFrom(...) `tokens`. The function must not be locked, and the token owner cannot be blacklisted. The spender cannot be the address(0).
+     
 ``` js
 approveAndCall (addressspender,uinttokens,bytesmemorydata)
 ```
+Token owner can approve for `spender` to transferFrom(...) `tokens` from the token owner's account. The `spender` contract function `receiveApproval(...)` is then executed. The function must not be locked and the token owned must not be blacklisted.
+
+
+
 ``` js
 balanceOf (addresstokenOwner)
 ```
+
+
+
 ``` js
 checkMintSolution (uint256nonce,bytes32challenge_digest,bytes32challenge_number,uinttestTarget)
 ```
