@@ -65,56 +65,43 @@ approveAndCall (addressspender,uinttokens,bytesmemorydata)
 ```
 Token owner can approve for `spender` to transferFrom(...) `tokens` from the token owner's account. The `spender` contract function `receiveApproval(...)` is then executed. The function must not be locked and the token owned must not be blacklisted.
 
-
-
-``` js
-balanceOf (addresstokenOwner)
-```
-
-
-
-``` js
-checkMintSolution (uint256nonce,bytes32challenge_digest,bytes32challenge_number,uinttestTarget)
-```
 ``` js
 confirmBlacklist (addressconfirmBlacklist)
 ```
+Tells whether the address is blacklisted. True if yes, False if no. Anyone can execute this function.
+
+
 ``` js
 confirmWhitelist (addresstokenAddress)
 ```
-``` js
-currentSupply ()
-```
+Tells whether the address is whitelisted. True if yes, False if no. Anyone can execute this function.
+
 ``` js
 decreaseAllowance (addressspender,uint256subtractedValue)
 ```
-``` js
-getChallengeNumber ()
-```
-``` js
-getMiningDifficulty ()
-```
-``` js
-getMiningReward ()
-```
-``` js
-getMiningTarget ()
-```
-``` js
-getMintDigest (uint256nonce,bytes32challenge_digest,bytes32challenge_number)
-```
+Decreases the allowance. The approve function must not be locked, and the initiator must not be blacklisted. Address(0) cannot be approved.
+
 ``` js
 getBlockAmount (addressminerAddress)
 ```
+Tells how much was mined by an address.
+
 ``` js
 getBlockAmount (uintblockNumber)
 ```
+Tells how much was mined per block provided the blocknumber.  
+
 ``` js
 getBlockMiner (uintblockNumber)
 ```
+Tells which address mined the block provided the blocknumber.  
+
+
 ``` js
 increaseAllowance (addressspender,uint256addedValue)
 ```
+Increases the allowance. The approve function must not be locked, and the initiator must not be blacklisted. Address(0) cannot be approved.
+
 ``` js
 mint (uint256nonce,bytes32challenge_digest)
 ```
@@ -162,4 +149,38 @@ transfer (addressto,uinttokens)
 ```
 ``` js
 transferFrom (addressfrom,addressto,uinttokens)
+```
+
+### View functions
+
+``` js
+balanceOf (addresstokenOwner)
+```
+
+``` js
+checkMintSolution (uint256nonce,bytes32challenge_digest,bytes32challenge_number,uinttestTarget)
+```
+
+``` js
+currentSupply ()
+```
+
+``` js
+getChallengeNumber ()
+```
+
+``` js
+getMiningDifficulty ()
+```
+
+``` js
+getMiningReward ()
+```
+
+``` js
+getMiningTarget ()
+```
+
+``` js
+getMintDigest (uint256nonce,bytes32challenge_digest,bytes32challenge_number)
 ```
