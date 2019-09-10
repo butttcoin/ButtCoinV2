@@ -187,6 +187,20 @@ getMintDigest (uint256nonce,bytes32challenge_digest,bytes32challenge_number)
 totalSupply ()
 ```
 
+### Internal Functions
+``` js 
+_startNewMiningEpoch() 
+```
+Called by the constructor (only once) and by mint function every time we reward the tokens.
+
+
+``` js 
+reAdjustDifficulty() 
+```
+Called by ```_startNewMiningEpoch()```. Readjusts the difficulty levels. Every time the mining occurs, we remove the number from a miningTarget. Lower the miningTarget, greater the difficulty. The mining target starts at 2^234. We are subtracting 2^210 from a MiningTarget each time we mine a block. This means that we can mine the coin (approximately) 16,777,216 times. If it takes 1 minute to mine a coin, we can mine it for (approximately) 30 years. However, since the mining difficulty always increases, we can safely assume that it can be mined for several hundred years.
+
+
+
 ### Lock Switch Variables
    bool public approveAndCallLock = false; //we can lock the approve and call function
    bool public approveLock = false; //we can lock the approve function.
