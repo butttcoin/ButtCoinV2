@@ -304,6 +304,19 @@ All switches are set to ``False`` by a default. False means unlocked, True means
 
 ```constructorLock``` - called only once by the constructor so that the constructor can be executed only once.
 
+### Internal Switch Maps
+```blacklist``` - in case there are accounts that need to be blocked, good for preventing attacks (can be useful against ransomware). Good for preventing the scammers from abusing this token.
+
+```rootAccounts``` - for communicating to sub-conctracts and having the root access.
+
+```whitelist``` - for sub-contracts communicating to sub-conctracts.
+
+```blockMiner``` - for keeping a track of which address mined which block.
+
+```blockAmount``` - for keeping a track of how much was mined per block.
+
+```minedAmount``` - for keeping a track how much each miner earned.
+
 ### Lock Switch Functions
 ``` js
 switchApproveAndCallLock ()
