@@ -35,10 +35,15 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 
 ### Static variables
 ```name``` - ButtCoin V2.0
+
 ```symbol``` - 0xBUTT
+
 ```decimals``` - 8
-```_BLOCKS_PER_ERA``` - 20999999.
+
+```_BLOCKS_PER_ERA``` - 20999999
+
 ```_MAXIMUM_TARGET``` - (2 ** 234), smaller the number means a greater difficulty
+
 ```_totalSupply``` - 33,554,431.99999981 tokens
 
 ### Statistical public variables
