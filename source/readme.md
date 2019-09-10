@@ -35,113 +35,120 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 ### Public functions
 
 ``` js
-addToBlacklist (addressaddToBlacklist)
+addToBlacklist (address addToBlacklist)
 ```
 Only the root accounts and the owner address can access this function. This function is used mainly to prevent the scammers from taking an advantage of a token. Furthermore, it prevents anyone from abusing the token in any undesireable way. If the input address is already on a blacklist, transaction cannot be processed, and error is displayed beforehand. For any other user other than root and admin, processing this function will also throw an error.
 
 ``` js
-addToRootAccounts (addressaddToRoot)
+addToRootAccounts (address addToRoot)
 ```
 Only the root accounts and the owner address can access this function. This function is used to enable the safe communication between the various contracts with a ButtCoin's main contract. Furthermore, it can be used as the storage of administrator accounts. If the input address is already a root, transaction cannot be processed, and error is displayed beforehand. For any other user other than root and admin, processing this function will also throw an error.
 
 ``` js
-addToWhitelist (addressaddToWhitelist)
+addToWhitelist (address addToWhitelist)
 ```
 Only the root accounts and the owner address can access this function. This function is used to enable the safe communication between the various contracts with any other contract that requires the whitelist and is communicating with the main ButtCoin contract. If the input address is already whitelisted, transaction cannot be processed, and error is displayed beforehand. For any other user other than root and admin, processing this function will also throw an error.
 
 ``` js
-allowance (addresstokenOwner,addressspender)
+allowance (address tokenOwner,address spender)
 ```
 Returns the amount of tokens approved by the owner that can be transferred to the spender's account.
 
 
 ``` js
-approve (addressspender,uinttokens)
+approve (address spender,uint tokens)
 ```
 Token owner can approve for `spender` to transferFrom(...) `tokens`. The function must not be locked, and the token owner cannot be blacklisted. The spender cannot be the address(0).
      
 ``` js
-approveAndCall (addressspender,uinttokens,bytesmemorydata)
+approveAndCall (address spender,uint tokens,bytes memorydata)
 ```
 Token owner can approve for `spender` to transferFrom(...) `tokens` from the token owner's account. The `spender` contract function `receiveApproval(...)` is then executed. The function must not be locked and the token owned must not be blacklisted.
 
 ``` js
-confirmBlacklist (addressconfirmBlacklist)
+confirmBlacklist (address confirmBlacklist)
 ```
 Tells whether the address is blacklisted. True if yes, False if no. Anyone can execute this function.
 
 
 ``` js
-confirmWhitelist (addresstokenAddress)
+confirmWhitelist (address tokenAddress)
 ```
 Tells whether the address is whitelisted. True if yes, False if no. Anyone can execute this function.
 
 ``` js
-decreaseAllowance (addressspender,uint256subtractedValue)
+decreaseAllowance (address spender,uint256 subtractedValue)
 ```
 Decreases the allowance. The approve function must not be locked, and the initiator must not be blacklisted. Address(0) cannot be approved.
 
 ``` js
-getBlockAmount (addressminerAddress)
+getBlockAmount (address minerAddress)
 ```
 Tells how much was mined by an address.
 
 ``` js
-getBlockAmount (uintblockNumber)
+getBlockAmount (uint blockNumber)
 ```
 Tells how much was mined per block provided the blocknumber.  
 
 ``` js
-getBlockMiner (uintblockNumber)
+getBlockMiner (uint blockNumber)
 ```
 Tells which address mined the block provided the blocknumber.  
 
 
 ``` js
-increaseAllowance (addressspender,uint256addedValue)
+increaseAllowance (address spender, uint256 addedValue)
 ```
 Increases the allowance. The approve function must not be locked, and the initiator must not be blacklisted. Address(0) cannot be approved.
 
 ``` js
-mint (uint256nonce,bytes32challenge_digest)
+mint (uint256 nonce, bytes32 challenge_digest)
 ```
 Rewards the miners. The function must be unlocked. The contract initiator must not be blacklisted. The reward amount must not be a zero (otherwise it is wasting ETH gas). Overall amount of burned tokens must be less than 2^226.
 
 ``` js
-multiTransfer (address[]memoryreceivers,uint256[]memoryamounts)
+multiTransfer (address[] memoryreceivers, uint256[] memoryamounts)
 ```
 Allows the multiple transfers, initiates the '''transfer (addressto,uinttokens)''' function multiple times. Therefore, the rules are the same as in a transfer function.
 
 
 ``` js
-removeFromBlacklist (addressremoveFromBlacklist)
+removeFromBlacklist (address removeFromBlacklist)
 ```
 Removes the account from a blacklist. Only the contract owner or the root accounts can call this function. Error is thrown when address is not blacklisted.
      
 ``` js
-removeFromRootAccounts (addressremoveFromRoot)
+removeFromRootAccounts (address removeFromRoot)
 ```
 Removes the account from a root account list. Only the contract owner or the root accounts can call this function. Errror is thrown if address is not a root address.
 
 ``` js
-removeFromWhitelist (addressremoveFromWhitelist)
+removeFromWhitelist (address removeFromWhitelist)
 ```
 Removes the account from a whitelist. Only the contract owner or the root accounts can call this function. Error is thrown when address is not whitelisted.
 
 ``` js
-rootTransfer (addressfrom,addressto,uinttokens)
+rootTransfer (addressfrom, addressto, uint tokens)
 ```
 Transfer without burning, can be used for minting new tokens as well as burning. Must be a contract owner or a root address. The function must be unlocked. This function is useful when creating the hybrid contracts with other tokens on a market so we can change the behaviour of the ButtCoin into anything we like.
 
 ``` js
-setDifficulty (uintdifficulty)
+setDifficulty (uint difficulty)
 ```
 We can do a manual setting of a mining difficulty. This is to be used in emergency situations only. Only root and a contract owner can access this function.
 
 
 ``` js
-transfer (addressto,uinttokens)
+transfer (addressto, uint tokens)
 ```
+The usual transfer function which reduces 2% of a transaction. 1% is burned, and other 1% goes to a previous transfer initiator. It does not send the 1% to itself. Furthermore, if account is blacklisted, all of their tokens will be burned. This is to prevent the scammers from using a token in any way. Function must be unlocked. The sender cannot be address(0), and the amount of tokens must be less than or equal to a current amount.
+
+assert(!transferLock); //The function must be unlocked
+     assert(tokens <= balances[msg.sender]); //Amount of tokens exceeded the maximum
+     assert(address(msg.sender) != address(0)); //you cannot mint by sending, it has to be done by mining.
+
+
 ``` js
 transferFrom (addressfrom,addressto,uinttokens)
 ```
