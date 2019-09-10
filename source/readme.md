@@ -1,5 +1,4 @@
-CURRENTLY UNDER CONSTRUCTION!
-
+For less-technical questions and aswers, see the FAQ document: https://github.com/butttcoin/FAQ
 
 # ButtCoin Version 2.0 White Paper
 
