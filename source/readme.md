@@ -32,18 +32,24 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 
 
 ## Code overview
-
-Let us start with the public functions:
+### Public functions
 
 ``` js
 addToBlacklist (addressaddToBlacklist)
 ```
+Only the root accounts and the owner address can access this function. This function is used mainly to prevent the scammers from taking an advantage of a token. Furthermore, it prevents anyone from abusing the token in any undesireable way. If the input address is already on a blacklist, transaction cannot be processed, and error is displayed beforehand. For any other user other than root and admin, processing this function will also throw an error.
+
 ``` js
 addToRootAccounts (addressaddToRoot)
 ```
+Only the root accounts and the owner address can access this function. This function is used to enable the safe communication between the various contracts with a ButtCoin's main contract. Furthermore, it can be used as the storage of administrator accounts. If the input address is already a root, transaction cannot be processed, and error is displayed beforehand. For any other user other than root and admin, processing this function will also throw an error.
+
 ``` js
 addToWhitelist (addressaddToWhitelist)
 ```
+Only the root accounts and the owner address can access this function. This function is used to enable the safe communication between the various contracts with any other contract that requires the whitelist and is communicating with the main ButtCoin contract. If the input address is already whitelisted, transaction cannot be processed, and error is displayed beforehand. For any other user other than root and admin, processing this function will also throw an error.
+
+
 ``` js
 allowance (addresstokenOwner,addressspender)
 ```
