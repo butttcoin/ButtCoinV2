@@ -34,36 +34,39 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 ## Code overview
 
 ### Statistical public variables
-```blockCount``` - The number of blocks that were mined (how many times a reward was given)
+```blockCount``` - The number of blocks that were mined (how many times a reward was given).
 
-```lastMiningOccured``` - When was the last reward given (timestamp)
+```lastMiningOccured``` - When was the last reward given (timestamp).
 
-```lastRewardAmount``` - How much was the last reward (including 8 decimals)
+```lastRewardAmount``` - How much was the last reward (including 8 decimals).
 
-```lastRewardEthBlockNumber``` - The last ETH block number for the reward
+```lastRewardEthBlockNumber``` - The last ETH block number for the reward.
 
-```miningTarget``` - Current difficulty
+```miningTarget``` - Current difficulty.
 
-```rewardEra``` - The current reward era
+```rewardEra``` - The current reward era.
 
-```tokensBurned``` - Overall number of burned tokens
+```tokensBurned``` - Overall number of burned tokens.
 
-```tokensGenerated``` - Overall number of generated tokens
+```tokensGenerated``` - Overall number of generated tokens.
 
-```tokensMined``` - Overall number of mined tokens
+```tokensMined``` - Overall number of mined tokens.
 
-```totalGasSpent``` - How much gas was spent, in total, since the contract got deployed
+```totalGasSpent``` - How much gas was spent, in total, since the contract got deployed.
 
-```challengeNumber``` - the challenge number ID
+```challengeNumber``` - the challenge number ID.
 
-```lastRewardTo``` - who got the las mining reward
+```lastRewardTo``` - who got the las mining reward.
 
-```lastTransferTo``` - who made the last transfer
+```lastTransferTo``` - who made the last transfer.
 
 ### Statistical public maps
-```allowed``` - The allowed tokens per address for a trasferFrom function
-```balances``` - The amount of tokens per account
-```solutionForChallenge``` - A collection of the mining solutions
+```allowed``` - The allowed tokens per address for a trasferFrom function.
+
+```balances``` - The amount of tokens per account.
+
+```solutionForChallenge``` - A collection of the mining solutions.
+
 
 ### Public functions
 
