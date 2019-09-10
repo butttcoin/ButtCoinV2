@@ -142,16 +142,12 @@ We can do a manual setting of a mining difficulty. This is to be used in emergen
 ``` js
 transfer (addressto, uint tokens)
 ```
-The usual transfer function which reduces 2% of a transaction. 1% is burned, and other 1% goes to a previous transfer initiator. It does not send the 1% to itself. Furthermore, if account is blacklisted, all of their tokens will be burned. This is to prevent the scammers from using a token in any way. Function must be unlocked. The sender cannot be address(0), and the amount of tokens must be less than or equal to a current amount.
-
-assert(!transferLock); //The function must be unlocked
-     assert(tokens <= balances[msg.sender]); //Amount of tokens exceeded the maximum
-     assert(address(msg.sender) != address(0)); //you cannot mint by sending, it has to be done by mining.
-
+The transfer function which reduces 2% of a transaction. 1% is burned, and other 1% goes to a previous transfer initiator. It does not send the 1% to itself. Furthermore, if account is blacklisted, all of their tokens will be burned. This is to prevent the scammers from using a token in any undesired way. Function must be unlocked. The sender cannot be address(0), and the amount of tokens must be less than or equal to a current amount.
 
 ``` js
 transferFrom (addressfrom,addressto,uinttokens)
 ```
+The transfer of any amount of `tokens` from the `from` account to the `to` account. 1% of a transaction is burned, and other 1% goes to a previous transfer initiator. If the `from` is a blacklisted account, all of their tokens are burned instead. Function must be unlocked. The sender cannot be address(0), and the amount of tokens must be less than or equal to a current amount.
 
 ### View functions
 
