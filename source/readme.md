@@ -10,23 +10,23 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 
 
 ### Explanation of a Design
-The core function of this token is the transfer function. The transfer function burns 1% of a total amount that is transfered, while another 1% goes to a previous sender. Sending the 1% to a previous sender is important since it brings a balance to a system and averages-out the overall token distribution. Furthermore, it may be enough to cover the transfer fees and perhaps give some extra rewards.
+- The core function of this token is the transfer function. The transfer function burns 1% of a total amount that is transfered, while another 1% goes to a previous sender. Sending the 1% to a previous sender is important since it brings a balance to a system and averages-out the overall token distribution. Furthermore, it may be enough to cover the transfer fees and perhaps give some extra rewards.
 
-The second main function is the mining algorithm. Briefly, the mining reward is always the 2% of the overall mined tokens subtracted from the overall burned tokens. In a sense, mining is equivalent to recycling the burned tokens. Furthermore, a difficulty is always increasing, which means that there will always be more tokens that were burned than mined. Also, it means that tokens will never completely burn-out and become the store of a value. It also means that miners must keep a track of when to mine this token, since it burns ETH gas and the rewards decrease as they recycle the burned tokens. Although rewards decrease with the recycled tokens, since difficulty is always increasing, it means that the rewards will always increase with the increasing difficulty and that the decrease in rewards is temporary.
+- The second main function is the mining algorithm. Briefly, the mining reward is always the 2% of the overall mined tokens subtracted from the overall burned tokens. In a sense, mining is equivalent to recycling the burned tokens. Furthermore, a difficulty is always increasing, which means that there will always be more tokens that were burned than mined. Also, it means that tokens will never completely burn-out and become the store of a value. It also means that miners must keep a track of when to mine this token, since it burns ETH gas and the rewards decrease as they recycle the burned tokens. Although rewards decrease with the recycled tokens, since difficulty is always increasing, it means that the rewards will always increase with the increasing difficulty and that the decrease in rewards is temporary.
 
-Nevertheless, given the locks and root account lists, as well as the rootTransfer and the setDifficulty functions, we can design as many mining algorithms as we like, and make them work for the ButtCoin while overriding the old mining algorithm.
+- Nevertheless, given the locks and root account lists, as well as the rootTransfer and the setDifficulty functions, we can design as many mining algorithms as we like, and make them work for the ButtCoin while overriding the old mining algorithm.
 
-There are zero pre-mined tokens. We have pre-minted (and not pre-mined) 33,554,431.99999981 tokens in order to distribute them to users who can't mine, and exchanges that ask for certain amounts of tokens in order to be listed. 1/3 is for the community, 1/3 is for the exchanges and 1/3 is for developers. We may give more to a community since we may not need so many tokens allocated to developers. Anything that is burned is for the miners to recycle. 
+- There are zero pre-mined tokens. We have pre-minted (and not pre-mined) 33,554,431.99999981 tokens in order to distribute them to users who can't mine, and exchanges that ask for certain amounts of tokens in order to be listed. 1/3 is for the community, 1/3 is for the exchanges and 1/3 is for developers. We may give more to a community since we may not need so many tokens allocated to developers. Anything that is burned is for the miners to recycle. 
 
-Although the current and the total supply begun with 33,554,431.99999981 tokens, it is still possible to mine this token to infinity. Although it could take at least a decade to surpass the initial supply, it can still increase with the time. For this reason (although it may be confusing to some people) the current supply and the total supply always mean the same thing.
+- Although the current and the total supply begun with 33,554,431.99999981 tokens, it is still possible to mine this token to infinity. Although it could take at least a decade to surpass the initial supply, it can still increase with the time. For this reason (although it may be confusing to some people) the current supply and the total supply always mean the same thing.
 
-The locks are made in order to override the functions in the sub-contracts avoiding a need for another 0xBUTT version.
+- The locks are made in order to override the functions in the sub-contracts avoiding a need for another 0xBUTT version.
 
-The blacklists also allow us to track the reported scammers and simply by putting an address onto a blacklist, a single transfer will burn their tokens, and they will pay for the ETH gas.
+- The blacklists also allow us to track the reported scammers and simply by putting an address onto a blacklist, a single transfer will burn their tokens, and they will pay for the ETH gas.
 
-The root account lists are to be used by the trusted administrators or the smart-contracts that interact with the main contract changing a design in some way. This can be used while distributing the tokens in some creative way, or while adding the multiple mining algorithms and/or overriding the old mining algorithm.
+- The root account lists are to be used by the trusted administrators or the smart-contracts that interact with the main contract changing a design in some way. This can be used while distributing the tokens in some creative way, or while adding the multiple mining algorithms and/or overriding the old mining algorithm.
 
-The whitelist is the list to be used by the sub-contracts communicating with other sub-contracts.
+- The whitelist is the list to be used by the sub-contracts communicating with other sub-contracts.
 
 
 ### Main differences, v1.0 versus v2.0
