@@ -35,44 +35,114 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 
 Let us start with the public functions:
 
-``` js	addToBlacklist (addressaddToBlacklist)	```
-``` js	addToRootAccounts (addressaddToRoot)	```
-``` js	addToWhitelist (addressaddToWhitelist)	```
-``` js	allowance (addresstokenOwner,addressspender)	```
-``` js	approve (addressspender,uinttokens)	```
-``` js	approveAndCall (addressspender,uinttokens,bytesmemorydata)	```
-``` js	balanceOf (addresstokenOwner)	```
-``` js	checkMintSolution (uint256nonce,bytes32challenge_digest,bytes32challenge_number,uinttestTarget)	```
-``` js	confirmBlacklist (addressconfirmBlacklist)	```
-``` js	confirmWhitelist (addresstokenAddress)	```
-``` js	currentSupply ()	```
-``` js	decreaseAllowance (addressspender,uint256subtractedValue)	```
-``` js	getChallengeNumber ()	```
-``` js	getMiningDifficulty ()	```
-``` js	getMiningReward ()	```
-``` js	getMiningTarget ()	```
-``` js	getMintDigest (uint256nonce,bytes32challenge_digest,bytes32challenge_number)	```
-``` js	getBlockAmount (addressminerAddress)	```
-``` js	getBlockAmount (uintblockNumber)	```
-``` js	getBlockMiner (uintblockNumber)	```
-``` js	increaseAllowance (addressspender,uint256addedValue)	```
-``` js	mint (uint256nonce,bytes32challenge_digest)	```
-``` js	multiTransfer (address[]memoryreceivers,uint256[]memoryamounts)	```
-``` js	removeFromBlacklist (addressremoveFromBlacklist)	```
-``` js	removeFromRootAccounts (addressremoveFromRoot)	```
-``` js	removeFromWhitelist (addressremoveFromWhitelist)	```
-``` js	rootTransfer (addressfrom,addressto,uinttokens)	```
-``` js	setDifficulty (uintdifficulty)	```
-``` js	switchApproveAndCallLock ()	```
-``` js	switchApproveLock ()	```
-``` js	switchMintLock ()	```
-``` js	switchRootTransferLock ()	```
-``` js	switchTransferFromLock ()	```
-``` js	switchTransferLock ()	```
-``` js	totalSupply ()	```
-``` js	transfer (addressto,uinttokens)	```
-``` js	transferFrom (addressfrom,addressto,uinttokens)	```
-
-
-
-
+``` js
+addToBlacklist (addressaddToBlacklist)
+```
+``` js
+addToRootAccounts (addressaddToRoot)
+```
+``` js
+addToWhitelist (addressaddToWhitelist)
+```
+``` js
+allowance (addresstokenOwner,addressspender)
+```
+``` js
+approve (addressspender,uinttokens)
+```
+``` js
+approveAndCall (addressspender,uinttokens,bytesmemorydata)
+```
+``` js
+balanceOf (addresstokenOwner)
+```
+``` js
+checkMintSolution (uint256nonce,bytes32challenge_digest,bytes32challenge_number,uinttestTarget)
+```
+``` js
+confirmBlacklist (addressconfirmBlacklist)
+```
+``` js
+confirmWhitelist (addresstokenAddress)
+```
+``` js
+currentSupply ()
+```
+``` js
+decreaseAllowance (addressspender,uint256subtractedValue)
+```
+``` js
+getChallengeNumber ()
+```
+``` js
+getMiningDifficulty ()
+```
+``` js
+getMiningReward ()
+```
+``` js
+getMiningTarget ()
+```
+``` js
+getMintDigest (uint256nonce,bytes32challenge_digest,bytes32challenge_number)
+```
+``` js
+getBlockAmount (addressminerAddress)
+```
+``` js
+getBlockAmount (uintblockNumber)
+```
+``` js
+getBlockMiner (uintblockNumber)
+```
+``` js
+increaseAllowance (addressspender,uint256addedValue)
+```
+``` js
+mint (uint256nonce,bytes32challenge_digest)
+```
+``` js
+multiTransfer (address[]memoryreceivers,uint256[]memoryamounts)
+```
+``` js
+removeFromBlacklist (addressremoveFromBlacklist)
+```
+``` js
+removeFromRootAccounts (addressremoveFromRoot)
+```
+``` js
+removeFromWhitelist (addressremoveFromWhitelist)
+```
+``` js
+rootTransfer (addressfrom,addressto,uinttokens)
+```
+``` js
+setDifficulty (uintdifficulty)
+```
+``` js
+switchApproveAndCallLock ()
+```
+``` js
+switchApproveLock ()
+```
+``` js
+switchMintLock ()
+```
+``` js
+switchRootTransferLock ()
+```
+``` js
+switchTransferFromLock ()
+```
+``` js
+switchTransferLock ()
+```
+``` js
+totalSupply ()
+```
+``` js
+transfer (addressto,uinttokens)
+```
+``` js
+transferFrom (addressfrom,addressto,uinttokens)
+```
