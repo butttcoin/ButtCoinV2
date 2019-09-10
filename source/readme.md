@@ -282,20 +282,15 @@ Called by ```_startNewMiningEpoch()```. Readjusts the difficulty levels. Every t
 
 
 ### Lock Switch Variables
-   bool public approveAndCallLock = false; //we can lock the approve and call function
-   bool public approveLock = false; //we can lock the approve function.
-   bool public mintLock = false; //we can lock the mint function, for emergency only.
-   bool public rootTransferLock = false; //we can lock the rootTransfer fucntion in case there is an emergency situation.
-   bool public transferFromLock = false; //we can lock the transferFrom function in case there is an emergency situation.
-   bool public transferLock = false; //we can lock the transfer function in case there is an emergency situation.
+All switches are set to ``False`` by a default. False means unlocked, True means locked.
 
-   bool internal constructorLock = false; //makes sure that constructor of the main is executed only once.
-   mapping(address => bool) internal blacklist; //in case there are accounts that need to be blocked, good for preventing attacks (can be useful against ransomware).
-   mapping(address => bool) internal rootAccounts; //for whitelisting the accounts such as exchanges, etc.
-   mapping(address => bool) internal whitelist; //for whitelisting the accounts such as exchanges, etc.
-   mapping(uint => address) internal blockMiner; //for keeping a track of who mined which block.
-   mapping(uint => uint) internal blockAmount; //for keeping a track of how much was mined per block
-   mapping(address => uint) internal minedAmount; //for keeping a track how much each miner earned
+```approveAndCallLock``` - we can (un)lock the approve and call function
+```approveLock``` - we can (un)lock the approve function.
+```mintLock``` - we can (un)lock the mint function, for emergency only.
+```rootTransferLock``` - we can (un)lock the rootTransfer fucntion in case there is an emergency situation.
+```transferFromLock``` - we can (un)lock the transferFrom function in case there is an emergency situation.
+```transferLock``` - we can (un)lock the transfer function in case there is an emergency situation.
+```constructorLock``` - called only once by the constructor so that the constructor can be executed only once.
 
 ### Lock Switch Functions
 ``` js
