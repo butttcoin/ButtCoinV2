@@ -54,11 +54,11 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 
 ```totalGasSpent``` - How much gas was spent, in total, since the contract got deployed.
 
-```challengeNumber``` - the challenge number ID.
+```challengeNumber``` - The challenge number ID.
 
-```lastRewardTo``` - who got the las mining reward.
+```lastRewardTo``` - Address that got the las mining reward.
 
-```lastTransferTo``` - who made the last transfer.
+```lastTransferTo``` - Address that made the last transfer.
 
 ### Statistical public maps
 ```allowed``` - The allowed tokens per address for a trasferFrom function.
