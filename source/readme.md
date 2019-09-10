@@ -1,4 +1,8 @@
-For less-technical questions and aswers, see the FAQ document: https://github.com/butttcoin/FAQ
+<p align="center">
+  <img src="https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/source/Simplified_COIN.png" width="512" title="Logo">
+</p>
+
+For the less-technical questions and aswers, see the FAQ document: https://github.com/butttcoin/FAQ
 
 # ButtCoin Version 2.0 White Paper
 ## 0x5556d6a283fD18d71FD0c8b50D1211C5F842dBBc
