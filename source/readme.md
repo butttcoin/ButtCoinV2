@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/source/Simplified_COIN.png" width="512" title="Logo">
+  <img src="https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/source/Simplified_COIN.png" width="256" title="Logo">
 </p>
 
 For the less-technical questions and aswers, see the FAQ document: https://github.com/butttcoin/FAQ
