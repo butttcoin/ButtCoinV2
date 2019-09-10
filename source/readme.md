@@ -35,7 +35,7 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 
 ### Statistical public variables
 ```blockCount``` - The number of blocks that were mined (how many times a reward was given)
-```lastMiningOccured``` - When was the last reward given (timestamp)
+ ```lastMiningOccured``` - When was the last reward given (timestamp)
 ```lastRewardAmount``` - How much was the last reward (including 8 decimals)
 ```lastRewardEthBlockNumber``` - The last ETH block number for the reward
 ```miningTarget``` - Current difficulty
