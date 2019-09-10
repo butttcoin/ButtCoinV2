@@ -10,7 +10,7 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 
 ### Main differences, v1.0 versus v2.0
 
-1. Mining is now making more sense, and has blocks. However, given the ability to be more precise using Solidity, we can adjust the rewards and difficulty after each block is mined.
+1. Mining is now making more sense, and has blocks. However, given the ability to be more precise using Solidity, we can adjust the rewards and difficulty after each block is mined. In essence, there is no difference between the block and era, however, it helps us keep a better track of statistics and calculations that can be done per era.
 
 2. Each reward is 2% of the overall burned tokens minus the overall minted tokens. This means, more burning implies greater rewards. More mining implies lower rewards. The mining difficulty does not decrease. As the mining difficulty slowly increases, more burning will occur, and therefore, the rewards increase as the mining difficulty increases. This way we are still encouraging the smart mining.
 
