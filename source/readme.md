@@ -105,9 +105,14 @@ Increases the allowance. The approve function must not be locked, and the initia
 ``` js
 mint (uint256nonce,bytes32challenge_digest)
 ```
+Rewards the miners. The function must be unlocked. The contract initiator must not be blacklisted. The reward amount must not be a zero (otherwise it is wasting ETH gas). Overall amount of burned tokens must be less than 2^226.
+
 ``` js
 multiTransfer (address[]memoryreceivers,uint256[]memoryamounts)
 ```
+Allows the multiple transfers, initiates the '''transfer (addressto,uinttokens)''' function multiple times. Therefore, the rules are the same as in a transfer function.
+
+
 ``` js
 removeFromBlacklist (addressremoveFromBlacklist)
 ```
