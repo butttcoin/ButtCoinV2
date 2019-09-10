@@ -28,6 +28,8 @@ The version 2.0 is taking the version 1.0 to a next level. The confusion that ve
 
 - The whitelist is the list to be used by the sub-contracts communicating with other sub-contracts.
 
+- We are also keeping a track of the amount of the gas that was spent on this contract, so we can divide it by the number of circulating coins and derive the bottom market price.
+
 
 ### Main differences, v1.0 versus v2.0
 
