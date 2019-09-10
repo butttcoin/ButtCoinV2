@@ -116,39 +116,29 @@ Allows the multiple transfers, initiates the '''transfer (addressto,uinttokens)'
 ``` js
 removeFromBlacklist (addressremoveFromBlacklist)
 ```
+Removes the account from a blacklist. Only the contract owner or the root accounts can call this function. Error is thrown when address is not blacklisted.
+     
 ``` js
 removeFromRootAccounts (addressremoveFromRoot)
 ```
+Removes the account from a root account list. Only the contract owner or the root accounts can call this function. Errror is thrown if address is not a root address.
+
 ``` js
 removeFromWhitelist (addressremoveFromWhitelist)
 ```
+Removes the account from a whitelist. Only the contract owner or the root accounts can call this function. Error is thrown when address is not whitelisted.
+
 ``` js
 rootTransfer (addressfrom,addressto,uinttokens)
 ```
+Transfer without burning, can be used for minting new tokens as well as burning. Must be a contract owner or a root address. The function must be unlocked. This function is useful when creating the hybrid contracts with other tokens on a market so we can change the behaviour of the ButtCoin into anything we like.
+
 ``` js
 setDifficulty (uintdifficulty)
 ```
-``` js
-switchApproveAndCallLock ()
-```
-``` js
-switchApproveLock ()
-```
-``` js
-switchMintLock ()
-```
-``` js
-switchRootTransferLock ()
-```
-``` js
-switchTransferFromLock ()
-```
-``` js
-switchTransferLock ()
-```
-``` js
-totalSupply ()
-```
+We can do a manual setting of a mining difficulty. This is to be used in emergency situations only. Only root and a contract owner can access this function.
+
+
 ``` js
 transfer (addressto,uinttokens)
 ```
@@ -188,4 +178,28 @@ getMiningTarget ()
 
 ``` js
 getMintDigest (uint256nonce,bytes32challenge_digest,bytes32challenge_number)
+```
+
+``` js
+totalSupply ()
+```
+
+### Lock Switches
+``` js
+switchApproveAndCallLock ()
+```
+``` js
+switchApproveLock ()
+```
+``` js
+switchMintLock ()
+```
+``` js
+switchRootTransferLock ()
+```
+``` js
+switchTransferFromLock ()
+```
+``` js
+switchTransferLock ()
 ```
