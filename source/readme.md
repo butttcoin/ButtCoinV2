@@ -222,40 +222,50 @@ The transfer of any amount of `tokens` from the `from` account to the `to` accou
 ### View functions
 
 ``` js
-balanceOf (addresstokenOwner)
+balanceOf (address tokenOwner)
 ```
-
-``` js
-checkMintSolution (uint256nonce,bytes32challenge_digest,bytes32challenge_number,uinttestTarget)
-```
+Get the token balance for account `tokenOwner`.
 
 ``` js
 currentSupply ()
 ```
+Get the current supply, in this case same as the total supply.
 
 ``` js
 getChallengeNumber ()
 ```
+This is a recent ethereum block hash, used to prevent pre-mining future blocks.
 
 ``` js
 getMiningDifficulty ()
 ```
+Gets the mining difficulty as an integer. _MAXIMUM_TARGET/miningTarget
 
 ``` js
 getMiningReward ()
 ```
+Gets the mining reward.
 
 ``` js
 getMiningTarget ()
 ```
-
-``` js
-getMintDigest (uint256nonce,bytes32challenge_digest,bytes32challenge_number)
-```
+Gets the mining target.
 
 ``` js
 totalSupply ()
 ```
+Get the total supply, in this case same as the current supply.
+
+``` js
+getMintDigest (uint256 nonce,bytes32 challenge_digest,bytes32 challenge_number)
+```
+For debug purposes only.
+
+``` js
+checkMintSolution (uint256 nonce,bytes32 challenge_digest,bytes32 challenge_number,uint testTarget)
+```
+For debug purposes only.
+
 
 ### Internal Functions
 ``` js 
@@ -287,7 +297,7 @@ Called by ```_startNewMiningEpoch()```. Readjusts the difficulty levels. Every t
    mapping(uint => uint) internal blockAmount; //for keeping a track of how much was mined per block
    mapping(address => uint) internal minedAmount; //for keeping a track how much each miner earned
 
-### Lock Switche Functions
+### Lock Switch Functions
 ``` js
 switchApproveAndCallLock ()
 ```
