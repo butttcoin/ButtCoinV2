@@ -187,7 +187,23 @@ getMintDigest (uint256nonce,bytes32challenge_digest,bytes32challenge_number)
 totalSupply ()
 ```
 
-### Lock Switches
+### Lock Switch Variables
+   bool public approveAndCallLock = false; //we can lock the approve and call function
+   bool public approveLock = false; //we can lock the approve function.
+   bool public mintLock = false; //we can lock the mint function, for emergency only.
+   bool public rootTransferLock = false; //we can lock the rootTransfer fucntion in case there is an emergency situation.
+   bool public transferFromLock = false; //we can lock the transferFrom function in case there is an emergency situation.
+   bool public transferLock = false; //we can lock the transfer function in case there is an emergency situation.
+
+   bool internal constructorLock = false; //makes sure that constructor of the main is executed only once.
+   mapping(address => bool) internal blacklist; //in case there are accounts that need to be blocked, good for preventing attacks (can be useful against ransomware).
+   mapping(address => bool) internal rootAccounts; //for whitelisting the accounts such as exchanges, etc.
+   mapping(address => bool) internal whitelist; //for whitelisting the accounts such as exchanges, etc.
+   mapping(uint => address) internal blockMiner; //for keeping a track of who mined which block.
+   mapping(uint => uint) internal blockAmount; //for keeping a track of how much was mined per block
+   mapping(address => uint) internal minedAmount; //for keeping a track how much each miner earned
+
+### Lock Switche Functions
 ``` js
 switchApproveAndCallLock ()
 ```
