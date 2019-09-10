@@ -286,30 +286,51 @@ Called by ```_startNewMiningEpoch()```. Readjusts the difficulty levels. Every t
 ### Lock Switch Variables
 All switches are set to ``False`` by a default. False means unlocked, True means locked.
 
-```approveAndCallLock``` - we can (un)lock the approve and call function
+```approveAndCallLock``` - we can (un)lock the approve and call function.
+
 ```approveLock``` - we can (un)lock the approve function.
+
 ```mintLock``` - we can (un)lock the mint function, for emergency only.
+
 ```rootTransferLock``` - we can (un)lock the rootTransfer fucntion in case there is an emergency situation.
+
 ```transferFromLock``` - we can (un)lock the transferFrom function in case there is an emergency situation.
+
 ```transferLock``` - we can (un)lock the transfer function in case there is an emergency situation.
+
 ```constructorLock``` - called only once by the constructor so that the constructor can be executed only once.
 
 ### Lock Switch Functions
 ``` js
 switchApproveAndCallLock ()
 ```
+Switches the approveAndCallLock from false to true or from true to false.
+
 ``` js
 switchApproveLock ()
 ```
+Switches the approveLock from false to true or from true to false.
+
+
 ``` js
 switchMintLock ()
 ```
+Switches the mintLock from false to true or from true to false.
+
+
 ``` js
 switchRootTransferLock ()
 ```
+Switches the rootTransferLock from false to true or from true to false.
+
+
 ``` js
 switchTransferFromLock ()
 ```
+Switches the transferFromLock from false to true or from true to false.
+
+
 ``` js
 switchTransferLock ()
 ```
+Switches the transferLock from false to true or from true to false.
