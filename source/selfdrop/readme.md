@@ -1,6 +1,6 @@
 This is a quick document about the ButtCoin self-drop (faucet).
 
-The self-drop is meant to reward anyone who makes a claim and any random address. Random address is any (previous) address that made a claim. The rewards are distributed in a following manner:
+The self-drop is meant to reward anyone who makes a claim as well as any random address with the same claim. Random address is any (previous) address that made a claim. The rewards are distributed in a following manner:
 
 Each time you make a claim, you are guaranteed to get 100 tokens!
 
