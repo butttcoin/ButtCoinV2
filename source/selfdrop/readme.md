@@ -4,7 +4,7 @@ The self-drop is meant to reward anyone who makes a claim and any random address
 
 Each time you make a claim, you are guaranteed to get 100 tokens!
 
-- If you make a claim for the first time with your address, you get only 100 tokens.
+- If you make a claim for the first time with your address, you get only 100 tokens, and you have to make a second claim.
 
 - If the random address has more tokens than you, we apply this formula and add it to your reward of 100 tokens: 
 (60% of random_address_claims) - (60% of your claims)
