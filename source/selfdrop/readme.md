@@ -9,9 +9,9 @@ Each time you make a claim, you are guaranteed to get 100 tokens!
 - If the random address was given more tokens than you, we apply this formula and add it to your reward of 100 tokens: 
 (60% of random address rewards) - (60% of your rewards)
 
-- If you have more tokens than a random address, we add 50 tokens to your reward.
+- If you have more tokens than a random address, we add 50 tokens to your reward of 100 tokens.
 
-- If you have more tokens than a random address, we apply the same formula and reward the random address with it as well
+- If you have more tokens than a random address, we apply the same formula and reward the random address with it.
 (60% of your rewards) - (60% of random address rewards)
 
 
