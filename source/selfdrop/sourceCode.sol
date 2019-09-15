@@ -1,4 +1,6 @@
- 
+/**
+ *Submitted for verification at Etherscan.io on 2019-02-11
+ */
 
 pragma solidity ^ 0.5 .11;
 
@@ -78,13 +80,13 @@ contract ERC20Detailed is IERC20 {
   }
 }
 
-contract FartThings2 is ERC20Detailed {
+contract FartThing2 is ERC20Detailed {
 
   using SafeMath for uint;
   mapping(address => mapping(address => uint256)) private _allowed;
 
   string constant tokenName = "FartThings v2.0";
-  string constant tokenSymbol = "FartThings2";
+  string constant tokenSymbol = "FART2";
   uint8 constant tokenDecimals = 8;
   uint256 _totalSupply = 0;
 
