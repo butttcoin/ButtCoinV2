@@ -1,4 +1,4 @@
-# The 0xBUTT Self-Drop faucet and a passive income and a Farthings v2.0 Token
+# The 0xBUTT Self-Drop faucet, a passive income and a Farthings v2.0 Token
 
 ## How does it work ?
 Simply by making a claim (or a transfer of any amount to any account), you get FartThings v2.0 tokens. Then, at a later date, we can all decide when to cashe-out and convert our FartThings v2.0 to 0xBUTT v2.0 coins at a 1:1 ratio.
