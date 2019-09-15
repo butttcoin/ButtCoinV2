@@ -3,22 +3,25 @@
 ## TUTORIAL
 The one-click button on a 0xbutt.com webpage where you can use MetaMask to get the tokens is under a development.
 
-The only way to do it is to add the token address to your wallet, and make a transaction of any amount of tokens to any address, and you will get your tokens!
+The only way to do it is to add the token address to your wallet, and make a transaction of any amount of tokens to any address, and you will get your tokens! This works the best with the MetaMask installed. Otherwise, use MEW or wait for a 0xbutt.com to update the webpage.
 
 ### Step 1. 
 Go to :
 
 ### Step 2: 
 Click on "Connect to Web3" and accept the popup message.
+![Image1](https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/source/selfdrop/img1.png)
 
 ### Step 3: 
 Fill-in the fields by typing any (valid) address, for example 0x077D0818B7c10a2b95A548cADa66e688bC3fc2C0 and any non-zero amount, for example 123
+![Image2](https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/source/selfdrop/img2.png)
 
 ### Step 4: 
-Sumbit
+Press the "Write" button.
+![Image3](https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/source/selfdrop/img3.png)
 
 ### Step 5: 
-Make a transaction any time with your wallet, with any amount (zero included).
+You can now make a transaction any time with your wallet, with any amount (zero included) to get more rewards!
 
 
 
