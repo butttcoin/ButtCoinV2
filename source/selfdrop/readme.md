@@ -19,14 +19,14 @@ You will have to go to Etherscan, and execute the Delete function. It will burn 
 
 The self-drop is meant to reward anyone who makes a claim as well as any random address with the same claim. Random address is any (previous) address that made a claim. The rewards are distributed in a following manner:
 
-- Each time you make a claim, you are guaranteed to get 100 tokens!
+- Each time you make a claim, you are guaranteed to get 10 tokens!
 
-- If you make a claim for the first time with your address, you get only 100 tokens, and you have to make the second claim.
+- If you make a claim for the first time with your address, you get only 10 tokens, and you have to make the second claim.
 
-- If the random address was given more tokens than you, we apply this formula and add it to your reward of 100 tokens: 
+- If the random address was given more tokens than you, we apply this formula and add it to your reward of 10 tokens: 
 (60% of random address rewards) - (60% of your rewards)
 
-- If you have more tokens than a random address, we add 50 tokens to your reward of 100 tokens.
+- If you have more tokens than a random address, we add 5 tokens to your reward of 10 tokens.
 
 - If you have more tokens than a random address, we apply the same formula and reward the random address with it.
 (60% of your rewards) - (60% of random address rewards)
