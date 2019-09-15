@@ -35,5 +35,12 @@ The self-drop is meant to reward anyone who makes a claim as well as any random 
 This is how we will get a good distribution of tokens, and it is also how you may earn the tokens even if you don't make any claims!  Nevertheless, if there aren't enough people making the claims, you will not be earning anything unless making the claims yourself.
 
 ## Please provide us with a tutorial on how to get this token !
+The one-click button on a 0xbutt.com webpage where you can use MetaMask to get the tokens is under a development.
 
+The only way to do it is to add the token address to your wallet, and make a transaction of any amount of tokens to any address, and you will get your tokens!
+
+This example is how it works with a MetaMask, and there are too many wallets to make a tutorial for. Use this tutorial to get a general idea.  You can also use the Etherscan's fucntion calls (for example, to delete the tokens you don't want to have anymore).
+
+
+Step 1. Open the MetaMask
 
