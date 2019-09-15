@@ -3,7 +3,7 @@
 ## TUTORIAL
 The one-click button on a 0xbutt.com webpage where you can use MetaMask to get the tokens is under a development.
 
-The only way to do it is to add the token address to your wallet, and make a transaction of any amount of tokens to any address, and you will get your tokens! This works the best with the MetaMask installed. Otherwise, use MEW or wait for a 0xbutt.com to update the webpage.
+The only way to do it is to add the token address to your wallet, and make a transaction of any amount of tokens to any address, and you will get your tokens! This works the best with the MetaMask installed. Otherwise, use MEW or wait for a 0xbutt.com to update the webpage. The reason for this procedure is because some wallets do not approve a zero transfer and you MUST have some tokens in a wallet.
 
 ### Step 1. 
 Go to :
@@ -21,7 +21,7 @@ Press the "Write" button.
 ![Image3](https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/source/selfdrop/img3.png)
 
 ### Step 5: 
-You can now make a transaction any time with your wallet, with any amount (zero included) to get more rewards!
+You can now make a transaction any time with your wallet, with any amount (for example 1) to get more rewards!
 
 
 
