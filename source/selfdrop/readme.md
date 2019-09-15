@@ -1,4 +1,4 @@
-This is a quick document about the ButtCoin self-drop (faucet).
+This is a quick document about the ButtCoin self-drop (faucet), as well as a passive-income.
 
 The self-drop is meant to reward anyone who makes a claim as well as any random address with the same claim. Random address is any (previous) address that made a claim. The rewards are distributed in a following manner:
 
