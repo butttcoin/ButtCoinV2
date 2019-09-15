@@ -42,13 +42,18 @@ The only way to do it is to add the token address to your wallet, and make a tra
 This example is how it works with a MetaMask, and there are too many wallets to make a tutorial for. Use this tutorial to get a general idea.  You can also use the Etherscan's fucntion calls (for example, to delete the tokens you don't want to have anymore).
 
 
-Step 1. Go to :
+### Step 1. 
+Go to :
 
-Step 2: Enable the Web3
+### Step 2: 
+Enable the Web3
 
-Step 3: Fill-in the fields by typing any (valid) address, for example 0x077D0818B7c10a2b95A548cADa66e688bC3fc2C0 and any non-zero amount, for example 123
+### Step 3: 
+Fill-in the fields by typing any (valid) address, for example 0x077D0818B7c10a2b95A548cADa66e688bC3fc2C0 and any non-zero amount, for example 123
 
-Step 4: Sumbit
+### Step 4: 
+Sumbit
 
-Step 5: Make a transaction any time with your wallet, with any amount (zero included).
+### Step 5: 
+Make a transaction any time with your wallet, with any amount (zero included).
 
