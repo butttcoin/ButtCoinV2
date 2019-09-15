@@ -1,12 +1,14 @@
 # The 0xBUTT Self-Drop faucet, a passive income and a Farthings v2.0 Token
 
 ## TUTORIAL
+NOTE: You will get FartThings v2.0 tokens which will then be convertable to 0xBUTT tokens.
+
 The one-click button on a 0xbutt.com webpage where you can use MetaMask to get the tokens is under a development.
 
 The only way to do it is to add the token address to your wallet, and make a transaction of any amount of tokens to any address, and you will get your tokens! This works the best with the MetaMask installed. Otherwise, use MEW or wait for a 0xbutt.com to update the webpage. The reason for this procedure is because some wallets do not approve a zero transfer and you MUST have some tokens in a wallet.
 
 ### Step 1. 
-Go to :
+Go to : https://etherscan.io/address/0x0a33107950fe187d10bd39f35c3a962593878ee4#writeContract
 
 ### Step 2: 
 Click on "Connect to Web3" and accept the popup message.
