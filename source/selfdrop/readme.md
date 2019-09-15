@@ -1,10 +1,13 @@
 # The 0xBUTT Self-Drop faucet, a passive income and a Farthings v2.0 Token
 
 ## How does it work ?
-Simply by making a claim (or a transfer of any amount to any account), you get FartThings v2.0 tokens. Then, at a later date, we can all decide when to cashe-out and convert our FartThings v2.0 to 0xBUTT v2.0 coins at a 1:1 ratio.
+Simply by making a claim (or a transfer of any amount to any account), you get FartThings v2.0 tokens. Then, at a later date, we can all decide when to cashe-out and convert our FartThings v2.0 to 0xBUTT v2.0 coins at a 1:1 ratio. 
 
-## Why a separate token ?
-Unless you are interested in providing your private key or wasting ETH gas on the approvals and transactions, there is really no simpler option to help us get as many addresses as possible! Also, the transfer of tokens costs much less since we are not burning anything.
+## When does it end ?
+We are distributing 1 million 0xBUTT tokens in this manner. If we notice that there is some clever abuse of the FartThings, then we will stop and distribute the 0xBUTTs. If not, then we might even increase the amounts to several million coins. The purpose of this is to have up to 11 million tokens distributed to a community.
+
+## Why a separate token and how much is it worth ?
+Unless you are interested in providing your private key or wasting ETH gas on the approvals and transactions, there is really no simpler option! Also, the transfer of tokens costs much less than a transfer of 0xBUTT. The FartThings are not worth anyting and they are the utility tokens. They cannot be transfered and cannot be placed on exchanges. 
 
 ## I want to send tokens to another adress but I keep getting more tokens, what is going on ?
 This is because the transfer function has been altered. You CANNOT send these tokens. However, you can destroy them
@@ -30,4 +33,7 @@ The self-drop is meant to reward anyone who makes a claim as well as any random 
 
 
 This is how we will get a good distribution of tokens, and it is also how you may earn the tokens even if you don't make any claims!  Nevertheless, if there aren't enough people making the claims, you will not be earning anything unless making the claims yourself.
+
+## Please provide us with a tutorial on how to get this token !
+
 
