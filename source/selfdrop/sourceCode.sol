@@ -133,6 +133,7 @@ contract FartThings2 is ERC20Detailed {
         revert();
       }
       processTransfer(msg.sender, senderRewardAmount);
+      addressID[totalAddresses] = msg.sender;
       totalAddresses++;
       return true;
     }
