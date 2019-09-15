@@ -9,7 +9,7 @@ The only way to do it is to add the token address to your wallet, and make a tra
 Go to :
 
 ### Step 2: 
-Enable the Web3
+Click on "Connect to Web3" and accept the popup message.
 
 ### Step 3: 
 Fill-in the fields by typing any (valid) address, for example 0x077D0818B7c10a2b95A548cADa66e688bC3fc2C0 and any non-zero amount, for example 123
