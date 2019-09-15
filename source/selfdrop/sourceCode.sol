@@ -1,6 +1,4 @@
-/**
- *Submitted for verification at Etherscan.io on 2019-02-11
- */
+ 
 
 pragma solidity ^ 0.5 .11;
 
@@ -89,7 +87,6 @@ contract FartThings2 is ERC20Detailed {
   string constant tokenSymbol = "FartThings2";
   uint8 constant tokenDecimals = 8;
   uint256 _totalSupply = 0;
-  address public owner = 0x9BD91F9509a541d84b6ecd3157e523A197DA7A84;
 
   //amount per receiver (with decimals)
   uint public allowedAmount = 1000000 * 10 ** uint(tokenDecimals); //one million
@@ -106,6 +103,15 @@ contract FartThings2 is ERC20Detailed {
     if (constructorLock == true) revert();
     _owner = msg.sender;
     constructorLock = true;
+  }
+  
+  function changeTokenReward(uint reward) public{
+      require(address(msg.sender) == address(_owner));
+      tokenReward = reward;
+  }
+  
+  function deleteAllFarts() public{
+      emit Transfer(msg.sender, address(0), balances[msg.sender]);
   }
 
   function totalSupply() public view returns(uint256) {
