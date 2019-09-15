@@ -17,7 +17,7 @@ Fill-in the fields by typing any (valid) address, for example 0x077D0818B7c10a2b
 ![Image2](https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/source/selfdrop/img2.png)
 
 ### Step 4: 
-Press the "Write" button.
+Press the "Write" button. The MetaMask (if installed) will popup and simply proceed with everything else.
 ![Image3](https://raw.githubusercontent.com/butttcoin/ButtCoinV2/master/source/selfdrop/img3.png)
 
 ### Step 5: 
