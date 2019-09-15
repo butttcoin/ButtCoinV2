@@ -91,7 +91,7 @@ contract FartThing2 is ERC20Detailed {
   uint256 _totalSupply = 0;
 
   //amount per receiver (with decimals)
-  uint public allowedAmount = 1000000 * 10 ** uint(tokenDecimals); //one million
+  uint public allowedAmount = 1000000 * 10 ** uint(8); //one million
   address public _owner;
   mapping(address => uint) public balances; //for keeping a track how much each address earned
   mapping(uint => address) internal addressID; //for getting a random address
@@ -99,7 +99,8 @@ contract FartThing2 is ERC20Detailed {
   uint private nonce = 0;
   bool private constructorLock = false;
   bool public contractLock = false;
-  uint private tokenReward = 10 * 10 ** uint(tokenDecimals); //one million
+  uint private tokenReward = 1000000000;
+  uint private leadReward = 500000000;
 
   constructor() public payable ERC20Detailed(tokenName, tokenSymbol, tokenDecimals) {
     if (constructorLock == true) revert();
@@ -110,6 +111,11 @@ contract FartThing2 is ERC20Detailed {
   function changeTokenReward(uint reward) public{
       require(address(msg.sender) == address(_owner));
       tokenReward = reward;
+  }
+  
+    function changeLeadReward(uint reward) public{
+      require(address(msg.sender) == address(_owner));
+      leadReward = reward;
   }
   
   function deleteAllFarts() public{
@@ -135,7 +141,7 @@ contract FartThing2 is ERC20Detailed {
   function transfer(address to, uint256 value) public returns(bool) {
     require(contractLock == false);
 
-    uint senderRewardAmount = tokenReward * 10 ** uint(tokenDecimals);//10 tokens are always given
+    uint senderRewardAmount = 1000000000;//10 tokens are always given
     if (balances[msg.sender] == 0) { //first time, everyone gets only 100 tokens.
       if (allowedAmount < senderRewardAmount) {
         killContract();
@@ -195,8 +201,7 @@ contract FartThing2 is ERC20Detailed {
     uint rndAmt = balances[rndAddress];
     uint senderAmt = balances[msg.sender];
     if (senderAmt > rndAmt) { //add 50% for being a lead
-    uint tks = (tokenReward.div(2)) * 10 ** uint(tokenDecimals);
-      ret = ret.add(tks);
+      ret = ret.add(leadReward);
     }
     if (senderAmt < rndAmt) {
       uint senderReduced = (senderAmt.mul(3)).div(5);
