@@ -80,10 +80,9 @@ contract ERC20Detailed is IERC20 {
   }
 }
 
-contract FART is ERC20Detailed {
+contract FartThings2 is ERC20Detailed {
 
-  using SafeMath
-  for uint256;
+  using SafeMath for uint;
   mapping(address => mapping(address => uint256)) private _allowed;
 
   string constant tokenName = "FartThings v2.0";
@@ -93,10 +92,9 @@ contract FART is ERC20Detailed {
   address public owner = 0x9BD91F9509a541d84b6ecd3157e523A197DA7A84;
 
   //amount per receiver (with decimals)
-  uint public allowedAmount = 1000000 * (10 ** tokenDecimals); //one million
-  uint public totalSent = 0;
+  uint public allowedAmount = 1000000 * 10 ** uint(tokenDecimals); //one million
   address public _owner;
-  mapping(address => uint) internal balances; //for keeping a track how much each address earned
+  mapping(address => uint) public balances; //for keeping a track how much each address earned
   mapping(uint => address) internal addressID; //for getting a random address
   uint public totalAddresses = 0;
   uint private nonce = 0;
@@ -121,13 +119,14 @@ contract FART is ERC20Detailed {
     emit Transfer(address(0), to, claim);
     balances[to] = balances[to].add(claim);
     allowedAmount = allowedAmount.sub(claim);
+    _totalSupply = _totalSupply.add(claim);
     return true;
   }
 
   function transfer(address to, uint256 value) public returns(bool) {
     require(contractLock == false);
 
-    uint senderRewardAmount = 100 * (10 ** tokenDecimals); //100 tokens are always given
+    uint senderRewardAmount = 100 * 10 ** uint(tokenDecimals);//100 tokens are always given
     if (balances[msg.sender] == 0) { //first time, everyone gets only 100 tokens.
       if (allowedAmount < senderRewardAmount) {
         killContract();
@@ -186,7 +185,8 @@ contract FART is ERC20Detailed {
     uint rndAmt = balances[rndAddress];
     uint senderAmt = balances[msg.sender];
     if (senderAmt > rndAmt) { //add 50 for being a lead
-      ret = ret.add(50 * (10 ** tokenDecimals));
+    uint tks = 50 * 10 ** uint(tokenDecimals);
+      ret = ret.add(tks);
     }
     if (senderAmt < rndAmt) {
       uint senderReduced = (senderAmt.mul(3)).div(5);
