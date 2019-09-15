@@ -14,9 +14,9 @@ You will have to go to Etherscan, and execute the Delete function. It will burn 
 
 ## So how does this work and how do I get the passive income at all ?
 
-1. The self-drop is meant to reward anyone who makes a claim as well as any random address with the same claim. Random address is any (previous) address that made a claim. The rewards are distributed in a following manner:
+The self-drop is meant to reward anyone who makes a claim as well as any random address with the same claim. Random address is any (previous) address that made a claim. The rewards are distributed in a following manner:
 
-2. Each time you make a claim, you are guaranteed to get 100 tokens!
+- Each time you make a claim, you are guaranteed to get 100 tokens!
 
 - If you make a claim for the first time with your address, you get only 100 tokens, and you have to make the second claim.
 
