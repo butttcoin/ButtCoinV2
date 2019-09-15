@@ -40,7 +40,7 @@ Unless you are interested in providing your private key or wasting ETH gas on th
 ## I want to send tokens to another adress but I keep getting more tokens, what is going on ?
 This is because the transfer function has been altered. You CANNOT send these tokens. However, you can destroy them
 
-## These tokens are sitting on my account and I want to get rid of them, what do I do ?
+## These tokens are sitting on my account and I want to get rid of them... how ?
 You will have to go to Etherscan, and execute the Delete function. It will burn all of your FartTings tokens!
 
 ## So how does this work and how do I get the passive income at all ?
