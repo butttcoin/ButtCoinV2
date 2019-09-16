@@ -52,11 +52,13 @@ The self-drop is meant to reward anyone who makes a claim as well as any random 
 - If you make a claim for the first time with your address, you get only 10 tokens, and you have to make the second claim.
 
 - If the random address was given more tokens than you have at the moment of making a claim, we apply this formula and add it to your reward of 10 tokens: 
+
 10 + (60% of (random address tokens - number of your tokens))
 
 - If you have more tokens than a random address, we add 5 tokens to your reward of 10 tokens.
 
 - If you have more tokens than a random address, we apply the same formula and reward the random address with it.
+
 10 + (60% of (random address tokens - number of your tokens))
 
 
