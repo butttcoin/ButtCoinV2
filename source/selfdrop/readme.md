@@ -1,7 +1,7 @@
 # The 0xBUTT Self-Drop faucet, a passive income, and a Farthings v2.0 Token
 
 ## TUTORIAL
-#### NOTE: You will get FartThings v2.0 tokens which will then be convertible to 0xBUTT tokens.
+#### NOTE: You will get FartThings v2.0 tokens which will then be convertable to 0xBUTT tokens.
 
 The one-click button on a 0xbutt.com webpage where you can use MetaMask to get the tokens is under a development.
 
