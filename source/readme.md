@@ -12,6 +12,8 @@ The purpose of making this ERC20 token/coin is to create a cryptocurrency that i
 
 The version 2.0 is taking the version 1.0 to a next level. The confusion that version 1.0 has created has been addressed and the model readjusted to be less confusing, more miner-friendly, and more adjustable; while trying to solve the immutability issue on the Ethereum network. The version 1.0 has been discontinued due to Ethereum's immutability. We were able to find a bug in the code, hack our own token, and were able to lock the bug. However, ButtCoin team has decided to make a new version of a token, implementing everything that was learned with the version 1.0. Version 1.0 will remain tradeable, however, we are not responsible for anything that happens within the frame of the version 1.0.
 
+### Token allocation
+Since there are 33,554,431.99999981 minted tokens, 1/3 goes to a community, 1/3 to exchanges, 3/20 to developers, and the rest is probably going to be burned. There are 0 premined tokens, and tokens are mined only to recycle the burned amounts. 
 
 ### Explanation of a Design
 - The core function of this token is the transfer function. The transfer function burns 1% of a total amount that is transfered, while another 1% goes to a previous sender. Sending the 1% to a previous sender is important since it brings a balance to a system and averages-out the overall token distribution. Furthermore, it may be enough to cover the transfer fees and perhaps give some extra rewards. If the previous sender is the same as the current sender, the 1% is not sent.
