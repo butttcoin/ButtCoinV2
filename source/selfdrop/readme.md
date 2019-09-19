@@ -8,7 +8,7 @@ The one-click button on a 0xbutt.com webpage where you can use MetaMask to get t
 This works the best with the MetaMask installed. Otherwise, use MEW or wait for a 0xbutt.com to update the webpage. The reason for this procedure is because some wallets do not approve a zero transfer and you MUST have some FartThings v2.0 tokens in a wallet.
 
 ### Step 1. 
-Go to : https://etherscan.io/address/0x0a33107950fe187d10bd39f35c3a962593878ee4#writeContract
+Go to : https://etherscan.io/address/0x1cCa3b5ad8539260785FcE66b895b7F85b8563aa#writeContract
 
 ### Step 2: 
 Click on "Connect to Web3" and accept the popup message.
