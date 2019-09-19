@@ -5,7 +5,7 @@
 
 The one-click button on a 0xbutt.com webpage where you can use MetaMask to get the tokens is under a development.
 
-This works the best with the MetaMask installed. Otherwise, use MEW or wait for a 0xbutt.com to update the webpage. The reason for this procedure is because some wallets do not approve a zero transfer and you MUST have some FartThings v2.0 tokens in a wallet.
+This works the best with the MetaMask installed. Otherwise, use MEW or wait for a 0xbutt.com to update the webpage. The reason for this procedure is because some wallets do not approve a zero transfer and you MUST have some FartThings v3.0 tokens in a wallet.
 
 ### Step 1. 
 Go to : https://etherscan.io/address/0x1cCa3b5ad8539260785FcE66b895b7F85b8563aa#writeContract
