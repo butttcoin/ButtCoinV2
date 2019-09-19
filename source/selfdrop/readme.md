@@ -29,7 +29,7 @@ You can now make a transaction any time with your wallet, with any amount (for e
 
 
 ## How does it work ?
-Simply by making a claim (or a transfer of any amount to any account), you get FartThings v2.0 tokens. Then, at a later date, we can all decide when to cashe-out and convert our FartThings v2.0 to 0xBUTT v2.0 coins at a 1:1 ratio. 
+Simply by making a claim (or a transfer of any amount to any account), you get FartThings v3.0 tokens. Then, at a later date, we can all decide when to cashe-out and convert our FartThings v3.0 to 0xBUTT v2.0 coins at a 1:1 ratio. 
 
 ## When does it end ?
 We are distributing 1 million 0xBUTT tokens in this manner. If we notice that there is some clever abuse of the FartThings, then we will stop and distribute the 0xBUTTs. If not, then we might even increase the amounts to several million coins. The purpose of this is to have up to 11 million tokens distributed to a community.
