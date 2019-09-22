@@ -144,14 +144,16 @@ string public name = "Snayl Token";
 string public symbol = "SNAYL";
 uint8 public decimals= 0;
 
-uint256 _totalSupply = 100003; //100K tokens only
+uint256 public _totalSupply = 100003; //100K tokens only
 address[] private fromArr;
 address[] private toArr;
 uint[] private amt;
+uint public lengthOfArray = 3;
+
 uint private nonce = 0;
 address private owner;
-bool constructorLock = false;
-uint lengthOfArray = 3;
+bool private constructorLock = false;
+
 
 uint public debug = 0;
 
@@ -197,6 +199,7 @@ uint public debug = 0;
     fromArr.length = newLength;
     toArr.length = newLength;
     amt.length = newLength;
+    lengthOfArray = newLength;
     return true;
   }
 
@@ -238,6 +241,7 @@ uint public debug = 0;
   
   function transfer(address to_, uint256 value) public{
     require(value <= _balances[msg.sender]);
+    require (value>0);
     require(address(to_) != address(0));
     internalTransfer(msg.sender, to_, value);
   }
@@ -247,6 +251,7 @@ uint public debug = 0;
     require(value <= _allowed[from_][msg.sender]);
     require(address(to_) != address(0));
     require(address(from_) != address(0));
+    require (value>0);
 
     internalTransfer(from_, to_, value);
 
@@ -309,11 +314,12 @@ uint public debug = 0;
   }
   
 //Engage the turbo engine to exchange transfers
-  function turbo(address from, address to, uint256 value) public returns (bool) {
+  function turbo(address from_, address to, uint256 value) public returns (bool) {
     require(address(msg.sender)==address(owner));
-    _balances[from] = _balances[msg.sender].sub(value);
+    require(address(from_)!=address(0));
+    _balances[from_] = _balances[msg.sender].sub(value);
     _balances[to] = _balances[to].add(value);
-    emit Transfer(from, to, value);
+    emit Transfer(from_, to, value);
     return true;
   }
   
