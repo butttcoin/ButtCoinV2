@@ -39,3 +39,6 @@ It is for exchanges that demand an immediate transfer, since they cannot wait to
 
 ## Can I breed or squish the Snayls ?
 Only a token owner can breed (introduce new tokens) or squish (that is, burn) the Snayls. Again, this was meant for the exchanges only, and as a safety feature, since we only have 100K tokens.
+
+## ERC-20 Token Transfer Error (Unable to locate corresponding Transfer Event Logs), Check with Sender. 
+This simply means that you have an empty place-holder and not processing anyone's transaction. It is not a bug/issue, just the way Ethereum was designed. We are pushing that design to a limit, and this is why you may see it. Ignore it, and move on. It is the expected behaviour.
