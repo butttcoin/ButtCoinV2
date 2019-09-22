@@ -1,4 +1,8 @@
-/*
+ 
+
+pragma solidity 0.5 .11;
+
+ /*
 
     .----.   @   @
    / .-"-.`.  \v/
@@ -7,13 +11,7 @@
 '---`----'----'
 Snayl token v1.0
 
-*/
-
-
-
-pragma solidity 0.5 .11;
-
-/*
+ 
 Instead of burning the tokens and expecting the behavioural changes, we are directly defining the behaviour.
 We are creating a deflation by increasing the competition and lowering the market concentration.
 This is done by randomly processing transactions within a buffer of 509 possible transactions.
@@ -21,7 +19,6 @@ Therefore, the chance for processing a transaction is always a 0.2%, which is to
 When processed, as a reward, the 1% of a processed transfer goes to an account that initiated a buffered transfer.
 This reward is making sure that the token resources become scarce with a demand. 
 */
-
 
 // ============================================================================
 // Safe maths
@@ -63,14 +60,6 @@ This reward is making sure that the token resources become scarce with a demand.
      return c;
    }
 
-   function mod(uint256 a, uint256 b) internal pure returns(uint256) {
-     return mod(a, b, "SafeMath: modulo by zero");
-   }
-
-   function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns(uint256) {
-     require(b != 0, errorMessage);
-     return a % b;
-   }
  }
 
 // ============================================================================
@@ -143,30 +132,32 @@ This reward is making sure that the token resources become scarce with a demand.
 // ============================================================================
 // MAIN
 // ============================================================================
- contract Zero_x_butt_v2 is ERC20Interface, Owned {
-  
-  using SafeMath for uint;
-  mapping (address => uint256) private _balances;
-  mapping (address => mapping (address => uint256)) private _allowed;
-
-  string constant tokenName = "Snayl";
-  string constant tokenSymbol = "SNAYL";
-  uint8  constant tokenDecimals = 0;
-  uint256 _totalSupply = 100003; //100K tokens only
-  address[] private fromArr;
-  address[] private toArr;
-  uint[] private amt;
-  uint private nonce = 0;
-  address private owner;
-  bool constructorLock = false;
-  uint lengthOfArray = 3;
-   
+ contract SNAYL is ERC20Interface, Owned {
+     
+using SafeMath for uint;
  
+mapping (address => uint256) private _balances;
+mapping (address => mapping (address => uint256)) private _allowed;
+
+string public name = "Snayl Token";
+string public symbol = "SNAYL";
+uint8 public decimals= 0;
+
+uint256 _totalSupply = 100003; //100K tokens only
+address[] private fromArr;
+address[] private toArr;
+uint[] private amt;
+uint private nonce = 0;
+address private owner;
+bool constructorLock = false;
+uint lengthOfArray = 3;
+
+
 // ------------------------------------------------------------------------
 // Constructor
 // ------------------------------------------------------------------------
    constructor() public onlyOwner {
-      if(constructorLock==true) revert();
+   if(constructorLock) revert();
     _mint(msg.sender, _totalSupply);
     fromArr.length = lengthOfArray;
     toArr.length = lengthOfArray;
@@ -175,7 +166,8 @@ This reward is making sure that the token resources become scarce with a demand.
     constructorLock = true;
    }
    
-   
+
+
   
   function getRandomID() internal returns (uint){
       uint randomnumber = uint(keccak256(abi.encodePacked(now, msg.sender, nonce))) % lengthOfArray;
@@ -313,5 +305,22 @@ This reward is making sure that the token resources become scarce with a demand.
     emit Transfer(from, to, value);
     return true;
   }
+  
+   
+ 
+// ------------------------------------------------------------------------
+// Don't accept ETH
+// ------------------------------------------------------------------------
+   function () external payable {
+     revert();
+   }
+   
+ 
+// ------------------------------------------------------------------------
+// Owner can transfer out any accidentally sent ERC20 tokens
+// ------------------------------------------------------------------------
+   function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns(bool success) {
+     return ERC20Interface(tokenAddress).transfer(owner, tokens);
+   }
  
  }
