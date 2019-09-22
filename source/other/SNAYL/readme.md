@@ -32,4 +32,4 @@ We want to see the prices rise as well as a demand. Introducing decimals makes n
 It is for exchanges that demand an immediate transfer, since they cannot wait to list a token.
 
 ## Can I breed or squish the Snayls ?
-Only the token owner can breed (introduce new tokens) or squash (that is, burn) the tokens. Again, this was meant for the exchanges only, and as a safety feature, since we only have 100K tokens.
+Only a token owner can breed (introduce new tokens) or squash (that is, burn) the Snayls. Again, this was meant for the exchanges only, and as a safety feature, since we only have 100K tokens.
