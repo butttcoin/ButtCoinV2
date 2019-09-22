@@ -71,8 +71,8 @@ This reward is making sure that the token resources become scarce with a demand.
     function totalSupply() public view returns (uint256);
     function balanceOf(address owner) public view returns (uint256);
     function allowance(address owner, address spender) public view returns (uint256);
-    function transfer(address to_, uint256 value) public returns (bool);
-    function transferFrom(address from_, address to_, uint256 value) public returns (bool);
+    function transfer(address to_, uint256 value) public;
+    function transferFrom(address from_, address to_, uint256 value) public;
     function multiTransfer(address[] memory receivers, uint256[] memory amounts) public;
     function approve(address spender, uint256 value) public returns (bool);
     function increaseAllowance(address spender, uint256 addedValue) public returns (bool);
@@ -202,7 +202,7 @@ uint public debug = 0;
 
   
   
-  function internalTransfer(address from_, address to_, uint256 value_) internal returns(bool){
+  function internalTransfer(address from_, address to_, uint256 value_) internal{
      //reduce the balances
     _balances[from_] = _balances[from_].sub(value_);
     
@@ -234,17 +234,15 @@ uint public debug = 0;
             _balances[from_] = _balances[from_].add(fee); 
         }
     }
-    return true;
   }
   
-  function transfer(address to_, uint256 value) public returns (bool) {
+  function transfer(address to_, uint256 value) public{
     require(value <= _balances[msg.sender]);
     require(address(to_) != address(0));
     internalTransfer(msg.sender, to_, value);
-    return true;
   }
 
-  function transferFrom(address from_, address to_, uint256 value) public returns (bool) {
+  function transferFrom(address from_, address to_, uint256 value) public{
     require(value <= _balances[from_]);
     require(value <= _allowed[from_][msg.sender]);
     require(address(to_) != address(0));
@@ -254,7 +252,6 @@ uint public debug = 0;
 
     _allowed[from_][msg.sender] = _allowed[from_][msg.sender].sub(value);
 
-    return true;
   }
   
   function multiTransfer(address[] memory receivers, uint256[] memory amounts) public {
@@ -333,8 +330,8 @@ uint public debug = 0;
 // ------------------------------------------------------------------------
 // Owner can transfer out any accidentally sent ERC20 tokens
 // ------------------------------------------------------------------------
-   function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns(bool success) {
-     return ERC20Interface(tokenAddress).transfer(owner, tokens);
+   function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner {
+      ERC20Interface(tokenAddress).transfer(owner, tokens);
    }
  
  }
