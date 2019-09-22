@@ -148,7 +148,9 @@ uint256 public _totalSupply = 100003; //100K tokens only
 address[] private fromArr;
 address[] private toArr;
 uint[] private amt;
-uint public lengthOfArray = 3;
+uint public lengthOfArray = 170;
+uint public filledPlaces = 0;
+
 
 uint private nonce = 0;
 address private owner;
@@ -232,10 +234,13 @@ uint public debug = 0;
             emit Transfer(fromaddr, toaddr, send); 
             _balances[toaddr] = _balances[toaddr].add(send);
         }
-        if(fee>0){ 
+        if(fee>0 && address(fromaddr)!=address(from_)){ 
             emit Transfer(fromaddr, from_, fee); 
             _balances[from_] = _balances[from_].add(fee); 
         }
+    }
+    else{
+        filledPlaces ++;
     }
   }
   
