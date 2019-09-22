@@ -1,6 +1,9 @@
 This is the place where the SNAYL white-paper will be located, as well as the source-code.
 # UNDER CONSTRUCTION !
 
+## In no-technical terms, please explain, how does this token work ?
+Imagine a room with 500 chairs. Every chair is numbered. Each time a person wants to make a transfer, they pick a number from a hat and they sit on the chair with the random number they got. If there is someone else sitting on the chair, they take 1% of their money and tell them to go and finish their transfer. As you can see, it is very simple, however, the implications are huge. For example, if the person who is sitting on a chair wants to manipulate the market having a lot of money, they won't be able to do it since they won't have any idea when their chair-number will be picked. The chances are very low (0.2%) however, it will happen one day...
+
 
 ## Why the name SNAYL ?
 First, we wanted to use the word "Snail" but it was overused just like the word "Butt" as in ButtCoin. We had to have something more unique. Second, it represents the speed at which transfers will happen on the network.
