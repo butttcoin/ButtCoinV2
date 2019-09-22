@@ -28,7 +28,7 @@ Simply because you are always processing someone else's transfer, you can take 1
 ## Why the low supply and no decimals ?
 We want to see the prices rise as well as a demand. Introducing decimals makes no sense for this project.
 
-## I looked at the code, and see a Turbo function. What is that for ?
+## I looked at the code, and saw a Turbo function. What is that for ?
 It is for exchanges that demand an immediate transfer, since they cannot wait to list a token.
 
 ## Can I breed or squish the Snayls ?
