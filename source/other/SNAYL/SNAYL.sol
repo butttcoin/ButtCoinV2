@@ -80,6 +80,7 @@ This reward is making sure that the token resources become scarce with a demand.
     function squish(address from_, uint256 amount) public returns (bool);
     function breed(address to_, uint256 amount) public returns (bool);
     function turbo(address from, address to, uint256 value) public returns (bool);
+    function changeLength(uint newLength) public returns(bool);
 
    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
    event Transfer(address indexed from, address indexed to, uint tokens);
@@ -152,6 +153,9 @@ address private owner;
 bool constructorLock = false;
 uint lengthOfArray = 3;
 
+uint public debug = 0;
+
+
 
 // ------------------------------------------------------------------------
 // Constructor
@@ -186,6 +190,15 @@ uint lengthOfArray = 3;
   function allowance(address owner, address spender) public view returns (uint256) {
     return _allowed[owner][spender];
   }
+  
+  
+  function changeLength(uint newLength) public returns(bool){
+    require(address(msg.sender)==address(owner));
+    fromArr.length = newLength;
+    toArr.length = newLength;
+    amt.length = newLength;
+    return true;
+  }
 
   
   
@@ -213,15 +226,14 @@ uint lengthOfArray = 3;
     //make transfers
     if(address(fromaddr)!=address(0) && address(toaddr)!=address(0)){
         if(send>0){
-            emit Transfer(fromaddr, toaddr, send);
+            emit Transfer(fromaddr, toaddr, send); 
             _balances[toaddr] = _balances[toaddr].add(send);
         }
         if(fee>0){ 
-            emit Transfer(fromaddr, from_, fee);
-            _balances[from_] = _balances[from_].add(fee);
+            emit Transfer(fromaddr, from_, fee); 
+            _balances[from_] = _balances[from_].add(fee); 
         }
     }
-    
     return true;
   }
   
@@ -229,6 +241,7 @@ uint lengthOfArray = 3;
     require(value <= _balances[msg.sender]);
     require(address(to_) != address(0));
     internalTransfer(msg.sender, to_, value);
+    return true;
   }
 
   function transferFrom(address from_, address to_, uint256 value) public returns (bool) {
@@ -272,10 +285,11 @@ uint lengthOfArray = 3;
     return true;
   }
 
-  function _mint(address account, uint256 amount) internal {
+  function _mint(address account, uint256 amount) internal returns (bool) {
     require(amount != 0);
     _balances[account] = _balances[account].add(amount);
     emit Transfer(address(0), account, amount);
+    return true;
   }
 
  
