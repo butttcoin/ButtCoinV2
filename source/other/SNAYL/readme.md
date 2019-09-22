@@ -22,3 +22,8 @@ As mentioned, there is no burning involved. By definition, if we can lower the m
 ## How do you focus on the competition more than on a market price manipulation ?
 By making the token transfers impossible to predict, we are preventing the market concentration. Furthermore, by making the token more scarce and by buffering the transfers, we are increasing a demand as well as a competition.
 
+## How do you plan to make the token more scarce ?
+Simply because you are always processing someone else's transfer, you can take 1% from their transfer. Unfortunately, zero transfers are NOT allowed, but you may get no tokens if they transfer less than 100.
+
+## Why the low supply and no decimals ?
+We want to see the prices rise as well as a demand. Introducing decimals makes no sense for this project.
