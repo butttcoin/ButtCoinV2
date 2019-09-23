@@ -3,6 +3,8 @@ This is the place where the SNAYL white-paper will be located, as well as the so
 
 ## WHERE IS MY AIRDROP ?
 Relax, this is a Snayl token! Give it some time, it does things the way the snails do...
+Here are the transaction IDs
+https://etherscan.io/tx/0xe6da37dd058666a8709c18f9e8cf21470c7bcb185088508fa7dbca7d20704661
 
 ## In no-technical terms, please explain, how does this token work ?
 Imagine a room with 500 chairs. Every chair is numbered. Each time a person wants to make a transfer, they pick a number from a hat and they sit on the chair with the random number they got. If there is someone else sitting on the chair, they take 1% of their money and tell them to go and finish their transfer. THAT IS ALL! As you can see, it is very simple, however, the implications are huge. For example, if the person who is sitting on a chair wants to manipulate the market having a lot of money, they won't be able to do it since they won't have any idea when their chair-number will be picked. The chances are very low (0.2%) however, it will happen one day...
