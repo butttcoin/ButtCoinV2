@@ -6,7 +6,9 @@ Currently, the ButtCoin (0xBUTT version 2.0) is a project/token that has an owne
 
 ### OPTION 2: Leave it as is.
 
-This is what the pros and cons to option 1. Option 2 is same as 1 but with everything enabled.
+This is what the pros and cons are to option 1.
+
+Option 2 is same as 1 but with everything enabled.
 
 Pros: 
 - There is no central authority.
