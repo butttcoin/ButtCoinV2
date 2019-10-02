@@ -1,4 +1,4 @@
-# The 0xBUTT Self-Drop faucet, a passive income, and a Farthings v3.0 Token
+# The 0xBUTT Self-Drop faucet, a passive income, and a Farthings v3.0 Token IS NOW CLOSED !!!!
 
 ## TUTORIAL
 #### NOTE: You will get FartThings v3.0 tokens which will then be convertable to 0xBUTT tokens.
