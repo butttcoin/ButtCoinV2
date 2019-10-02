@@ -1,3 +1,5 @@
+# BUTTCOIN v2.0 OWNERSHIP POLL
+
 Currently, the ButtCoin (0xBUTT version 2.0) is a project/token that has an owner. Having an ownership has the pros and cons. The main concern while having an ownership is that although on a decentralized platform, the project itself has a central governing authority. This poll is asking the community to decide whether to turn this central authority off or whether to let it remain. There are 2 options:
 
 1. Remove the ownership and the administrator accounts, everyone should have equal rights.
