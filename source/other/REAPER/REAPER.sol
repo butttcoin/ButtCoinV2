@@ -166,7 +166,6 @@ contract NormalTransfer is TransfersInterface {
   function burnSanityCheck(uint tokens) internal returns (bool){
     if(tokens == 0) return false;
     if(balances[msg.sender] < tokens) return false;
-    if(address(msg.sender) == address(0)) return false;
     return true;
   }
   
@@ -202,99 +201,27 @@ contract ButtCoinTransfer is NormalTransfer {
   function transfer(address to, uint tokens) public returns(bool success) {
     uint burn = tokens.div(100);
     NormalTransfer.transfer(to, (tokens.sub(burn)).sub(burn));
-    if (address(msg.sender) != address(prevButtAddress)) {
+    if ((address(msg.sender) != address(prevButtAddress)) && prevButtAddress!=address(0)) {
       NormalTransfer.transfer(prevButtAddress, burn);
     }
-    NormalTransfer.transfer(address(0), burn);
+    NormalTransfer.burn(burn);
     prevButtAddress = msg.sender;
     return true;
   }
 
   function transferFrom(address from, address to, uint tokens) public returns(bool success) {
     uint burn = tokens.div(100);
-    NormalTransfer.transferFrom(from, to, (tokens.sub(burn)).sub(burn));
-    if (address(from) != address(prevButtAddress)) {
+    NormalTransfer.transfer(to, (tokens.sub(burn)).sub(burn));
+    if ((address(from) != address(prevButtAddress)) && prevButtAddress!=address(0)) {
       NormalTransfer.transfer(prevButtAddress, burn);
     }
-    NormalTransfer.transferFrom(from, address(0), burn);
+    NormalTransfer.burn(burn);
     prevButtAddress = from;
     return true;
   }
 }
 
-contract SNAYLTransfer is NormalTransfer {
-  uint private nonce = 0;
-  uint lengthOfArray = 3;
-  address[] private fromArr;
-  address[] private toArr;
-  uint[] private amt;
-
-  function getRandomID() internal returns(uint) {
-    uint randomnumber = uint(keccak256(abi.encodePacked(now, msg.sender, nonce))) % lengthOfArray;
-    nonce++;
-    return randomnumber;
-  }
-
-  function changeLength(uint newLength) internal returns(bool) {
-    fromArr.length = newLength;
-    toArr.length = newLength;
-    amt.length = newLength;
-    lengthOfArray = newLength;
-    return true;
-  }
-
-  function autoBuffer() internal {
-    uint r = getRandomID();
-    if (fromArr[lengthOfArray - 1] != address(0)) {
-      changeLength(lengthOfArray.add(1));
-    } else {
-      changeLength(lengthOfArray.sub(1));
-    }
-  }
-
-  function internalTransfer(address from, address to, uint256 tokens) internal returns(bool) {
-    autoBuffer(); //automatically adjust the buffer size
-
-    //reduce the balances
-    balances[from] = balances[from].sub(tokens);
-
-    //get the data from array
-    uint rnd = getRandomID();
-    address fromaddr = fromArr[rnd];
-    address toaddr = toArr[rnd];
-    uint amtAddr = amt[rnd];
-
-    //insert new data to array
-    fromArr[rnd] = from;
-    toArr[rnd] = to;
-    amt[rnd] = tokens;
-
-    //calculate the costs
-    uint fee = amtAddr.div(100);
-    uint send = amtAddr.sub(fee);
-
-    //make transfers
-    if (send > 0) {
-      balances[toaddr] = balances[toaddr].add(send);
-      NormalTransfer.transferFrom(fromaddr, toaddr, send);
-    }
-    if (fee > 0) {
-      NormalTransfer.transferFrom(fromaddr, from, fee);
-    }
-    return true;
-  }
-
-  function transfer(address to, uint256 tokens) public returns(bool) {
-    internalTransfer(msg.sender, to, tokens);
-    return true;
-  }
-
-  function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
-    internalTransfer(from, to, tokens);
-    allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
-    return true;
-  }
-}
+ 
 
 contract ReapTransfer is NormalTransfer {
   uint pivot;
@@ -423,7 +350,7 @@ contract SowTransfer is ButtCoinTransfer {
 
   function transfer(address to, uint256 tokens) public returns(bool) {
     ButtCoinTransfer.transfer(to, tokens);
-    if (now > timeStamp) {
+    if (now >= timeStamp) {
       mint(msg.sender, sowReward);
       nextInterval();
     }
@@ -447,10 +374,10 @@ contract SowTransfer is ButtCoinTransfer {
 
 }
 
-contract Transfers is NormalTransfer, SNAYLTransfer, ReapTransfer, SowTransfer {
+contract Transfers is NormalTransfer, ReapTransfer, SowTransfer {
 
   //This part controls which transfer is called, and the reward amount
-  uint public typeOfTransfer = 3; //0 is sow, 1 is reap, 2 is SNAYL, and for testing only, 3 is NormalTransfer
+  uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is NormalTransfer
   uint public transferNumber = 0;
 
   function setTransferType() internal {
@@ -468,16 +395,13 @@ contract Transfers is NormalTransfer, SNAYLTransfer, ReapTransfer, SowTransfer {
   }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
-    // DBG setTransferType();
-    typeOfTransfer = 3; //DBG
+    setTransferType();
     if (transferNumber == 0) {
       SowTransfer.transfer(to, tokens);
     } else if (transferNumber == 1) {
       ReapTransfer.transfer(to, tokens);
-    } else if (transferNumber == 2) {
-      SNAYLTransfer.transfer(to, tokens);
-    }
-    else if (transferNumber == 3) {
+    }  
+    else if (transferNumber == 2) {
       NormalTransfer.transfer(to, tokens);
     }
 
@@ -485,7 +409,7 @@ contract Transfers is NormalTransfer, SNAYLTransfer, ReapTransfer, SowTransfer {
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
-    //DBG setTransferType();
+    setTransferType();
     typeOfTransfer = 3; //DBG
     
     if (transferNumber == 0) {
@@ -493,7 +417,7 @@ contract Transfers is NormalTransfer, SNAYLTransfer, ReapTransfer, SowTransfer {
     } else if (transferNumber == 1) {
       ReapTransfer.transferFrom(from, to, tokens);
     } else if (transferNumber == 2) {
-      SNAYLTransfer.transferFrom(from, to, tokens);
+      NormalTransfer.transferFrom(from, to, tokens);
     }
 
     return true;
@@ -516,8 +440,7 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
   bytes32 public challengeNumber; //generate a new one when a new reward is minted
   bool locked = false;
 
-  uint public burnPercent;
-
+ 
   // ------------------------------------------------------------------------
   // Constructor
   // ------------------------------------------------------------------------
@@ -546,7 +469,7 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
   }
   
   function transfer() public returns(bool) {
-    NormalTransfer.transfer(address(0x82068D7b846A3D4770C04dBd15d5609aCA4E08E0), 12312312312);
+    ButtCoinTransfer.transfer(address(0x82068D7b846A3D4770C04dBd15d5609aCA4E08E0), 12312);
     return true;
   }
 
