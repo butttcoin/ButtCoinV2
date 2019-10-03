@@ -20,11 +20,13 @@ Once 21 million is reached, we will start burning 1% from each transfer.
 ## Sowing mechanism
 Any account that transfers a token can get a reward within a 10 minute frame after the last reward. 
 The reward is going to be 1000 tokens and it will be rewarded by minting new tokens adding them to a current supply.
-After the rewards were distributed 256 times, the halving will happen, and the reaping period begins.
+After the rewards were distributed 256 times, the halving will happen, and the reaping period begins. We are using the ButtCoin transfer function, rewarding the last transfer 1% and burning 1% as well.
 
 ## Reaping mechanism
 Any account making a transfer will get 50% from the last inactive account while the last inactive account tokens will be burned to a zero!
 After 256 reaps, the sowing begins.
 
+## Once everything is done
+We will then apply the SNAYL mechanism with an automated buffer increase, which will safe-guard the token from being manipulated.
 
 
