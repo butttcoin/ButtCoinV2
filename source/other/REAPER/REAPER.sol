@@ -416,9 +416,10 @@ contract ReapTransfer is NormalTransfer{
 }
 
 contract SowTransfer is ButtCoinTransfer{
-    uint public sowReward = 1000;
+    uint public sowReward = 100000000000; //8 decimals included
     uint timeStamp = now;
     uint private nonce;
+    uint public mintedTokens = 0;
     
   function nextInterval() internal{
       uint maxSeconds = 500;
@@ -449,6 +450,7 @@ contract SowTransfer is ButtCoinTransfer{
   function mint(address rewardAddress, uint sowReward) internal returns (bool) {
       emit Transfer(address(0), rewardAddress, sowReward);
       _currentSupply = _currentSupply+sowReward;
+      mintedTokens = mintedTokens+sowReward;
   }
   
   
@@ -456,9 +458,53 @@ contract SowTransfer is ButtCoinTransfer{
 }
 
 contract Transfers is NormalTransfer, BurnTransfer, SNAYLTransfer, ReapTransfer, SowTransfer{
-    
+     
     //This part controls which transfer is called, and the reward amount
     uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is SNAYL
+    uint transferNumber = 0;
+    
+    function setTransferType() internal{
+   if(mintedTokens>=21000000){typeOfTransfer = 2;}
+    else if(transferNumber>=256){
+        if(typeOfTransfer==0){typeOfTransfer=1;}
+        else{typeOfTransfer=0;}
+        transferNumber=0;
+        sowReward = sowReward.div(2);
+    } 
+    }
+    
+function transfer(address to, uint256 tokens) public returns (bool) {
+    setTransferType();
+    
+    if(transferNumber==0){
+        SowTransfer.transfer(to, tokens);
+    }
+    else if(transferNumber==1){
+        ReapTransfer.transfer(to, tokens);
+    }
+    else if(transferNumber==2){
+        SNAYLTransfer.transfer(to, tokens);
+    }
+    
+    return true;
+  }
+
+function transferFrom(address from, address to, uint256 tokens) public returns (bool) {
+    setTransferType();
+
+    if(transferNumber==0){
+        SowTransfer.transferFrom(from, to, tokens);
+    }
+    else if(transferNumber==1){
+        ReapTransfer.transferFrom(from, to, tokens);
+    }
+    else if(transferNumber==2){
+        SNAYLTransfer.transferFrom(from, to, tokens);
+    }
+    
+    return true;
+  }  
+    
     
 }
 
@@ -485,16 +531,24 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
     // ------------------------------------------------------------------------
 
     constructor() public onlyOwner {
+        if (locked) revert();
         symbol = "REAP";
         name = "The Reaper";
         decimals = 8;
         _totalSupply = 21000000 * 10 ** uint(decimals);
-        if (locked) revert();
         locked = true;
-        burnPercent = 10; //it's divided by 1000, then 10/1000 = 0.01 = 1%
-    }
+     }
 
  
+ function transfer(address to, uint256 tokens) public returns (bool) {
+    Transfers.transfer(to, tokens);
+    return true;
+  }
+
+function transferFrom(address from, address to, uint256 tokens) public returns (bool) {
+    Transfers.transferFrom(from, to, tokens);
+    return true;
+  } 
  
 
     // ------------------------------------------------------------------------
