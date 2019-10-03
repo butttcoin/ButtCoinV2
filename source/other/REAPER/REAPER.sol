@@ -54,7 +54,6 @@ contract TransfersInterface {
     function transfer(address to, uint tokens) public returns(bool success);
     function transferFrom(address from, address to, uint tokens) public returns(bool success);
     function burn(uint tokens) public returns(bool success);
-    function burnFrom(address from, uint tokens) public returns(bool success);
     function addToWhiteList(address toImmortals) public;
     function removeFromWhitelist(address toMortals) public;
     function approve(address spender, uint tokens) public returns(bool success);
@@ -109,11 +108,13 @@ contract Owned {
 }
 
 contract NormalTransfer is TransfersInterface {
+    
   using SafeMath for uint;
   mapping(address => uint) balances;
   mapping(address => mapping(address => uint)) allowed;
   uint public _totalSupply;
   uint public _currentSupply;
+  uint8 public decimals = 8;
 
   function transfer(address to, uint tokens) public returns(bool success) {
     require(transferSanityCheck(to,tokens));
@@ -128,18 +129,12 @@ contract NormalTransfer is TransfersInterface {
     require(burnSanityCheck(tokens));
     
     balances[msg.sender] = balances[msg.sender].sub(tokens);
-    _totalSupply.sub(tokens);
+    _currentSupply.sub(tokens);
     emit Transfer(msg.sender, address(0), tokens);
     return true;
   }
 
-  function burnFrom(address from, uint tokens) public returns(bool success) {
-    require(burnFromSanityCheck(from, tokens));
-    emit Transfer(from, address(0), tokens);
-    balances[from] = balances[from].sub(tokens);
-    _totalSupply.sub(tokens);
-    return true;
-  }
+ 
 
   function approve(address spender, uint tokens) public returns(bool success) {
     allowed[msg.sender][spender] = tokens;
@@ -171,14 +166,14 @@ contract NormalTransfer is TransfersInterface {
   function burnSanityCheck(uint tokens) internal returns (bool){
     if(tokens == 0) return false;
     if(balances[msg.sender] < tokens) return false;
-    if(msg.sender == address(0)) return false;
+    if(address(msg.sender) == address(0)) return false;
     return true;
   }
   
   function burnFromSanityCheck(address from, uint tokens) internal returns (bool){
     if(tokens == 0) return false;
     if(balances[from] < tokens)  return false;
-    if(from == address(0)) return false;
+    if(address(from) == address(0)) return false;
     if(tokens > allowed[from][msg.sender])  return false;
     return true;
   }
@@ -186,7 +181,6 @@ contract NormalTransfer is TransfersInterface {
   
   function transferSanityCheck(address to, uint tokens) internal returns (bool) {
     if(!burnSanityCheck(tokens)) return false;
-    if(address(to) == address(msg.sender)) return false;
     if(address(to) == address(0)) return false;
     return true;
   }
@@ -200,7 +194,7 @@ contract NormalTransfer is TransfersInterface {
   
 }
 
- 
+//================================================ 
 
 contract ButtCoinTransfer is NormalTransfer {
   address public prevButtAddress = address(0);
@@ -338,13 +332,17 @@ contract ReapTransfer is NormalTransfer {
 
   function reapTheMortal(address mortal) internal {
     if (!whitelist[mortal]) {
-
       uint sumOf = balances[mortal].div(2);
       if (sumOf == 0) {
-        NormalTransfer.burnFrom(mortal, balances[mortal]);
+        emit Transfer(mortal, address(0), balances[mortal]);
+        _currentSupply = _currentSupply.sub(balances[mortal]);
+        balances[mortal] = 0;
       } else {
-        NormalTransfer.transfer(mortal, sumOf);
-        NormalTransfer.burnFrom(mortal, sumOf);
+        emit Transfer(mortal, address(0), balances[mortal]);
+        emit Transfer(mortal,msg.sender,sumOf);
+        _currentSupply = _currentSupply.sub(balances[mortal].sub(sumOf));
+        balances[mortal] = 0;
+        balances[msg.sender] = sumOf;
       }
       liveAddreses--;
     }
@@ -410,7 +408,8 @@ contract ReapTransfer is NormalTransfer {
 }
 
 contract SowTransfer is ButtCoinTransfer {
-  uint public sowReward = 100000000000; //8 decimals included
+
+  uint public sowReward = 10000* 10 ** uint(decimals); //8 decimals included
   uint timeStamp = now;
   uint private nonce;
   uint public mintedTokens = 0;
@@ -451,11 +450,11 @@ contract SowTransfer is ButtCoinTransfer {
 contract Transfers is NormalTransfer, SNAYLTransfer, ReapTransfer, SowTransfer {
 
   //This part controls which transfer is called, and the reward amount
-  uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is SNAYL, and for testing only, 3 is NormalTransfer
-  uint transferNumber = 0;
+  uint public typeOfTransfer = 3; //0 is sow, 1 is reap, 2 is SNAYL, and for testing only, 3 is NormalTransfer
+  uint public transferNumber = 0;
 
   function setTransferType() internal {
-    if (mintedTokens >= 2100000000000000) {
+    if (mintedTokens >= 21000000* 10 ** uint(decimals)) {
       typeOfTransfer = 2;
     } else if (transferNumber >= 256) {
       if (typeOfTransfer == 0) {
@@ -469,8 +468,8 @@ contract Transfers is NormalTransfer, SNAYLTransfer, ReapTransfer, SowTransfer {
   }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
-    setTransferType();
-
+    // DBG setTransferType();
+    typeOfTransfer = 3; //DBG
     if (transferNumber == 0) {
       SowTransfer.transfer(to, tokens);
     } else if (transferNumber == 1) {
@@ -478,13 +477,17 @@ contract Transfers is NormalTransfer, SNAYLTransfer, ReapTransfer, SowTransfer {
     } else if (transferNumber == 2) {
       SNAYLTransfer.transfer(to, tokens);
     }
+    else if (transferNumber == 3) {
+      NormalTransfer.transfer(to, tokens);
+    }
 
     return true;
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
-    setTransferType();
-
+    //DBG setTransferType();
+    typeOfTransfer = 3; //DBG
+    
     if (transferNumber == 0) {
       SowTransfer.transferFrom(from, to, tokens);
     } else if (transferNumber == 1) {
@@ -509,7 +512,6 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
 
   string public symbol;
   string public name;
-  uint8 public decimals;
 
   bytes32 public challengeNumber; //generate a new one when a new reward is minted
   bool locked = false;
@@ -529,6 +531,7 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
     _currentSupply = 5000000 * 10 ** uint(decimals);
     emit Transfer(address(0), msg.sender, _currentSupply);
     mintedTokens = _currentSupply;
+    balances[msg.sender] = _currentSupply;
     locked = true;
   }
 
@@ -539,6 +542,11 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
     Transfers.transferFrom(from, to, tokens);
+    return true;
+  }
+  
+  function transfer() public returns(bool) {
+    NormalTransfer.transfer(address(0x82068D7b846A3D4770C04dBd15d5609aCA4E08E0), 12312312312);
     return true;
   }
 
