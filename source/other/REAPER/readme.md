@@ -18,7 +18,7 @@ First, we will do the sowing, then reaping and then repeat the both until 21 mil
 Once 21 million is reached, we will start burning 1% from each transfer.
 
 ## Sowing mechanism
-Any account that transfers a token can get a reward within a 10 minute frame since the last reward. 
+Any account that transfers a token can get a reward within a 10 minute frame after the last reward. 
 The reward is going to be 1000 tokens and it will be rewarded by minting new tokens adding them to a current supply.
 After the rewards were distributed 256 times, the halving will happen, and the reaping period begins.
 
