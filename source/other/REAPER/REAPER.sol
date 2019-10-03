@@ -200,21 +200,7 @@ contract NormalTransfer is TransfersInterface {
   
 }
 
-contract BurnTransfer is NormalTransfer {
-  function transfer(address to, uint tokens) public returns(bool success) {
-    uint burn = tokens.div(100);
-    NormalTransfer.transfer(to, tokens.sub(burn));
-    NormalTransfer.transfer(address(0), burn);
-    return true;
-  }
-
-  function transferFrom(address from, address to, uint tokens) public returns(bool success) {
-    uint burn = tokens.div(100);
-    NormalTransfer.transferFrom(from, to, tokens.sub(burn));
-    NormalTransfer.transferFrom(from, address(0), burn);
-    return true;
-  }
-}
+ 
 
 contract ButtCoinTransfer is NormalTransfer {
   address public prevButtAddress = address(0);
@@ -462,10 +448,10 @@ contract SowTransfer is ButtCoinTransfer {
 
 }
 
-contract Transfers is NormalTransfer, BurnTransfer, SNAYLTransfer, ReapTransfer, SowTransfer {
+contract Transfers is NormalTransfer, SNAYLTransfer, ReapTransfer, SowTransfer {
 
   //This part controls which transfer is called, and the reward amount
-  uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is SNAYL
+  uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is SNAYL, and for testing only, 3 is NormalTransfer
   uint transferNumber = 0;
 
   function setTransferType() internal {
