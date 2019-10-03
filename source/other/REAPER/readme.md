@@ -13,6 +13,9 @@ There are two main periods. One is a sowing period and other is the reaping peri
 We will leave 3-5 million for the owner account in order to be able to spread the tokens to exchanges for a liquidity.
 We will have to make a white-list so that tokens on exchanges don't get burned.
 
+## Token distribution
+Only 21 accounts will be elligible to get them for free, others will have to take the smallest and the cheapest amount from either a relay or uniswap. This is simply because they can mint their own tokens during the sow period and because we are starting from a zero, other than 3-5 mil tokens allocated to exchanges and a liquidity. The total supply is 21 million.
+
 ## Reaping and sowing mechanism
 First, we will do the sowing, then reaping and then repeat the both until 21 million tokens are distributed burned in such a manner.
 Once 21 million is reached, we will start burning 1% from each transfer.
