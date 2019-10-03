@@ -1,9 +1,9 @@
-
+/**
+ *Submitted for verification at Etherscan.io on 2019-06-17
+ */
 
 pragma solidity 0.5 .11;
 
-// Mineable & Deflationary ERC20 Token using Proof Of Work
-//
 // Symbol      :  
 // Name        :   
 // Total supply: 21,000,000.00
@@ -46,7 +46,6 @@ library SafeMath {
 
 contract ERC20Interface {
   function totalSupply() public view returns(uint);
-
   function balanceOf(address tokenOwner) public view returns(uint balance);
 
   function allowance(address tokenOwner, address spender) public view returns(uint remaining);
@@ -55,7 +54,6 @@ contract ERC20Interface {
 
 contract TransfersInterface {
   function transfer(address to, uint tokens) public returns(bool success);
-
   function transferFrom(address from, address to, uint tokens) public returns(bool success);
 
   function approve(address spender, uint tokens) public returns(bool success);
@@ -109,19 +107,14 @@ contract Owned {
 }
 
 contract NormalTransfer is TransfersInterface {
-  using SafeMath
-  for uint;
+  using SafeMath for uint;
   mapping(address => uint) balances;
   mapping(address => mapping(address => uint)) allowed;
   uint public _totalSupply;
   uint public _currentSupply;
 
   function transfer(address to, uint tokens) public returns(bool success) {
-    require(tokens > 0);
-    require(balances[msg.sender] >= tokens);
-    require(address(to) != address(msg.sender));
-    require(address(to) != address(0));
-    require(msg.sender != address(0));
+    require(transferSanityCheck(to,tokens));
 
     balances[msg.sender] = balances[msg.sender].sub(tokens);
     balances[to] = balances[to].add(tokens);
@@ -130,10 +123,8 @@ contract NormalTransfer is TransfersInterface {
   }
 
   function burn(uint tokens) public returns(bool success) {
-    require(tokens > 0);
-    require(balances[msg.sender] >= tokens);
-    require(msg.sender != address(0));
-
+    require(burnSanityCheck(tokens));
+    
     balances[msg.sender] = balances[msg.sender].sub(tokens);
     _totalSupply.sub(tokens);
     emit Transfer(msg.sender, address(0), tokens);
@@ -141,11 +132,7 @@ contract NormalTransfer is TransfersInterface {
   }
 
   function burnFrom(address from, uint tokens) public returns(bool success) {
-    assert(tokens > 0);
-    assert(balances[from] >= tokens);
-    assert(from != address(0));
-    assert(tokens <= allowed[from][msg.sender]);
-
+    require(burnFromSanityCheck(from, tokens));
     emit Transfer(from, address(0), tokens);
     balances[from] = balances[from].sub(tokens);
     _totalSupply.sub(tokens);
@@ -159,13 +146,7 @@ contract NormalTransfer is TransfersInterface {
   }
 
   function transferFrom(address from, address to, uint tokens) public returns(bool success) {
-    assert(tokens > 0);
-    assert(balances[from] >= tokens);
-    assert(address(to) != address(from));
-    assert(from != address(0));
-    assert(tokens <= allowed[from][msg.sender]);
-    assert(address(to) != address(0));
-
+    require(transferFromSanityCheck(from,to,tokens));
     balances[from] = balances[from].sub(tokens);
     allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
     balances[to] = balances[to].add(tokens);
@@ -183,6 +164,38 @@ contract NormalTransfer is TransfersInterface {
     ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);
     return true;
   }
+  
+  
+  function burnSanityCheck(uint tokens) internal returns (bool){
+    if(tokens == 0) return false;
+    if(balances[msg.sender] < tokens) return false;
+    if(msg.sender == address(0)) return false;
+    return true;
+  }
+  
+  function burnFromSanityCheck(address from, uint tokens) internal returns (bool){
+    if(tokens == 0) return false;
+    if(balances[from] < tokens)  return false;
+    if(from == address(0)) return false;
+    if(tokens > allowed[from][msg.sender])  return false;
+    return true;
+  }
+  
+  
+  function transferSanityCheck(address to, uint tokens) internal returns (bool) {
+    if(!burnSanityCheck(tokens)) return false;
+    if(address(to) == address(msg.sender)) return false;
+    if(address(to) == address(0)) return false;
+    return true;
+  }
+  
+  function transferFromSanityCheck(address from, address to, uint tokens) internal returns (bool) {
+    if(!burnFromSanityCheck(from,tokens)) return false;
+    if(address(to) == address(from)) return false;
+    return true;
+  }
+  
+  
 }
 
 contract BurnTransfer is NormalTransfer {
