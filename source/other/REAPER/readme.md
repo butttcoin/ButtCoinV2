@@ -10,7 +10,7 @@ There are two main periods. One is a sowing period and other is the reaping peri
 
 
 ## Token allocation
-We will leave 7 million (one third) for the owner account in order to be able to spread the tokens to exchanges for a liquidity.
+We will leave 3-5 million for the owner account in order to be able to spread the tokens to exchanges for a liquidity.
 We will have to make a white-list so that tokens on exchanges don't get burned.
 
 ## Reaping and sowing mechanism
@@ -19,7 +19,7 @@ Once 21 million is reached, we will start burning 1% from each transfer.
 
 ## Sowing mechanism
 Any account that transfers a token can get a reward within a 10 minute frame since the last reward. 
-The reward is going to be 200 tokens and it will be rewarded by minting new tokens adding them to a current supply.
+The reward is going to be 1000 tokens and it will be rewarded by minting new tokens adding them to a current supply.
 After the rewards were distributed 256 times, the halving will happen, and the reaping period begins.
 
 ## Reaping mechanism
