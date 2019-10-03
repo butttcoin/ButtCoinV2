@@ -51,12 +51,16 @@ contract ERC20Interface {
 }
 
 contract TransfersInterface {
-  function transfer(address to, uint tokens) public returns(bool success);
-  function transferFrom(address from, address to, uint tokens) public returns(bool success);
-
-  function approve(address spender, uint tokens) public returns(bool success);
-  event Transfer(address indexed from, address indexed to, uint tokens);
-  event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
+    function transfer(address to, uint tokens) public returns(bool success);
+    function transferFrom(address from, address to, uint tokens) public returns(bool success);
+    function burn(uint tokens) public returns(bool success);
+    function burnFrom(address from, uint tokens) public returns(bool success);
+    function addToWhiteList(address toImmortals) public;
+    function removeFromWhitelist(address toMortals) public;
+    function approve(address spender, uint tokens) public returns(bool success);
+    
+    event Transfer(address indexed from, address indexed to, uint tokens);
+    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
 }
 
 // ----------------------------------------------------------------------------
@@ -536,6 +540,9 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
     name = "The Reaper";
     decimals = 8;
     _totalSupply = 21000000 * 10 ** uint(decimals);
+    _currentSupply = 5000000 * 10 ** uint(decimals);
+    emit Transfer(address(0), msg.sender, _currentSupply);
+    mintedTokens = _currentSupply;
     locked = true;
   }
 
