@@ -5,7 +5,7 @@ This is a quick overview of the Reaper token. It is a 0xBUTT promotional token f
 Our intention is to create the cruel and the scariest token that has ever been made.
 
 There are two main periods. One is a sowing period and other is the reaping period.
-- Sowing period consists of rewarding the token transfers, every 10 minutes, at random.
+- Sowing period consists of rewarding the token transfers, every 10 minutes, at random intervals.
 - Reaping period consists of burning the most inactive accounts and taking 50% from them.
 
 
