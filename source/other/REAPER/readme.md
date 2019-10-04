@@ -1,9 +1,9 @@
 # Reaper Token White-Paper
 ## Overview
 
-The reaper token's main goal is to introduce a new deflationary mechanism where addresses are burned. Deflation is usualy achieved by burning 1% of any transfer. Reaper, on the other hand, is pruning the network by removing the least active account. The pruning is done by burning the assets of the least active account and transfering the 50% to a person who initiated the pruning. Thus, the initiator address is called The Reaper. Since we are pruning the network to achieve the best performace, we are also distributing and minting the tokens in a similar manner. For this reason, we have two cycles called Sowing and Reaping. Therefore, the main purpose of this token is to establish the best-performing network by distributing and burning the tokens. Once all tokens are minted and Sowing and Reaping periods over, we are simply applying the classical 1% burning fee to each transfer. We are hoping to accomplish the optimal parameters for any deflaitonary token, answering which ratio of minted and burned tokens would give the best token performaces.
+The reaper token's main goal is to introduce a new deflationary mechanism where addresses are burned. Deflation is usually achieved by burning 1% of any transfer. Reaper, on the other hand, is pruning the network by removing the least active account. The pruning is done by burning the assets of the least active account and transferring the 50% to a person who initiated the pruning. Thus, the initiator address is called The Reaper. Since we are pruning the network to achieve the best performance, we are also distributing and minting the tokens in a similar manner. For this reason, we have two cycles called Sowing and Reaping. Therefore, the main purpose of this token is to establish the best-performing network by distributing and burning the tokens. Once all tokens are minted and Sowing and Reaping periods over, we are simply applying the classical 1% burning fee to each transfer. We are hoping to accomplish the optimal parameters for any deflationary token, answering which ratio of minted and burned tokens would give the best token performance.
 
-The reaper token idea originates from a quick conversation on a Telegram's ButtCoin channel where we were discussing accounts, while one user thougth that we are discussing the tokens with a burning applied. Soon, we have realized that burning the inactive accounts would be something new that hasn't been done before, and although cruel, it would be nice to have around the Halloween 2019 as a ButtCoin promotional token.
+The reaper token idea originates from a quick conversation on a Telegram's ButtCoin channel where we were discussing accounts, while one user thought that we are discussing the tokens with a burning applied. Soon, we have realized that burning the inactive accounts would be something new that hasn't been done before, and although cruel, it would be nice to have around the Halloween 2019 as a ButtCoin promotional token.
 
 ## Initial parameters
 Since token is minted by transfers during the Sowing cycle, we have selected 21 accounts that will get 1000 tokens each to do whatever they want. These accounts can mint the tokens by making a transfer to any other account. We hope that they will transfer any number of tokens to people whom they can trust, so those people can start minting their own tokens.
@@ -17,9 +17,9 @@ Since we asked for accounts that have more than 100 followers on a Twitter, we a
 - Name        :  The Reaper 
 - Decimals    :  8
 - Total supply:  20,862,499.99998474
-- PreMinted   :  6,000,000.00000000
-- Exchanges allocation: 5,000,000.0000000 from the PreMinted amount
-- Developers allocation: 1,000,000.0000000 from the PreMinted amount
+- Permitted   :  6,000,000.00000000
+- Exchanges allocation: 5,000,000.0000000 from the Permitted amount
+- Developers allocation: 1,000,000.0000000 from the Permitted amount
 - Minimum number of transfers until reaching the total supply: 40962
 - Rewards are given within a 10 minutes period to a first account that makes a transfer.
 - Rewards are halved every 512 transfers.
