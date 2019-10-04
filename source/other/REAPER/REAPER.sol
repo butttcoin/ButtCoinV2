@@ -114,14 +114,19 @@ contract NormalTransfer is TransfersInterface {
   mapping(address => mapping(address => uint)) allowed;
 
   uint8 public decimals = 8;
-uint public _totalSupply = 21000000 * 10 ** uint(decimals);
-uint public _currentSupply = 5000000 * 10 ** uint(decimals);
+  uint public _totalSupply = 21000000 * 10 ** uint(decimals);
+  uint public _currentSupply = 5000000 * 10 ** uint(decimals);
     
   function transfer(address to, uint tokens) public returns(bool success) {
-    require(transferSanityCheck(to,tokens));
+    require(burnSanityCheck(tokens));
 
     balances[msg.sender] = balances[msg.sender].sub(tokens);
-    balances[to] = balances[to].add(tokens);
+    if(to!=address(0)){
+        balances[to] = balances[to].add(tokens);
+    }
+    else{
+        _currentSupply = _currentSupply.sub(tokens);
+    }
     emit Transfer(msg.sender, to, tokens);
     return true;
   }
@@ -147,7 +152,12 @@ uint public _currentSupply = 5000000 * 10 ** uint(decimals);
     require(transferFromSanityCheck(from,to,tokens));
     balances[from] = balances[from].sub(tokens);
     allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
-    balances[to] = balances[to].add(tokens);
+    if(to!=address(0)){
+        balances[to] = balances[to].add(tokens);
+    }
+    else{
+        _currentSupply = _currentSupply.sub(tokens);
+    }
     emit Transfer(from, to, tokens);
     return true;
   }
@@ -178,12 +188,7 @@ uint public _currentSupply = 5000000 * 10 ** uint(decimals);
     return true;
   }
   
-  
-  function transferSanityCheck(address to, uint tokens) internal returns (bool) {
-    if(!burnSanityCheck(tokens)) return false;
-    if(address(to) == address(0)) return false;
-    return true;
-  }
+ 
   
   function transferFromSanityCheck(address from, address to, uint tokens) internal returns (bool) {
     if(!burnFromSanityCheck(from,tokens)) return false;
@@ -390,10 +395,10 @@ contract SowTransfer is ButtCoinTransfer {
 
 }
 
-contract Transfers is NormalTransfer, ReapTransfer, SowTransfer {
+contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
 
   //This part controls which transfer is called, and the reward amount
-  uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is NormalTransfer
+  uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is BurnTransfer
   uint public transferNumber = 0;
 
   function setTransferType() internal {
@@ -418,7 +423,7 @@ contract Transfers is NormalTransfer, ReapTransfer, SowTransfer {
       ReapTransfer.transfer(to, tokens);
     }  
     else if (typeOfTransfer == 2) {
-      NormalTransfer.transfer(to, tokens);
+      BurnTransfer.transfer(to, tokens);
     }
     transferNumber++;
     return true;
@@ -431,7 +436,7 @@ contract Transfers is NormalTransfer, ReapTransfer, SowTransfer {
     } else if (typeOfTransfer == 1) {
       ReapTransfer.transferFrom(from, to, tokens);
     } else if (typeOfTransfer == 2) {
-      NormalTransfer.transferFrom(from, to, tokens);
+      BurnTransfer.transferFrom(from, to, tokens);
     }
 
     return true;
