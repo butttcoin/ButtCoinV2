@@ -6,7 +6,11 @@ The reaper token's main goal is to introduce a new deflationary mechanism where 
 The reaper token idea originates from a quick conversation on a Telegram's ButtCoin channel where we were discussing accounts, while one user thougth that we are discussing the tokens with a burning applied. Soon, we have realized that burning the inactive accounts would be something new that hasn't been done before, and although cruel, it would be nice to have around the Halloween 2019 as a ButtCoin promotional token.
 
 ## Initial parameters
-Since token is minted by transfers during the Sowing cycle, we have selected 21 accounts that will get 100 tokens each. These accounts can mint the tokens by making a transfer to any other account. We hope that they will transfer any number of tokens to people whom they can trust, so those people can start minting their own tokens.
+Since token is minted by transfers during the Sowing cycle, we have selected 21 accounts that will get 1000 tokens each to do whatever they want. These accounts can mint the tokens by making a transfer to any other account. We hope that they will transfer any number of tokens to people whom they can trust, so those people can start minting their own tokens.
+
+## About 21 initial accounts
+Since we asked for accounts that have more than 100 followers on a Twitter, we assume that they will network the token minting, and spread the tokens to any other account they want to have The Reaper token. Tokens are minted simply by sending any amount to any address. Initial reward is 14500 tokens, and every 512 transfers (after the Reaping cycle is finished) this reward gets reduced by a half. Furthermore, should they become inactive, their accounts will be reaped. We hope that at least one account will do the token distribution properly.
+
 
 ## Token data
 - Symbol      :  REAP
@@ -26,28 +30,25 @@ Since token is minted by transfers during the Sowing cycle, we have selected 21 
 - The minting will continue for at least 0.5 years, or more, depending on a volume of transfers.
 - Once the minting is done, all transfers will be normal with a 1% burning fee (without Sowing or Reaping).
 
+## Ownership privileges
+Since we keep a track of the most inactive accounts, to avoid burning tokens allocated for the exchange liquidity, we need a whitelist. Since there are white-listed accounts immune to Sowing and Reaping, we need an owner to determine those accounts. Therefore, owner as well as the exchanges will not be able be Reaped, and whitelisted accounts cannot do any sowing either.
+
+## Early exchange listings
+We will use the BambooRelay as well as the Uniswap to distribute tokens for the very cheap price, so that everyone can mint their own tokens, reap them or be reaped.
 
 
-We will leave 3-5 million for the owner account in order to be able to spread the tokens to exchanges for a liquidity.
-We will have to make a white-list so that tokens on exchanges don't get burned.
-
-## Token distribution
-Only 21 accounts will be elligible to get them for free, others will have to take the smallest and the cheapest amount from either a relay or uniswap. This is simply because everyone can mint their own tokens during the sow period and because we are starting from a zero, (except the 3-5 mil tokens allocated to exchanges and a liquidity). The total supply is 21 million.
 
 ## Reaping and sowing mechanism
-First, we will do the sowing, then reaping and then repeat the both until 21 million tokens are distributed burned in such a manner.
-Once 21 million is reached, we will start burning 1% from each transfer.
+First, we will do the sowing, then reaping and then repeat the both until 21 million tokens are distributed burned in such a manner. Once 21 million is reached, we will start burning 1% from each transfer.
 
 ## Sowing mechanism
 Any account that transfers a token can get a reward within a 10 minute frame after the last reward. 
-The reward is going to be 1000 tokens and it will be rewarded by minting new tokens adding them to a current supply.
-After the rewards were distributed 256 times, the halving will happen, and the reaping period begins. We are using the ButtCoin transfer function, rewarding the last transfer 1% and burning 1% as well.
+The reward is going to be 14500 tokens and it will be rewarded by minting new tokens adding them to a current supply.
+After the rewards were distributed 512 times, the halving will happen, and the reaping period will begin. 
 
 ## Reaping mechanism
-Any account making a transfer will get 50% from the last inactive account while the last inactive account tokens will be burned to a zero!
-After 256 reaps, the sowing begins.
+Any account making a transfer will get 50% from the last inactive account while the last inactive account tokens will be burned to a zero! The sowing begins after 512 reaps.
 
-## Once everything is done
-We will then apply the SNAYL mechanism with an automated buffer increase, which will safe-guard the token from being manipulated.
-
+## Once everything is distributed
+Once all tokens are distributed, we will begin applying the 1% burning fee reduction from each transfer.
 
