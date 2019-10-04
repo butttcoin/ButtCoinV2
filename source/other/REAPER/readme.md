@@ -42,7 +42,7 @@ First, we will do the sowing, then reaping and then repeat the both until 21 mil
 
 ## Sowing mechanism
 Any account that transfers a token can get a reward within a 10 minute frame after the last reward. 
-The reward is going to be 14500 tokens and it will be rewarded by minting new tokens adding them to a current supply.
+The reward is going to be 14500 tokens and it will be rewarded by minting new tokens and adding them to a current supply.
 After the rewards were distributed 512 times, the halving will happen, and the reaping period will begin. 
 
 ## Reaping mechanism
