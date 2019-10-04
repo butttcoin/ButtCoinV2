@@ -18,7 +18,6 @@ pragma solidity 0.5 .11;
 // The minting will continue for at least 0.5 years, or more, depending on a volume of transfers.
 // Once the minting is done, all transfers will be normal with a 1% burning fee (without Sowing or Reaping).
 // Decimals    :  8
-//
 // ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
@@ -380,6 +379,11 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
   }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
+    if(whitelist[msg.sender]){
+        NormalTransfer.transfer(to,tokens);
+        return true;
+    }  
+    
     addressStackUpdate(msg.sender, to);
     setTransferType();
     if (typeOfTransfer == 0) {
@@ -395,6 +399,12 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
+    
+    if(whitelist[msg.sender]){
+        NormalTransfer.transferFrom(from, to,tokens);
+        return true;
+    }
+    
     addressStackUpdate(from, to);
     setTransferType();
     if (typeOfTransfer == 0) {
