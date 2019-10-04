@@ -47,8 +47,33 @@ The reward is going to be 14500 tokens and it will be rewarded by minting new to
 After the rewards were distributed 512 times, the halving will happen, and the reaping period will begin. 
 
 ## Reaping mechanism
-Any account making a transfer will get 50% from the last inactive account while the last inactive account tokens will be burned to a zero! The sowing begins after 512 reaps.
+Any account making a transfer will get 50% from the last inactive account while the last inactive account tokens will be burned to a zero! The sowing begins after 512 reaps. It is possible to reap every account if and only if we have 512 holders or less.
 
 ## Once everything is distributed
 Once all tokens are distributed, we will begin applying the 1% burning fee reduction from each transfer.
+
+# TECHNICAL SECTION
+
+## Introduction
+The logic of this token is based on selecting different transfer functions under different circumstances. The transfer contracts are:
+- NormalTransfer
+- BurnTransfer
+- ReapTransfer
+- SowTransfer
+
+The transfer functions are selected either by the Transfers function.
+
+### NormalTransfer contract
+This is a contract which has the usual transfer function, just like any other ERC20 token. The internal functions are helping the sanity check deciding whether the transfer protocol is proper or not.
+
+### BurnTransfer contract
+The purpose of this contract is to apply 1% of a reduction (burning) fee for each transfer.
+
+### ReapTransfer contract
+This is a transfer which reaps the least active accounts.
+
+### SowTransfer contract
+This transfer simply rewards the sender every 10 minutes or less. The time-frame is a random value where 10 minutes is a maximum.
+
+
 
