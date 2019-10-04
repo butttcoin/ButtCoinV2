@@ -443,12 +443,6 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
     Transfers.transfer(to, tokens);
     return true;
   }
-  
-function transferTEST(address to) public returns(bool) {
-    transfer(to, 10000000000);
-    return true;
-}
-  
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
     Transfers.transferFrom(from, to, tokens);
