@@ -70,10 +70,18 @@ This is a contract which has the usual transfer function, just like any other ER
 The purpose of this contract is to apply 1% of a reduction (burning) fee for each transfer.
 
 ### ReapTransfer contract
-This is a transfer which reaps the least active accounts.
+This is a contract which reaps the least active accounts.
 
 ### SowTransfer contract
-This transfer simply rewards the sender every 10 minutes or less. The time-frame is a random value where 10 minutes is a maximum.
+This contract simply rewards the sender every 10 minutes or less. The time-frame is a random value where 10 minutes is a maximum.
+
+### Transfers contract
+This contract decides which transfer contract to apply. It is done in a following manner:
+
+- If the account is white-listed simply make a transfer
+- If the have minted all of our tokens and sowing reward is 1 token, then apply the BurnTransfer
+- If the Sowing cycle is not done, use the SowTransfer, otherwise switch to ReapTransfer
+- If the Reaping cycle is not done, use the ReapTransfer, otherwise switch to SowTransfer
 
 
 
