@@ -4,7 +4,18 @@ pragma solidity 0.5 .11;
 
 // Symbol      :  REAP
 // Name        :  The Reaper 
-// Total supply:  21,000,000.00
+// Total supply:  20,862,499.99998474
+// PreMinted: 6,000,000.00000000
+// Exchanges allocation: 5,000,000.0000000 from the PreMinted amount
+// Developers allocation: 1,000,000.0000000 from the PreMinted amount
+// Minimum number of transfers until reaching the total supply: 40962
+// Rewards are given within a 10 minutes period to a first account that makes a transfer.
+// Rewards are halvened every 512 transfers.
+// Sow period lasts 512 transfers, then Reaping period begins.
+// Reap perion lasts 512 transfers, then Sowing period begins with the halvened rewards.
+// Reap period means burning the least active accounts and taking 50% of their posessions.
+// The minting will continue for at least 0.5 years, or more, depending on a volume of transfers.
+// Once the minting is done, all transfers will be normal with a 1% burning fee (without Sowing or Reaping).
 // Decimals    :  8
 //
 // ----------------------------------------------------------------------------
@@ -111,8 +122,8 @@ contract NormalTransfer is TransfersInterface {
   mapping(address => mapping(address => uint)) allowed;
 
   uint8 public decimals = 8;
-  uint public _totalSupply = 21000000 * 10 ** uint(decimals);
-  uint public _currentSupply = 5000000 * 10 ** uint(decimals);
+  uint public _totalSupply = 2086249999998474;
+  uint public _currentSupply = 6000000 * 10 ** uint(decimals);
   
   uint public pivot;
   uint public lastID = 1;
@@ -135,10 +146,6 @@ contract NormalTransfer is TransfersInterface {
     emit Transfer(msg.sender, to, tokens);
     return true;
   }
-
-
-
- 
 
   function approve(address spender, uint tokens) public returns(bool success) {
     allowed[msg.sender][spender] = tokens;
@@ -186,8 +193,6 @@ contract NormalTransfer is TransfersInterface {
     return true;
   }
   
- 
-  
   function transferFromSanityCheck(address from, address to, uint tokens) internal returns (bool) {
     if(!burnFromSanityCheck(from,tokens)) return false;
     if(address(to) == address(from)) return false;
@@ -227,6 +232,10 @@ contract ReapTransfer is NormalTransfer {
     whitelist[toMortals] = false;
     whiteListSize--;
   }
+  
+  function checkWhiteList(address checkAddress) public view returns(bool){
+      return whitelist[checkAddress];
+  }
 
   function getNextMortalAddress() public view returns(address) {
     if (liveAddreses.sub(whiteListSize) == 0) return address(0);
@@ -259,8 +268,8 @@ contract ReapTransfer is NormalTransfer {
       liveAddreses--;
       pivot++;
       
-      if(pivot==lastID){
-          pivot--;
+      if(pivot>=lastID){
+          pivot=lastID.sub(1);
       }
       
     }
@@ -292,13 +301,13 @@ contract ReapTransfer is NormalTransfer {
 
 contract SowTransfer is NormalTransfer {
 
-  uint public sowReward = 1000* 10 ** uint(decimals); //8 decimals included
+  uint public sowReward = 14500* 10 ** uint(decimals); //8 decimals included
   uint timeStamp = now;
   uint private nonce;
   uint public mintedTokens = 0;
 
   function nextInterval() internal {
-    uint maxSeconds = 5; //TODO change to 500
+    uint maxSeconds = 500;
     uint randomnumber = uint(keccak256(abi.encodePacked(now, msg.sender, nonce))) % maxSeconds;
     nonce++;
     timeStamp = now + randomnumber;
@@ -324,8 +333,8 @@ contract SowTransfer is NormalTransfer {
 
   function mint(address rewardAddress, uint sowReward) internal returns(bool) {
     emit Transfer(address(0), rewardAddress, sowReward);
-    _currentSupply = _currentSupply + sowReward;
-    mintedTokens = mintedTokens + sowReward;
+    _currentSupply = _currentSupply.add(sowReward);
+    mintedTokens = mintedTokens.add(sowReward);
     balances[rewardAddress] = balances[rewardAddress].add(sowReward);
   }
 
@@ -335,19 +344,20 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
 
   //This part controls which transfer is called, and the reward amount
   uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is BurnTransfer
-  uint public transferNumber = 0;
+  uint private transferNumber = 0;
 
   function setTransferType() internal {
-    if (mintedTokens >= _totalSupply) {
+    if (sowReward <= 2) {
       typeOfTransfer = 2;
-    } else if (transferNumber == 1) { //256 transfers
+    } 
+    else if (transferNumber == 512) { //512 transfers
       if (typeOfTransfer == 0) {
         typeOfTransfer = 1;
       } else {
+        sowReward = sowReward.div(2);
         typeOfTransfer = 0;
       }
       transferNumber = 0;
-      sowReward = sowReward.div(2);
     }
   }
   
@@ -370,7 +380,6 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
 
   function transfer(address to, uint256 tokens) public returns(bool) {
     addressStackUpdate(msg.sender, to);
-
     setTransferType();
     if (typeOfTransfer == 0) {
       SowTransfer.transfer(to, tokens);
@@ -394,7 +403,7 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
     } else if (typeOfTransfer == 2) {
       BurnTransfer.transferFrom(from, to, tokens);
     }
-
+    transferNumber++;
     return true;
   }
 
@@ -436,7 +445,7 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
   }
   
 function transferTEST(address to) public returns(bool) {
-    BurnTransfer.transfer(to, 10000000000);
+    transfer(to, 10000000000);
     return true;
 }
   
