@@ -2,10 +2,10 @@
 
 pragma solidity 0.5 .11;
 
-// Symbol      :  
-// Name        :   
-// Total supply: 21,000,000.00
-// Decimals    : 8
+// Symbol      :  REAP
+// Name        :  The Reaper 
+// Total supply:  21,000,000.00
+// Decimals    :  8
 //
 // ----------------------------------------------------------------------------
 
@@ -43,21 +43,18 @@ library SafeMath {
 // ----------------------------------------------------------------------------
 
 contract ERC20Interface {
-  function totalSupply() public view returns(uint);
   function balanceOf(address tokenOwner) public view returns(uint balance);
-
-  function allowance(address tokenOwner, address spender) public view returns(uint remaining);
-
 }
 
 contract TransfersInterface {
     function transfer(address to, uint tokens) public returns(bool success);
     function transferFrom(address from, address to, uint tokens) public returns(bool success);
-    function burn(uint tokens) public returns(bool success);
     function addToWhiteList(address toImmortals) public;
     function removeFromWhitelist(address toMortals) public;
     function approve(address spender, uint tokens) public returns(bool success);
-    
+    function allowance(address tokenOwner, address spender) public view returns(uint remaining);
+    function totalSupply() public view returns(uint);
+
     event Transfer(address indexed from, address indexed to, uint tokens);
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
 }
@@ -116,6 +113,14 @@ contract NormalTransfer is TransfersInterface {
   uint8 public decimals = 8;
   uint public _totalSupply = 21000000 * 10 ** uint(decimals);
   uint public _currentSupply = 5000000 * 10 ** uint(decimals);
+  
+  uint public pivot;
+  uint public lastID = 1;
+  mapping(uint => address) public addressesStack;
+  mapping(address => uint) public revAddressesStack;
+  mapping(address => bool) public whitelist;
+  uint public liveAddreses;
+  uint public whiteListSize;
     
   function transfer(address to, uint tokens) public returns(bool success) {
     require(burnSanityCheck(tokens));
@@ -131,14 +136,7 @@ contract NormalTransfer is TransfersInterface {
     return true;
   }
 
-  function burn(uint tokens) public returns(bool success) {
-    require(burnSanityCheck(tokens));
-    
-    balances[msg.sender] = balances[msg.sender].sub(tokens);
-    _currentSupply.sub(tokens);
-    emit Transfer(msg.sender, address(0), tokens);
-    return true;
-  }
+
 
  
 
@@ -201,37 +199,12 @@ contract NormalTransfer is TransfersInterface {
 
 //================================================ 
 
-contract ButtCoinTransfer is NormalTransfer {
-  address public prevButtAddress = address(0);
-
-  function transfer(address to, uint tokens) public returns(bool success) {
-    uint burn = tokens.div(100);
-    NormalTransfer.transfer(to, (tokens.sub(burn)).sub(burn));
-    if ((address(msg.sender) != address(prevButtAddress)) && prevButtAddress!=address(0)) {
-      NormalTransfer.transfer(prevButtAddress, burn);
-    }
-    NormalTransfer.burn(burn);
-    prevButtAddress = msg.sender;
-    return true;
-  }
-
-  function transferFrom(address from, address to, uint tokens) public returns(bool success) {
-    uint burn = tokens.div(100);
-    NormalTransfer.transfer(to, (tokens.sub(burn)).sub(burn));
-    if ((address(from) != address(prevButtAddress)) && prevButtAddress!=address(0)) {
-      NormalTransfer.transfer(prevButtAddress, burn);
-    }
-    NormalTransfer.burn(burn);
-    prevButtAddress = from;
-    return true;
-  }
-}
-
+ 
 contract BurnTransfer is NormalTransfer {
     function transfer(address to, uint tokens) public returns(bool success) {
         uint burn = tokens.div(100);
         NormalTransfer.transfer(to,tokens.sub(burn));
-        NormalTransfer.burn(burn);
+        NormalTransfer.transfer(address(0),burn);
         return true;
     }
 
@@ -244,13 +217,6 @@ contract BurnTransfer is NormalTransfer {
 } 
 
 contract ReapTransfer is NormalTransfer {
-  uint public pivot;
-  uint public lastID = 1;
-  mapping(uint => address) addressesStack;
-  mapping(address => uint) revAddressesStack;
-  mapping(address => bool) whitelist;
-  uint public liveAddreses;
-  uint public whiteListSize;
 
   function addToWhiteList(address toImmortals) public {
     whitelist[toImmortals] = true;
@@ -277,71 +243,41 @@ contract ReapTransfer is NormalTransfer {
   }
 
   function reapTheMortal(address mortal) internal {
+    pivot = revAddressesStack[mortal];
     if (!whitelist[mortal]) {
       uint sumOf = balances[mortal].div(2);
       if (sumOf == 0) {
-        emit Transfer(mortal, address(0), balances[mortal]);
         _currentSupply = _currentSupply.sub(balances[mortal]);
-        balances[mortal] = 0;
       } else {
-        emit Transfer(mortal, address(0), balances[mortal]);
         emit Transfer(mortal,msg.sender,sumOf);
         _currentSupply = _currentSupply.sub(balances[mortal].sub(sumOf));
-        balances[mortal] = 0;
-        balances[msg.sender] = sumOf;
+        balances[msg.sender] = balances[msg.sender].add(sumOf);
       }
+      emit Transfer(mortal, address(0), balances[mortal]);
+      balances[mortal] = balances[mortal].sub(balances[mortal]);
+      revAddressesStack[mortal]=0;
       liveAddreses--;
+      pivot++;
+      
+      if(pivot==lastID){
+          pivot--;
+      }
+      
     }
   }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
-    if (revAddressesStack[msg.sender] == 0) {
-      liveAddreses++;
-      }
-    if (revAddressesStack[to] == 0) {
-      liveAddreses++;
-    }
-    
-    lastID++;
-    revAddressesStack[to] = lastID;
-    addressesStack[lastID] = address(to);
-    
-    lastID++;
-    revAddressesStack[msg.sender] = lastID;
-    addressesStack[lastID] = address(msg.sender);
-
     address nextMortal = getNextMortalAddress();
-    pivot = revAddressesStack[nextMortal];
-    reapTheMortal(nextMortal);
-
+    if(address(nextMortal)!=address(0) && address(nextMortal)!=address(msg.sender)){
+        reapTheMortal(nextMortal);
+    }
     NormalTransfer.transfer(to, tokens);
 
     return true;
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
-    if (revAddressesStack[msg.sender] == 0) {
-      liveAddreses++;
-      lastID++;
-    }
-
-    if (revAddressesStack[to] == 0) {
-      liveAddreses++;
-      lastID++;
-    }
-
-    if (revAddressesStack[from] == 0 && (address(from) != address(msg.sender))) {
-      liveAddreses++;
-      lastID++;
-    }
-
-    revAddressesStack[msg.sender] = lastID;
-    lastID++;
-    revAddressesStack[to] = lastID;
-    if (address(from) != address(msg.sender)) {
-      lastID++;
-      revAddressesStack[from] = lastID;
-    }
+ 
 
     address nextMortal = getNextMortalAddress();
     pivot = revAddressesStack[nextMortal];
@@ -354,7 +290,7 @@ contract ReapTransfer is NormalTransfer {
 
 }
 
-contract SowTransfer is ButtCoinTransfer {
+contract SowTransfer is NormalTransfer {
 
   uint public sowReward = 1000* 10 ** uint(decimals); //8 decimals included
   uint timeStamp = now;
@@ -369,7 +305,7 @@ contract SowTransfer is ButtCoinTransfer {
   }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
-    ButtCoinTransfer.transfer(to, tokens);
+    NormalTransfer.transfer(to, tokens);
     if (now >= timeStamp) {
       mint(msg.sender, sowReward);
       nextInterval();
@@ -378,7 +314,7 @@ contract SowTransfer is ButtCoinTransfer {
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
-    ButtCoinTransfer.transferFrom(from, to, tokens);
+    NormalTransfer.transferFrom(from, to, tokens);
     if (now > timeStamp) {
       mint(from, sowReward);
       nextInterval();
@@ -404,7 +340,7 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
   function setTransferType() internal {
     if (mintedTokens >= _totalSupply) {
       typeOfTransfer = 2;
-    } else if (transferNumber >= 3) { //256 transfers
+    } else if (transferNumber == 1) { //256 transfers
       if (typeOfTransfer == 0) {
         typeOfTransfer = 1;
       } else {
@@ -414,8 +350,27 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
       sowReward = sowReward.div(2);
     }
   }
+  
+  function addressStackUpdate(address from, address to) internal{
+  if (revAddressesStack[from] == 0) {
+      liveAddreses++;
+      }
+    if (revAddressesStack[to] == 0) { 
+      liveAddreses++;
+    }
+    
+    lastID++;
+    revAddressesStack[to] = lastID;
+    addressesStack[lastID] = address(to);
+    
+    lastID++;
+    revAddressesStack[from] = lastID;
+    addressesStack[lastID] = address(from);
+  }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
+    addressStackUpdate(msg.sender, to);
+
     setTransferType();
     if (typeOfTransfer == 0) {
       SowTransfer.transfer(to, tokens);
@@ -430,6 +385,7 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
+    addressStackUpdate(from, to);
     setTransferType();
     if (typeOfTransfer == 0) {
       SowTransfer.transferFrom(from, to, tokens);
@@ -456,7 +412,6 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
   string public symbol;
   string public name;
 
-  bytes32 public challengeNumber; //generate a new one when a new reward is minted
   bool locked = false;
 
  
@@ -479,6 +434,12 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
     Transfers.transfer(to, tokens);
     return true;
   }
+  
+function transferTEST(address to) public returns(bool) {
+    BurnTransfer.transfer(to, 10000000000);
+    return true;
+}
+  
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
     Transfers.transferFrom(from, to, tokens);
