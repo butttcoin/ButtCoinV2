@@ -25,7 +25,7 @@ Since we asked for accounts that have more than 100 followers on a Twitter, we a
 - Initial reward amount is 14500.00000000 tokens.
 - Sow period lasts 512 transfers, then Reaping period begins.
 - Reap period lasts 512 transfers, then Sowing period begins with the halved rewards.
-- Reap period means burning the least active accounts and taking 50% of their possessions.
+- Reap period means burning the least active accounts and taking 50% of their assets.
 - The minting will continue for at least 0.5 years, or more, depending on a volume of transfers.
 - Once the minting is done, all transfers will be normal with a 1% burning fee (without Sowing or Reaping).
 
