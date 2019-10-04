@@ -51,9 +51,7 @@ Any account making a transfer will get 50% from the last inactive account while 
 ## Once everything is distributed
 Once all tokens are distributed, we will begin applying the 1% burning fee reduction from each transfer.
 
-# LOGIC
-
-## Introduction
+## MAIN LOGIC
 The logic of this token is based on selecting different transfer functions under different circumstances. The transfer contracts are:
 - NormalTransfer
 - BurnTransfer
@@ -81,4 +79,7 @@ This contract decides which transfer contract to apply. It is done in a followin
 - If the have minted all of our tokens and sowing reward is 1 token, then apply the BurnTransfer
 - If the Sowing cycle is not done, use the SowTransfer, otherwise switch to ReapTransfer
 - If the Reaping cycle is not done, use the ReapTransfer, otherwise switch to SowTransfer
+
+
+This is a plain-english whitepaper, please see the source code for any other details.
 
