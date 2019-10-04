@@ -8,7 +8,7 @@ The reaper token idea originates from a quick conversation on a Telegram's ButtC
 ## Initial parameters
 Since token is minted by transfers during the Sowing cycle, we have selected 21 accounts that will get 100 tokens each. These accounts can mint the tokens by making a transfer to any other account. We hope that they will transfer any number of tokens to people whom they can trust, so those people can start minting their own tokens.
 
-## Token allocation
+## Token data
 - Symbol      :  REAP
 - Name        :  The Reaper 
 - Decimals    :  8
