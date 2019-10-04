@@ -52,7 +52,7 @@ Any account making a transfer will get 50% from the last inactive account while 
 ## Once everything is distributed
 Once all tokens are distributed, we will begin applying the 1% burning fee reduction from each transfer.
 
-# TECHNICAL SECTION
+# LOGIC
 
 ## Introduction
 The logic of this token is based on selecting different transfer functions under different circumstances. The transfer contracts are:
