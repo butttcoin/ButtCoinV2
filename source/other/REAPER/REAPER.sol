@@ -11,6 +11,7 @@ pragma solidity 0.5 .11;
 // Minimum number of transfers until reaching the total supply: 40962
 // Rewards are given within a 10 minutes period to a first account that makes a transfer.
 // Rewards are halvened every 512 transfers.
+// Initial reward amount is 14500.00000000 tokens.
 // Sow period lasts 512 transfers, then Reaping period begins.
 // Reap perion lasts 512 transfers, then Sowing period begins with the halvened rewards.
 // Reap period means burning the least active accounts and taking 50% of their posessions.
