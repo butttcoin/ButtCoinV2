@@ -16,7 +16,7 @@ Since we asked for accounts that have more than 100 followers on a Twitter, we a
 - Name        :  The Reaper 
 - Decimals    :  8
 - Total supply:  20,862,499.99998474
-- Permitted   :  6,000,000.00000000
+- Pre-Minted   :  6,000,000.00000000
 - Exchanges allocation: 5,000,000.0000000 from the Permitted amount
 - Developers allocation: 1,000,000.0000000 from the Permitted amount
 - Minimum number of transfers until reaching the total supply: 40962
