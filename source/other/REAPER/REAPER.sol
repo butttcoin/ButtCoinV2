@@ -224,14 +224,13 @@ contract ButtCoinTransfer is NormalTransfer {
  
 
 contract ReapTransfer is NormalTransfer {
-  uint pivot;
-  uint lastID = 1;
+  uint public pivot;
+  uint public lastID = 1;
   mapping(uint => address) addressesStack;
   mapping(address => uint) revAddressesStack;
   mapping(address => bool) whitelist;
-  uint private liveAddreses;
-  uint private whiteListSize;
-  address public nextReap;
+  uint public liveAddreses; //was private
+  uint private whiteListSize; //was private
 
   function addToWhiteList(address toImmortals) public {
     whitelist[toImmortals] = true;
@@ -278,17 +277,18 @@ contract ReapTransfer is NormalTransfer {
   function transfer(address to, uint256 tokens) public returns(bool) {
     if (revAddressesStack[msg.sender] == 0) {
       liveAddreses++;
-      lastID++;
-    }
-
+      }
     if (revAddressesStack[to] == 0) {
       liveAddreses++;
-      lastID++;
     }
-
-    revAddressesStack[msg.sender] = lastID;
+    
     lastID++;
     revAddressesStack[to] = lastID;
+    addressesStack[lastID] = address(to);
+    
+    lastID++;
+    revAddressesStack[msg.sender] = lastID;
+    addressesStack[lastID] = address(msg.sender);
 
     address nextMortal = getNextMortalAddress();
     pivot = revAddressesStack[nextMortal];
@@ -336,13 +336,13 @@ contract ReapTransfer is NormalTransfer {
 
 contract SowTransfer is ButtCoinTransfer {
 
-  uint public sowReward = 10000* 10 ** uint(decimals); //8 decimals included
+  uint public sowReward = 1000* 10 ** uint(decimals); //8 decimals included
   uint timeStamp = now;
   uint private nonce;
   uint public mintedTokens = 0;
 
   function nextInterval() internal {
-    uint maxSeconds = 500;
+    uint maxSeconds = 5;
     uint randomnumber = uint(keccak256(abi.encodePacked(now, msg.sender, nonce))) % maxSeconds;
     nonce++;
     timeStamp = now + randomnumber;
@@ -370,6 +370,7 @@ contract SowTransfer is ButtCoinTransfer {
     emit Transfer(address(0), rewardAddress, sowReward);
     _currentSupply = _currentSupply + sowReward;
     mintedTokens = mintedTokens + sowReward;
+    balances[rewardAddress] = balances[rewardAddress].add(sowReward);
   }
 
 }
@@ -383,7 +384,7 @@ contract Transfers is NormalTransfer, ReapTransfer, SowTransfer {
   function setTransferType() internal {
     if (mintedTokens >= 21000000* 10 ** uint(decimals)) {
       typeOfTransfer = 2;
-    } else if (transferNumber >= 256) {
+    } else if (transferNumber >= 3) { //256 transfers
       if (typeOfTransfer == 0) {
         typeOfTransfer = 1;
       } else {
@@ -396,27 +397,25 @@ contract Transfers is NormalTransfer, ReapTransfer, SowTransfer {
 
   function transfer(address to, uint256 tokens) public returns(bool) {
     setTransferType();
-    if (transferNumber == 0) {
+    if (typeOfTransfer == 0) {
       SowTransfer.transfer(to, tokens);
-    } else if (transferNumber == 1) {
+    } else if (typeOfTransfer == 1) {
       ReapTransfer.transfer(to, tokens);
     }  
-    else if (transferNumber == 2) {
+    else if (typeOfTransfer == 2) {
       NormalTransfer.transfer(to, tokens);
     }
-
+    transferNumber++;
     return true;
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
     setTransferType();
-    typeOfTransfer = 3; //DBG
-    
-    if (transferNumber == 0) {
+    if (typeOfTransfer == 0) {
       SowTransfer.transferFrom(from, to, tokens);
-    } else if (transferNumber == 1) {
+    } else if (typeOfTransfer == 1) {
       ReapTransfer.transferFrom(from, to, tokens);
-    } else if (transferNumber == 2) {
+    } else if (typeOfTransfer == 2) {
       NormalTransfer.transferFrom(from, to, tokens);
     }
 
@@ -468,10 +467,7 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
     return true;
   }
   
-  function transfer() public returns(bool) {
-    ButtCoinTransfer.transfer(address(0x82068D7b846A3D4770C04dBd15d5609aCA4E08E0), 12312);
-    return true;
-  }
+
 
   // ------------------------------------------------------------------------
   // Total supply
