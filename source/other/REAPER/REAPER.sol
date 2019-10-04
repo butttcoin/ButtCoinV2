@@ -203,7 +203,7 @@ contract NormalTransfer is TransfersInterface {
   
 }
 
-//================================================ 
+//===============TRANSFER CONTRACTS BEGIN HERE================================= 
 
  
 contract BurnTransfer is NormalTransfer {
@@ -409,6 +409,9 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
   }
 
 }
+
+//===============TRANSFER CONTRACTS END HERE================================= 
+
 
 // ----------------------------------------------------------------------------
 // REAPER, MAIN CONTRACT
