@@ -10,11 +10,11 @@ pragma solidity 0.5 .11;
 // Developers allocation: 1,000,000.0000000 from the PreMinted amount
 // Minimum number of transfers until reaching the total supply: 40962
 // Rewards are given within a 10 minutes period to a first account that makes a transfer.
-// Rewards are halvened every 512 transfers.
+// Rewards are halved every 512 transfers.
 // Initial reward amount is 14500.00000000 tokens.
 // Sow period lasts 512 transfers, then Reaping period begins.
-// Reap perion lasts 512 transfers, then Sowing period begins with the halvened rewards.
-// Reap period means burning the least active accounts and taking 50% of their posessions.
+// Reap period lasts 512 transfers, then Sowing period begins with the halved rewards.
+// Reap period means burning the least active accounts and taking 50% of their possessions.
 // The minting will continue for at least 0.5 years, or more, depending on a volume of transfers.
 // Once the minting is done, all transfers will be normal with a 1% burning fee (without Sowing or Reaping).
 // Decimals    :  8
