@@ -8,7 +8,7 @@ The reaper token's main goal is to introduce a new deflationary mechanism where 
 Since token is minted by transfers during the Sowing cycle, we have selected 21 accounts that will get 1000 tokens each to do whatever they want. These accounts can mint the tokens by making a transfer to any other account. We hope that they will transfer any number of tokens to people whom they can trust, so those people can start minting their own tokens.
 
 ## About 21 initial accounts
-Since we asked for accounts that have more than 100 followers on a Twitter, we assume that they will network the token minting, and spread the tokens to any other account they can trust. Tokens are minted simply by sending any amount to any address. Initial reward is 14500 tokens, and every 512 transfers (after the Reaping cycle is finished) this reward gets reduced by a half. Furthermore, should they become inactive, their accounts will be reaped. We hope that at least one account will do the token distribution properly.
+Since we asked for accounts that have more than 100 followers on a Twitter, we assume that they will network the token minting, and spread the tokens to any other account they can trust. Tokens are minted simply by sending any amount to any address. Initial reward is 14500 tokens, and every 512 transfers (after the Reaping cycle is finished) this reward gets reduced by a half. Furthermore, should they become inactive, their accounts will be reaped. We hope that at least one account will do the token distribution properly. Rewards happen every 10 minutes or less (random time, 10 minutes the most), while only the first account that made a transfer will be rewarded.
 
 
 ## Token data
