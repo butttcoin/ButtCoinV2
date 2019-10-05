@@ -1,6 +1,6 @@
 # Reaper Token White-Paper
-### ERC20 CONTRACT ADDRESS: 0x22585c163b353510e8fef984c02609302eb5fc62
 ## Overview
+### ERC20 CONTRACT ADDRESS: 0x22585c163b353510e8fef984c02609302eb5fc62
 
 The reaper token's main goal is to introduce a new deflationary mechanism where addresses are burned. Deflation is usually achieved by burning 1% of any transfer. Reaper, on the other hand, is pruning the network by removing the least active accounts. The pruning is done by burning the assets of the least active account and transferring the 50% to a person who initiated the pruning. Thus, the initiator address is called The Reaper. Since we are pruning the network to achieve the best performance, we are also distributing and minting the tokens in a similar manner. For this reason, we have two cycles called Sowing and Reaping. Therefore, the main purpose of this token is to establish the best-performing network by distributing and burning the tokens. Once all tokens are minted and Sowing and Reaping periods over, we are simply applying the classical 1% burning fee to each transfer. We are hoping to accomplish the optimal parameters for any deflationary token, answering which ratio of minted and burned tokens would give the best token performance.
 
