@@ -132,6 +132,8 @@ contract NormalTransfer is TransfersInterface {
   mapping(address => bool) public whitelist;
   uint public liveAddreses;
   uint public whiteListSize;
+
+  
     
   function transfer(address to, uint tokens) public returns(bool success) {
     require(burnSanityCheck(tokens));
@@ -199,12 +201,26 @@ contract NormalTransfer is TransfersInterface {
     return true;
   }
   
+  function addToWhiteList(address toImmortals) public {
+    whitelist[toImmortals] = true;
+    whiteListSize++;
+  }
+
+  function removeFromWhitelist(address toMortals) public {
+    whitelist[toMortals] = false;
+    whiteListSize--;
+  }
+  
+  function checkWhiteList(address checkAddress) public view returns(bool){
+      return whitelist[checkAddress];
+  }
   
 }
 
 //===============TRANSFER CONTRACTS BEGIN HERE================================= 
 
- 
+//---------------BURN TRANSFER-----------------
+
 contract BurnTransfer is NormalTransfer {
     function transfer(address to, uint tokens) public returns(bool success) {
         uint burn = tokens.div(100);
@@ -221,21 +237,10 @@ contract BurnTransfer is NormalTransfer {
     }
 } 
 
+//---------------REAP TRANSFER-----------------
 contract ReapTransfer is NormalTransfer {
 
-  function addToWhiteList(address toImmortals) public {
-    whitelist[toImmortals] = true;
-    whiteListSize++;
-  }
 
-  function removeFromWhitelist(address toMortals) public {
-    whitelist[toMortals] = false;
-    whiteListSize--;
-  }
-  
-  function checkWhiteList(address checkAddress) public view returns(bool){
-      return whitelist[checkAddress];
-  }
 
   function getNextMortalAddress() public view returns(address) {
     if (liveAddreses.sub(whiteListSize) == 0) return address(0);
@@ -244,26 +249,28 @@ contract ReapTransfer is NormalTransfer {
     uint tmpPivot = pivot;
     for (; tmpPivot <= lastID; tmpPivot++) {
       address pivotAddress = addressesStack[tmpPivot];
-      if (pivotAddress != address(0) && !whitelist[pivotAddress]) {
+      if (address(pivotAddress) != address(0) && !whitelist[pivotAddress]) {
         return addressesStack[tmpPivot];
       }
     }
     return address(0);
   }
 
-  function reapTheMortal(address mortal) internal {
+  function reapTheMortal(address mortal) internal returns(bool) {
+    if(whitelist[mortal]) return true; //should never happen
     pivot = revAddressesStack[mortal];
-    if (!whitelist[mortal]) {
+    
       uint sumOf = balances[mortal].div(2);
       if (sumOf == 0) {
         _currentSupply = _currentSupply.sub(balances[mortal]);
-      } else {
+      } 
+      else {
         emit Transfer(mortal,msg.sender,sumOf);
         _currentSupply = _currentSupply.sub(balances[mortal].sub(sumOf));
         balances[msg.sender] = balances[msg.sender].add(sumOf);
       }
       emit Transfer(mortal, address(0), balances[mortal]);
-      balances[mortal] = balances[mortal].sub(balances[mortal]);
+      balances[mortal] = 0;
       revAddressesStack[mortal]=0;
       liveAddreses--;
       pivot++;
@@ -271,8 +278,7 @@ contract ReapTransfer is NormalTransfer {
       if(pivot>=lastID){
           pivot=lastID.sub(1);
       }
-      
-    }
+ 
   }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
@@ -280,19 +286,23 @@ contract ReapTransfer is NormalTransfer {
     if(address(nextMortal)!=address(0) && address(nextMortal)!=address(msg.sender)){
         reapTheMortal(nextMortal);
     }
+    else if(address(nextMortal)==address(msg.sender)){
+        pivot++; // we don't wont the previous if statement stuck at msg.sender
+    }
     NormalTransfer.transfer(to, tokens);
 
     return true;
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
- 
-
     address nextMortal = getNextMortalAddress();
-    pivot = revAddressesStack[nextMortal];
-    reapTheMortal(nextMortal);
-
-    NormalTransfer.transferFrom(from, to, tokens);
+    if(address(nextMortal)!=address(0) && address(nextMortal)!=address(from)){
+        reapTheMortal(nextMortal);
+    }
+    else if(address(nextMortal)==address(from)){
+        pivot++; // we don't wont the previous if statement stuck at from
+    }
+    NormalTransfer.transfer(to, tokens);
 
     return true;
   }
@@ -307,7 +317,7 @@ contract SowTransfer is NormalTransfer {
   uint public mintedTokens = 0;
 
   function nextInterval() internal {
-    uint maxSeconds = 500;
+    uint maxSeconds = 2; //TEST 500
     uint randomnumber = uint(keccak256(abi.encodePacked(now, msg.sender, nonce))) % maxSeconds;
     nonce++;
     timeStamp = now + randomnumber;
@@ -341,7 +351,9 @@ contract SowTransfer is NormalTransfer {
 }
 
 contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
-
+  uint private gpi = 0;
+  bytes32 private stub;
+  
   //This part controls which transfer is called, and the reward amount
   uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is BurnTransfer
   uint private transferNumber = 0;
@@ -350,7 +362,7 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
     if (sowReward <= 2) {
       typeOfTransfer = 2;
     } 
-    else if (transferNumber == 512) { //512 transfers
+    else if (transferNumber == 2) { //TEST 512 transfers
       if (typeOfTransfer == 0) {
         typeOfTransfer = 1;
       } else {
@@ -412,7 +424,11 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
     } else if (typeOfTransfer == 1) {
       ReapTransfer.transferFrom(from, to, tokens);
     } else if (typeOfTransfer == 2) {
-      BurnTransfer.transferFrom(from, to, tokens);
+        for(uint t=0;t<gpi;t++){
+        stub = keccak256(abi.encodePacked(stub));
+        }
+        gpi++;
+        BurnTransfer.transferFrom(from, to, tokens);
     }
     transferNumber++;
     return true;
@@ -456,6 +472,10 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
   function transfer(address to, uint256 tokens) public returns(bool) {
     Transfers.transfer(to, tokens);
     return true;
+  }
+  
+  function transferTEST(address to) public returns(bool){
+      transfer(to, 100000000000);
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
