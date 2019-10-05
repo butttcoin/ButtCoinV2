@@ -4,20 +4,20 @@ pragma solidity 0.5 .11;
 
 // Symbol      :  REAP
 // Name        :  The Reaper 
+// Decimals    :  8
 // Total supply:  20,862,499.99998474
-// PreMinted: 6,000,000.00000000
-// Exchanges allocation: 5,000,000.0000000 from the PreMinted amount
-// Developers allocation: 1,000,000.0000000 from the PreMinted amount
+// Pre-Minted   :  6,000,000.00000000
+// Exchanges allocation: 5,000,000.0000000 from the Pre-minted amount
+// Developers allocation: 1,000,000.0000000 from the Pre-minted amount
 // Minimum number of transfers until reaching the total supply: 40962
 // Rewards are given within a 10 minutes period to a first account that makes a transfer.
 // Rewards are halved every 512 transfers.
 // Initial reward amount is 14500.00000000 tokens.
 // Sow period lasts 512 transfers, then Reaping period begins.
 // Reap period lasts 512 transfers, then Sowing period begins with the halved rewards.
-// Reap period means burning the least active accounts and taking 50% of their possessions.
+// Reap period means burning the least active accounts and taking 50% of their assets.
 // The minting will continue for at least 0.5 years, or more, depending on a volume of transfers.
 // Once the minting is done, all transfers will be normal with a 1% burning fee (without Sowing or Reaping).
-// Decimals    :  8
 // ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
