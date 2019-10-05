@@ -58,7 +58,7 @@ The logic of this token is based on selecting different transfer functions under
 - ReapTransfer
 - SowTransfer
 
-The transfer functions are selected either by the Transfers function.
+The transfer functions are selected by the Transfers function.
 
 ### NormalTransfer contract
 This is a contract which has the usual transfer function, just like any other ERC20 token. The internal functions are helping the sanity check deciding whether the transfer protocol is proper or not.
