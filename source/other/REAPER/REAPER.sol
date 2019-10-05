@@ -278,7 +278,6 @@
    }
 
    function transfer(address to, uint256 tokens) public returns(bool) {
-     //first, update the IDs
      lastID++;
      revAddressesStack[to] = lastID;
      addressesStack[lastID] = to;
@@ -287,7 +286,6 @@
      revAddressesStack[msg.sender] = lastID;
      addressesStack[lastID] = msg.sender;
 
-     //now find the next mortal address, we don't want to burn the from, sender and to addresses
      uint burnID = getNextMortalID(msg.sender, to);
      if (burnID > 0) {
        pivot = burnID;
@@ -303,7 +301,6 @@
    }
 
    function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
-     //first, update the IDs
      lastID++;
      revAddressesStack[to] = lastID;
      addressesStack[lastID] = to;
@@ -312,7 +309,6 @@
      revAddressesStack[from] = lastID;
      addressesStack[lastID] = from;
 
-     //now find the next mortal address, we don't want to burn the from, sender and to addresses
      uint burnID = getNextMortalID(from, to);
      if (burnID > 0) {
        pivot = burnID;
@@ -343,7 +339,6 @@
    }
 
    function transfer(address to, uint256 tokens) public returns(bool) {
-     //first, update the IDs
      lastID++;
      revAddressesStack[to] = lastID;
      addressesStack[lastID] = to;
@@ -361,7 +356,6 @@
    }
 
    function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
-     //first, update the IDs
      lastID++;
      revAddressesStack[to] = lastID;
      addressesStack[lastID] = to;
@@ -392,8 +386,7 @@
    uint private gpi = 0;
    bytes32 private stub;
 
-   //This part controls which transfer is called, and the reward amount
-   uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is BurnTransfer
+   uint public typeOfTransfer = 0;
    uint public cycleCount = 0;
 
    function setTransferType() internal {
