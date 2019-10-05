@@ -125,12 +125,11 @@ contract NormalTransfer is TransfersInterface {
   uint public _totalSupply = 2086249999998474;
   uint public _currentSupply = 6000000 * 10 ** uint(decimals);
   
-  uint public pivot;
+  uint public pivot = 0;
   uint public lastID = 1;
   mapping(uint => address) public addressesStack;
   mapping(address => uint) public revAddressesStack;
   mapping(address => bool) public whitelist;
-  uint public liveAddreses;
   uint public whiteListSize;
 
   
@@ -217,7 +216,7 @@ contract NormalTransfer is TransfersInterface {
   
 }
 
-//===============TRANSFER CONTRACTS BEGIN HERE================================= 
+//===============TRANSFERS CONTRACTS BEGIN HERE================================= 
 
 //---------------BURN TRANSFER-----------------
 
@@ -243,11 +242,6 @@ contract ReapTransfer is NormalTransfer {
     address public lastReapedAddress;
     address public lastReaperAddress;
     uint public lastReapingTimeStamp;
-
-  function nextMortalAddress(uint ID) internal returns (address){
-      if(ID==0) return address(0);
-      return addressesStack[ID];
-  }    
 
   function getNextMortalID(address from, address to) internal returns(uint) {
       for(uint t=pivot;t<lastID;t++){
@@ -300,7 +294,7 @@ contract ReapTransfer is NormalTransfer {
           lastReapingTimeStamp = now;
           reapTheMortal(msg.sender, burnID);
       }
-      
+      pivot++;
       NormalTransfer.transfer(to, tokens);
       
     return true;
@@ -325,12 +319,13 @@ contract ReapTransfer is NormalTransfer {
           lastReapingTimeStamp = now;
           reapTheMortal(from, burnID);
       }
-      
+      pivot++;
       NormalTransfer.transferFrom(from, to, tokens);
   }
 
 }
 
+//---------------SOW TRANSFER-----------------
 contract SowTransfer is NormalTransfer {
 
   uint public sowReward = 14500* 10 ** uint(decimals); //8 decimals included
@@ -339,14 +334,13 @@ contract SowTransfer is NormalTransfer {
   uint public mintedTokens = 0;
 
   function nextInterval() internal {
-    uint maxSeconds = 2; //TEST 500
+    uint maxSeconds = 500;
     uint randomnumber = uint(keccak256(abi.encodePacked(now, msg.sender, nonce))) % maxSeconds;
     nonce++;
     timeStamp = now + randomnumber;
   }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
-      
       //first, update the IDs
       lastID++;
       revAddressesStack[to] = lastID;
@@ -375,7 +369,7 @@ contract SowTransfer is NormalTransfer {
       addressesStack[lastID] = from;
       
     NormalTransfer.transferFrom(from, to, tokens);
-    if (now > timeStamp) {
+    if (now >= timeStamp) {
       mint(msg.sender, sowReward);
       nextInterval();
     }
@@ -391,26 +385,27 @@ contract SowTransfer is NormalTransfer {
 
 }
 
+//---------------TRANSFER LOGIC-----------------
 contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
   uint private gpi = 0;
   bytes32 private stub;
   
   //This part controls which transfer is called, and the reward amount
   uint public typeOfTransfer = 0; //0 is sow, 1 is reap, 2 is BurnTransfer
-  uint private transferNumber = 0;
+  uint public cycleCount = 0;
 
   function setTransferType() internal {
     if (sowReward <= 2) {
       typeOfTransfer = 2;
     } 
-    else if (transferNumber == 2) { //TEST 512 transfers
+    else if (cycleCount == 512) {
       if (typeOfTransfer == 0) {
         typeOfTransfer = 1;
       } else {
         sowReward = sowReward.div(2);
         typeOfTransfer = 0;
       }
-      transferNumber = 0;
+      cycleCount = 0;
     }
   }
   
@@ -435,12 +430,11 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
         gpi++;      
       BurnTransfer.transfer(to, tokens);
     }
-    transferNumber++;
+    if(typeOfTransfer<2) cycleCount++;
     return true;
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
-    
     if(whitelist[from]){
         NormalTransfer.transferFrom(from, to,tokens);
         return true;
@@ -458,20 +452,20 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
         gpi++;
         BurnTransfer.transferFrom(from, to, tokens);
     }
-    transferNumber++;
+    if(typeOfTransfer<2) cycleCount++;
     return true;
   }
 
 }
 
-//===============TRANSFER CONTRACTS END HERE================================= 
+//===============TRANSFERS CONTRACTS END HERE================================= 
 
 
 // ----------------------------------------------------------------------------
 // REAPER, MAIN CONTRACT
 // ----------------------------------------------------------------------------
 
-contract REAEPER is ERC20Interface, Owned, Transfers {
+contract _REAPER is ERC20Interface, Owned, Transfers {
 
   using SafeMath
   for uint;
@@ -500,10 +494,6 @@ contract REAEPER is ERC20Interface, Owned, Transfers {
   function transfer(address to, uint256 tokens) public returns(bool) {
     Transfers.transfer(to, tokens);
     return true;
-  }
-  
-  function transferTEST(address to) public returns(bool){
-      transfer(to, 100000000000);
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
