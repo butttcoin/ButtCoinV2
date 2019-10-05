@@ -1,4 +1,4 @@
-# Reaper Token White-Paper
+# The Reaper Token White-Paper
 ## Overview
 ### ERC20 CONTRACT ADDRESS: 0x22585c163b353510e8fef984c02609302eb5fc62
 
