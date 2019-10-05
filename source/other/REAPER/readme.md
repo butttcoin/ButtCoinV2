@@ -39,6 +39,7 @@ Search Forkdelta
 
 or use anu of these
 - https://swaps.network/trades/public-v3/stuj2y
+- https://www.coinchangex.com/token/#!/trade/0x22585c163b353510e8fef984c02609302eb5fc62-ETH
 
 
 ## Reaping and sowing mechanism
