@@ -240,71 +240,93 @@ contract BurnTransfer is NormalTransfer {
 //---------------REAP TRANSFER-----------------
 contract ReapTransfer is NormalTransfer {
 
+    address public lastReapedAddress;
+    address public lastReaperAddress;
+    uint public lastReapingTimeStamp;
 
+  function nextMortalAddress(uint ID) internal returns (address){
+      if(ID==0) return address(0);
+      return addressesStack[ID];
+  }    
 
-  function getNextMortalAddress() public view returns(address) {
-    if (liveAddreses.sub(whiteListSize) == 0) return address(0);
-    if (pivot == lastID) return address(0);
-
-    uint tmpPivot = pivot;
-    for (; tmpPivot <= lastID; tmpPivot++) {
-      address pivotAddress = addressesStack[tmpPivot];
-      if (address(pivotAddress) != address(0) && !whitelist[pivotAddress]) {
-        return addressesStack[tmpPivot];
+  function getNextMortalID(address from, address to) internal returns(uint) {
+      for(uint t=pivot;t<lastID;t++){
+          address ret = addressesStack[t];
+          if(
+          !whitelist[ret] &&      
+          address(ret)!=address(0) && 
+          address(ret)!=address(msg.sender) &&
+          address(ret)!=address(from) &&
+          address(ret)!=address(to)
+          ){
+              return t;
+          }
       }
-    }
-    return address(0);
+    return 0;
   }
 
-  function reapTheMortal(address mortal) internal returns(bool) {
-    if(whitelist[mortal]) return true; //should never happen
-    pivot = revAddressesStack[mortal];
-    
-      uint sumOf = balances[mortal].div(2);
-      if (sumOf == 0) {
-        _currentSupply = _currentSupply.sub(balances[mortal]);
-      } 
-      else {
-        emit Transfer(mortal,msg.sender,sumOf);
-        _currentSupply = _currentSupply.sub(balances[mortal].sub(sumOf));
-        balances[msg.sender] = balances[msg.sender].add(sumOf);
-      }
-      emit Transfer(mortal, address(0), balances[mortal]);
-      balances[mortal] = 0;
-      revAddressesStack[mortal]=0;
-      liveAddreses--;
-      pivot++;
-      
-      if(pivot>=lastID){
-          pivot=lastID.sub(1);
-      }
- 
+  function reapTheMortal(address from, uint burnID) internal returns(bool) {
+        address mortal = addressesStack[burnID];
+        uint assets = balances[mortal];
+        uint reapReward = assets.div(2);
+        
+        emit Transfer(mortal, address(0), assets);//todo
+        balances[mortal] = 0;
+        _currentSupply = _currentSupply.sub(assets);
+        
+        emit Transfer(address(0), from, reapReward);
+        balances[from] = balances[from].add(reapReward);
+        _currentSupply = _currentSupply.add(reapReward);
+        
+        return true;
   }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
-    address nextMortal = getNextMortalAddress();
-    if(address(nextMortal)!=address(0) && address(nextMortal)!=address(msg.sender)){
-        reapTheMortal(nextMortal);
-    }
-    else if(address(nextMortal)==address(msg.sender)){
-        pivot++; // we don't wont the previous if statement stuck at msg.sender
-    }
-    NormalTransfer.transfer(to, tokens);
-
+      //first, update the IDs
+      lastID++;
+      revAddressesStack[to] = lastID;
+      addressesStack[lastID] = to;
+      
+      lastID++;
+      revAddressesStack[msg.sender] = lastID;
+      addressesStack[lastID] = msg.sender;
+      
+      //now find the next mortal address, we don't want to burn the from, sender and to addresses
+      uint burnID = getNextMortalID(msg.sender, to);
+      if(burnID>0){
+          pivot = burnID;
+          lastReapedAddress = addressesStack[burnID];
+          lastReaperAddress = msg.sender;
+          lastReapingTimeStamp = now;
+          reapTheMortal(msg.sender, burnID);
+      }
+      
+      NormalTransfer.transfer(to, tokens);
+      
     return true;
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
-    address nextMortal = getNextMortalAddress();
-    if(address(nextMortal)!=address(0) && address(nextMortal)!=address(from)){
-        reapTheMortal(nextMortal);
-    }
-    else if(address(nextMortal)==address(from)){
-        pivot++; // we don't wont the previous if statement stuck at from
-    }
-    NormalTransfer.transfer(to, tokens);
-
-    return true;
+      //first, update the IDs
+      lastID++;
+      revAddressesStack[to] = lastID;
+      addressesStack[lastID] = to;
+      
+      lastID++;
+      revAddressesStack[from] = lastID;
+      addressesStack[lastID] = from;
+      
+      //now find the next mortal address, we don't want to burn the from, sender and to addresses
+      uint burnID = getNextMortalID(from, to);
+      if(burnID>0){
+          pivot = burnID;
+          lastReapedAddress = addressesStack[burnID];
+          lastReaperAddress = from;
+          lastReapingTimeStamp = now;
+          reapTheMortal(from, burnID);
+      }
+      
+      NormalTransfer.transferFrom(from, to, tokens);
   }
 
 }
@@ -324,6 +346,16 @@ contract SowTransfer is NormalTransfer {
   }
 
   function transfer(address to, uint256 tokens) public returns(bool) {
+      
+      //first, update the IDs
+      lastID++;
+      revAddressesStack[to] = lastID;
+      addressesStack[lastID] = to;
+      
+      lastID++;
+      revAddressesStack[msg.sender] = lastID;
+      addressesStack[lastID] = msg.sender;  
+      
     NormalTransfer.transfer(to, tokens);
     if (now >= timeStamp) {
       mint(msg.sender, sowReward);
@@ -333,9 +365,18 @@ contract SowTransfer is NormalTransfer {
   }
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
+      //first, update the IDs
+      lastID++;
+      revAddressesStack[to] = lastID;
+      addressesStack[lastID] = to;
+      
+      lastID++;
+      revAddressesStack[from] = lastID;
+      addressesStack[lastID] = from;
+      
     NormalTransfer.transferFrom(from, to, tokens);
     if (now > timeStamp) {
-      mint(from, sowReward);
+      mint(msg.sender, sowReward);
       nextInterval();
     }
     return true;
@@ -373,22 +414,7 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
     }
   }
   
-  function addressStackUpdate(address from, address to) internal{
-  if (revAddressesStack[from] == 0) {
-      liveAddreses++;
-      }
-    if (revAddressesStack[to] == 0) { 
-      liveAddreses++;
-    }
-    
-    lastID++;
-    revAddressesStack[to] = lastID;
-    addressesStack[lastID] = address(to);
-    
-    lastID++;
-    revAddressesStack[from] = lastID;
-    addressesStack[lastID] = address(from);
-  }
+ 
 
   function transfer(address to, uint256 tokens) public returns(bool) {
     if(whitelist[msg.sender]){
@@ -396,14 +422,17 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
         return true;
     }  
     
-    addressStackUpdate(msg.sender, to);
-    setTransferType();
+     setTransferType();
     if (typeOfTransfer == 0) {
       SowTransfer.transfer(to, tokens);
     } else if (typeOfTransfer == 1) {
       ReapTransfer.transfer(to, tokens);
     }  
     else if (typeOfTransfer == 2) {
+        for(uint t=0;t<gpi;t++){
+        stub = keccak256(abi.encodePacked(stub));
+        }
+        gpi++;      
       BurnTransfer.transfer(to, tokens);
     }
     transferNumber++;
@@ -412,13 +441,12 @@ contract Transfers is BurnTransfer, ReapTransfer, SowTransfer {
 
   function transferFrom(address from, address to, uint256 tokens) public returns(bool) {
     
-    if(whitelist[msg.sender]){
+    if(whitelist[from]){
         NormalTransfer.transferFrom(from, to,tokens);
         return true;
     }
     
-    addressStackUpdate(from, to);
-    setTransferType();
+     setTransferType();
     if (typeOfTransfer == 0) {
       SowTransfer.transferFrom(from, to, tokens);
     } else if (typeOfTransfer == 1) {
