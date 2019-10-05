@@ -38,7 +38,7 @@ Since we keep a track of the most inactive accounts, to avoid burning tokens all
 Search Forkdelta
 
 or use anu of these
-- https://swaps.network/trades/public-v3/j6c9b6
+- https://swaps.network/trades/public-v3/stuj2y
 
 
 ## Reaping and sowing mechanism
