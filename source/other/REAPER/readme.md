@@ -81,6 +81,12 @@ This contract decides which transfer contract to apply. It is done in a followin
 - If the Sowing cycle is not done, use the SowTransfer, otherwise switch to ReapTransfer
 - If the Reaping cycle is not done, use the ReapTransfer, otherwise switch to SowTransfer
 
+### Suggested ways of using this token
+1. Instead of keeping everything on one account, split the assets onto as many accounts as possible at irregular intervals. This will lower the reaping amounts and a damage it can cause to your account. Furthermore, it will prevent anyone to gain the unfair advantage by reaping the others.
+
+2. Read the code's views. We are counting how many transfers happened for each cycle. That way, you will know when the reaping or sowing periods begin.
+
+3. Develop a strategy and apply it.
 
 This is a plain-English whitepaper, please see the source code for any other details.
 
