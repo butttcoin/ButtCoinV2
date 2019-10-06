@@ -35,9 +35,11 @@ Since we asked for accounts that have more than 100 followers on a Twitter, we a
 Since we keep a track of the most inactive accounts, to avoid burning tokens allocated for the exchange liquidity, we need a whitelist. Since there are white-listed accounts immune to Sowing and Reaping, we need an owner to determine those accounts. Therefore, owner as well as the exchanges will not be able be Reaped, and whitelisted accounts cannot do any sowing either.
 
 ## Early exchange listings
-Search Forkdelta
+Search Forkdelta:
 
-or use anu of these
+https://forkdelta.app/#!/trade/0x22585c163b353510e8fef984c02609302eb5fc62-ETH
+
+or use any of these
 - https://swaps.network/trades/public-v3/stuj2y
 - https://www.coinchangex.com/token/#!/trade/0x22585c163b353510e8fef984c02609302eb5fc62-ETH
 
