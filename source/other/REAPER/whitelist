@@ -1,5 +1,5 @@
 This is a document that shows all the whitelisted accounts. You may confirm the validity with a deployed contract.
 
 0xe44d100080aE91a1f3d6499E28BcEa0F4193E43b - Owner Address
-0x8d12a197cb00d4747a1fe03395095ce2a5cc6819 - ForkDelta (EtherDelta2)
-
+0x8d12a197cb00d4747a1fe03395095ce2a5cc6819 - ForkDelta (EtherDelta2, exchange)
+0xc3c12a9e63e466a3ba99e07f3ef1f38b8b81ae1b - mcafeedex (exchange)
